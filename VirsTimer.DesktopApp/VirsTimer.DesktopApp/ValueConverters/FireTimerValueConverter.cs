@@ -23,12 +23,12 @@ namespace VirsTimer.DesktopApp.ValueConverters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is int delayFireTimer))
-                return Brushes.Yellow;
-            if (delayFireTimer == 0)
-                return Brushes.Khaki;
-            if (delayFireTimer == 1)
-                return Brushes.MediumVioletRed;
+            if (!(value is DelayStopwatchTimer delayFireTimer))
+                return Brushes.DarkGray;
+            else if (delayFireTimer.CountdownStarted && !delayFireTimer.CanFire)
+                return Brushes.IndianRed;
+            else if (delayFireTimer.CanFire)
+                return Brushes.LawnGreen;
 
             return Brushes.DarkGray;
         }

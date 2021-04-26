@@ -12,13 +12,12 @@ namespace VirsTimer.DesktopApp.Views
     {
         private readonly TextBlock timerTextBlock;
 
-        public DelayFireTimer DelayFireTimer => Model.DelayFireTimer;
+        public DelayStopwatchTimer DelayFireTimer => Model.Model;
         public TimerViewModel Model { get; }
 
         public TimerView()
         {
             InitializeComponent();
-            DataContext = this;
             timerTextBlock = this.FindControl<TextBlock>("TimerTextBlock");
             DataContext = Model = new TimerViewModel();
             DelayFireTimer.AddEvent(TimerFireEvent);
@@ -32,10 +31,10 @@ namespace VirsTimer.DesktopApp.Views
         public void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)
         {
             keyEventArgs.Handled = true;
-            if (!Model.Model.IsRunning && !DelayFireTimer.IsRunning && keyEventArgs.Key == Key.Space)
+            if (!Model.Model.IsRunning && !DelayFireTimer.CountdownStarted && keyEventArgs.Key == Key.Space)
             {
                 //timerTextBlock.Foreground = Brushes.MediumVioletRed;
-                DelayFireTimer.Start();
+                DelayFireTimer.StartCountdown();
             }
             else if (Model.Model.IsRunning)
                 Model.Model.InvertWork();
@@ -45,11 +44,7 @@ namespace VirsTimer.DesktopApp.Views
         {
             if (!Model.Model.IsRunning && keyEventArgs.Key == Key.Space)
             {
-                DelayFireTimer.Stop();
-                //timerTextBlock.Foreground = Brushes.DarkGray;
-                if (DelayFireTimer.CanFire)
-                    Model.Model.InvertWork();
-                DelayFireTimer.ResetCanFire();
+                DelayFireTimer.Start();
             }
         }
 

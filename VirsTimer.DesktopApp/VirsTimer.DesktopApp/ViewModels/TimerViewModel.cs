@@ -13,31 +13,17 @@ namespace VirsTimer.DesktopApp.ViewModels
             set => this.RaiseAndSetIfChanged(ref currentTime, value);
         }
 
-        private int state;
-        public int State
-        {
-            get => state;
-            set => this.RaiseAndSetIfChanged(ref state, value);
-        }
-
-        public DelayFireTimer DelayFireTimer { get; }
-
-        public StopwatchTimer Model { get; }
+        public DelayStopwatchTimer Model { get; }
 
         public TimerViewModel()
         {
-            Model = new StopwatchTimer();
+            Model = new DelayStopwatchTimer();
             Model.AddEvent(UpdateGretting);
-            DelayFireTimer = new DelayFireTimer();
         }
 
         private void UpdateGretting(object? sender, EventArgs e)
         {
-            if (DelayFireTimer.IsRunning)
-                State = 0;
-            if (!DelayFireTimer.IsRunning)
-                State = 1;
-
+            this.RaisePropertyChanged("Model");
             var currentTime = Model.CurrentTime;
             if (currentTime.Hours > 0)
                 CurrentTime = currentTime.ToString("hh\\:mm\\:ss\\.ff");

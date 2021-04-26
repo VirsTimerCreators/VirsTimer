@@ -23,12 +23,12 @@
 		<Panel HorizontalAlignment="Center" VerticalAlignment="Center">
 			<TextBlock x:Name="TimerTextBlock"
 					   Text="{Binding CurrentTime}"
-					   Foreground="{Binding State, Converter={StaticResource fireTimerValueConverter}}"
+					   Foreground="{Binding Model, Converter={StaticResource fireTimerValueConverter}}"
 					   HorizontalAlignment="Left"
 					   VerticalAlignment="Center"
 					   FontSize="144"
 					   FontFamily="Verdana"
-					   FontWeight="Bold"/>
+					   FontWeight="Regular"/>
 		</Panel>
 	</Panel>
 </Window>
