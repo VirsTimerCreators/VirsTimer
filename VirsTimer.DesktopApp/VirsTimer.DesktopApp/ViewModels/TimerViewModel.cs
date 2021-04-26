@@ -13,18 +13,18 @@ namespace VirsTimer.DesktopApp.ViewModels
             set => this.RaiseAndSetIfChanged(ref currentTime, value);
         }
 
-        public DelayStopwatchTimer Model { get; }
+        public DelayStopwatchTimer Timer { get; }
 
         public TimerViewModel()
         {
-            Model = new DelayStopwatchTimer();
-            Model.AddEvent(UpdateGretting);
+            Timer = new DelayStopwatchTimer();
+            Timer.AddEvent(UpdateGretting);
         }
 
         private void UpdateGretting(object? sender, EventArgs e)
         {
-            this.RaisePropertyChanged("Model");
-            var currentTime = Model.CurrentTime;
+            this.RaisePropertyChanged("Timer");
+            var currentTime = Timer.CurrentTime;
             if (currentTime.Hours > 0)
                 CurrentTime = currentTime.ToString("hh\\:mm\\:ss\\.ff");
             else if (currentTime.Minutes > 0)

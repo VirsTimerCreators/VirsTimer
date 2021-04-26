@@ -22,8 +22,8 @@
 		</ExperimentalAcrylicBorder>
 		<Panel HorizontalAlignment="Center" VerticalAlignment="Center">
 			<TextBlock x:Name="TimerTextBlock"
-					   Text="{Binding CurrentTime}"
-					   Foreground="{Binding Model, Converter={StaticResource fireTimerValueConverter}}"
+					   Text="{Binding Model.CurrentTime}"
+					   Foreground="{Binding Model.Timer, Converter={StaticResource fireTimerValueConverter}}"
 					   HorizontalAlignment="Left"
 					   VerticalAlignment="Center"
 					   FontSize="144"
