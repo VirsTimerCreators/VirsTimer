@@ -1,14 +1,12 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using VirsTimer.Core.Timers;
 using VirsTimer.DesktopApp.ViewModels;
 
 namespace VirsTimer.DesktopApp.Views
 {
     public class TimerView : Window
     {
-        public DelayStopwatchTimer DelayFireTimer => Model.Timer;
         public TimerViewModel Model { get; }
 
         public TimerView()
@@ -26,8 +24,8 @@ namespace VirsTimer.DesktopApp.Views
         public void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)
         {
             keyEventArgs.Handled = true;
-            if (keyEventArgs.Key == Key.Space && !Model.Timer.IsRunning && !DelayFireTimer.CountdownStarted)
-                DelayFireTimer.StartCountdown();
+            if (keyEventArgs.Key == Key.Space && !Model.Timer.IsRunning && !Model.Timer.CountdownStarted)
+                Model.Timer.StartCountdown();
             else if (Model.Timer.IsRunning)
                 Model.Timer.InvertWork();
         }
@@ -35,7 +33,7 @@ namespace VirsTimer.DesktopApp.Views
         public void WindowKeyUp(object? sender, KeyEventArgs keyEventArgs)
         {
             if (keyEventArgs.Key == Key.Space && !Model.Timer.IsRunning)
-                DelayFireTimer.Start();
+                Model.Timer.Start();
         }
     }
 }
