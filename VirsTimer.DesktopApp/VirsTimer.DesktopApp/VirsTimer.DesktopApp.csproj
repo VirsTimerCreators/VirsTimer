@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.2" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.2" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.2" />
+    <PackageReference Include="Avalonia.ReactiveUI.Events" Version="0.10.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VirsTimer.Core\VirsTimer.Core.csproj" />
+  </ItemGroup>
+</Project>
