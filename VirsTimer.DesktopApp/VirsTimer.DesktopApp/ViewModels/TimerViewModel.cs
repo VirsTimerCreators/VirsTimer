@@ -6,31 +6,38 @@ namespace VirsTimer.DesktopApp.ViewModels
 {
     public class TimerViewModel : ViewModelBase
     {
-        private string currentTime = "00.00";
-        public string CurrentTime
+        private TimeSpan currentTime = TimeSpan.Zero;
+        private TimeSpan savedTime = TimeSpan.Zero;
+
+        public DelayStopwatchTimer Timer { get; }
+        public TimeSpan SavedTime
+        {
+            get => savedTime;
+            set => this.RaiseAndSetIfChanged(ref savedTime, value);
+        }
+
+        public TimeSpan CurrentTime
         {
             get => currentTime;
             set => this.RaiseAndSetIfChanged(ref currentTime, value);
         }
 
-        public DelayStopwatchTimer Timer { get; }
-
         public TimerViewModel()
         {
             Timer = new DelayStopwatchTimer();
-            Timer.AddEvent(UpdateCurrentTime);
+            Timer.AddRefreshEvent(UpdateCurrentTime);
+            Timer.Stopped += UpdateSavedTime;
         }
 
         private void UpdateCurrentTime(object? sender, EventArgs e)
         {
             this.RaisePropertyChanged("Timer");
-            var currentTime = Timer.CurrentTime;
-            if (currentTime.Hours > 0)
-                CurrentTime = currentTime.ToString("hh\\:mm\\:ss\\.ff");
-            else if (currentTime.Minutes > 0)
-                CurrentTime = currentTime.ToString("mm\\:ss\\.ff");
-            else
-                CurrentTime = currentTime.ToString("ss\\.ff");
+            CurrentTime = Timer.CurrentTime;
+        }
+
+        private void UpdateSavedTime()
+        {
+            SavedTime = Timer.CurrentTime;
         }
     }
 }

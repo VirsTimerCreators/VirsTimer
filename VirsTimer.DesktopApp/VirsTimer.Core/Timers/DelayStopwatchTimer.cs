@@ -18,6 +18,8 @@ namespace VirsTimer.Core.Timers
 
         public bool IsRunning => _stopwatch.IsRunning;
 
+        public event Action Stopped;
+
         public void InvertWork()
         {
             if (!IsRunning)
@@ -65,9 +67,10 @@ namespace VirsTimer.Core.Timers
         public void Stop()
         {
             _stopwatch.Stop();
+            Stopped();
         }
 
-        public void AddEvent(EventHandler eventHandler)
+        public void AddRefreshEvent(EventHandler eventHandler)
         {
             _timerRefresher.Tick += eventHandler;
         }

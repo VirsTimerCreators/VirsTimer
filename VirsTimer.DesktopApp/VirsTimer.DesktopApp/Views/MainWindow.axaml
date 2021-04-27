@@ -9,7 +9,8 @@
         Title="MainWindow"
 		KeyDown="WindowKeyDown"
 		KeyUp="WindowKeyUp">
-	<Panel>
-		<views:TimerView Content="{Binding ViewModel.TimerViewModel}"/>
-	</Panel>
+	<Grid RowDefinitions="*,*">
+		<views:TimerView Grid.Row="0" Content="{Binding ViewModel.TimerViewModel}"/>
+		<views:SolvesListView Grid.Row="1" Content="{Binding ViewModel.SolvesListViewModel}"/>
+	</Grid>
 </Window>
