@@ -48,6 +48,7 @@ namespace VirsTimer.Core.Timers
 
         public void StartCountdown()
         {
+            _stopwatch.Reset();
             _delayTimer.Start();
         }
 
@@ -58,7 +59,6 @@ namespace VirsTimer.Core.Timers
                 return;
 
             CanFire = false;
-
             _stopwatch.Start();
         }
 
