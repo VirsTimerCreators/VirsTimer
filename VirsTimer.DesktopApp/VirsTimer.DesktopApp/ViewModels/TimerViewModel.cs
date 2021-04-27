@@ -18,10 +18,10 @@ namespace VirsTimer.DesktopApp.ViewModels
         public TimerViewModel()
         {
             Timer = new DelayStopwatchTimer();
-            Timer.AddEvent(UpdateGretting);
+            Timer.AddEvent(UpdateCurrentTime);
         }
 
-        private void UpdateGretting(object? sender, EventArgs e)
+        private void UpdateCurrentTime(object? sender, EventArgs e)
         {
             this.RaisePropertyChanged("Timer");
             var currentTime = Timer.CurrentTime;

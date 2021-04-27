@@ -1,0 +1,15 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:views="clr-namespace:VirsTimer.DesktopApp.Views;assembly=VirsTimer.DesktopApp"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		Height="1000" Width="1500"
+        x:Class="VirsTimer.DesktopApp.Views.MainWindow"
+        Title="MainWindow"
+		KeyDown="WindowKeyDown"
+		KeyUp="WindowKeyUp">
+	<Panel>
+		<views:TimerView Content="{Binding ViewModel.TimerViewModel}"/>
+	</Panel>
+</Window>

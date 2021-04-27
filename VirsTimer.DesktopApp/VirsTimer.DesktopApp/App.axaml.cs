@@ -31,7 +31,7 @@ namespace VirsTimer.DesktopApp
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = ServiceProvider.GetRequiredService<TimerView>();
+                desktop.MainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             }
 
             base.OnFrameworkInitializationCompleted();
@@ -44,7 +44,7 @@ namespace VirsTimer.DesktopApp
         private void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient();
-            services.AddTransient<TimerView>();
+            services.AddTransient<MainWindow>();
         }
     }
 }
