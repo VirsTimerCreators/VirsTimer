@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
+using VirsTimer.Core.Services;
+using VirsTimer.DesktopApp.ViewModels;
 using VirsTimer.DesktopApp.Views;
 
 namespace VirsTimer.DesktopApp
@@ -43,6 +45,11 @@ namespace VirsTimer.DesktopApp
 
         private void ConfigureServices(IServiceCollection services)
         {
+            var fileSolvesService = new FileSolvesService();
+
+            services.AddSingleton<IPastSolvesGetter>(fileSolvesService);
+            services.AddSingleton<ISolvesSaver>(fileSolvesService);
+            services.AddTransient<MainWindowViewModel>();
             services.AddHttpClient();
             services.AddTransient<MainWindow>();
         }

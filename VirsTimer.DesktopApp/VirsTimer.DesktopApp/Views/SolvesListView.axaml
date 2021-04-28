@@ -9,7 +9,7 @@
 	<ListBox Items="{Binding Solves}">
 		<ListBox.ItemTemplate>
 			<DataTemplate>
-				<TextBlock Text="{Binding Time, Converter={converters:TimeSpanValueConverter}}"/>
+				<TextBlock Text="{Binding TimeAsSpan, Converter={converters:TimeSpanValueConverter}}"/>
 			</DataTemplate>
 		</ListBox.ItemTemplate>
 	</ListBox>

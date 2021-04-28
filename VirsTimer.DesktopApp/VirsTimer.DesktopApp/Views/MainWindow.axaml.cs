@@ -11,10 +11,12 @@ namespace VirsTimer.DesktopApp.Views
     {
         public MainWindowViewModel ViewModel { get; }
 
-        public MainWindow()
+        public MainWindow() { }
+
+        public MainWindow(MainWindowViewModel mainWindowViewModel)
         {
             InitializeComponent();
-            ViewModel = new MainWindowViewModel();
+            ViewModel = mainWindowViewModel;
             DataContext = this;
 #if DEBUG
             this.AttachDevTools();
@@ -34,7 +36,8 @@ namespace VirsTimer.DesktopApp.Views
             else if (ViewModel.TimerViewModel.Timer.IsRunning)
             {
                 ViewModel.TimerViewModel.Timer.Stop();
-                ViewModel.SolvesListViewModel.Solves.Add(new Core.Models.Solve(ViewModel.TimerViewModel.SavedTime, Core.Constants.SolveFlag.DNF, DateTime.Now, ""));
+                ViewModel.SolvesListViewModel.Solves.Add(new Core.Models.Solve(ViewModel.TimerViewModel.SavedTime, ""));
+                ViewModel.SolvesListViewModel.Save();
             }
         }
 

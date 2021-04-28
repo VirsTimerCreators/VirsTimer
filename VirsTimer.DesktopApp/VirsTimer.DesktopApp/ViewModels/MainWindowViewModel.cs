@@ -1,5 +1,6 @@
 ﻿using System;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Services;
 
 namespace VirsTimer.DesktopApp.ViewModels
 {
@@ -8,10 +9,10 @@ namespace VirsTimer.DesktopApp.ViewModels
         public TimerViewModel TimerViewModel { get; }
         public SolvesListViewModel SolvesListViewModel { get; }
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(IPastSolvesGetter pastSolvesGetter, ISolvesSaver solvesSaver)
         {
             TimerViewModel = new TimerViewModel();
-            SolvesListViewModel = new SolvesListViewModel(Array.Empty<Solve>());
+            SolvesListViewModel = new SolvesListViewModel(pastSolvesGetter, solvesSaver);
         }
     }
 }
