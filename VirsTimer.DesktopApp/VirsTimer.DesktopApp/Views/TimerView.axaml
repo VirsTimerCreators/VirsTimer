@@ -7,6 +7,15 @@
 	mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 	x:Class="VirsTimer.DesktopApp.Views.TimerView">
 	<Panel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<ExperimentalAcrylicBorder IsHitTestVisible="False">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+					BackgroundSource="Digger"
+					TintColor="Black"
+					TintOpacity="1"
+					MaterialOpacity="0.75" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
 		<TextBlock x:Name="TimerTextBlock"
 				   Text="{Binding CurrentTime, Converter={converters:TimeSpanValueConverter}}"
 				   Foreground="{Binding Timer, Converter={converters:DelayStopwatchTimer}}"

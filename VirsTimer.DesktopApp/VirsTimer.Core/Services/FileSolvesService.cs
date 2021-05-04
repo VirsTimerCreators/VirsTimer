@@ -9,13 +9,18 @@ using VirsTimer.Core.Models;
 
 namespace VirsTimer.Core.Services
 {
-    public partial class FileSolvesService : IPastSolvesGetter, ISolvesSaver
+    public partial class FileSolvesService : IPastSolvesGetter, ISolvesSaver, IEventsGetter
     {
         private readonly IFileSystem _fileSystem;
 
         public FileSolvesService(IFileSystem? fileSystem = null)
         {
             _fileSystem = fileSystem ?? new FileSystem();
+        }
+
+        public Task<IReadOnlyList<Event>> GetEventsAsync()
+        {
+            return Task.FromResult<IReadOnlyList<Event>>(new[] { new Event("3x3x3") });
         }
 
         public async Task<IReadOnlyList<Solve>> GetSolvesAsync(string @event, string session)
