@@ -50,7 +50,13 @@ namespace VirsTimer.DesktopApp
             services.AddSingleton<IPastSolvesGetter>(fileSolvesService);
             services.AddSingleton<ISolvesSaver>(fileSolvesService);
             services.AddSingleton<IEventsGetter>(fileSolvesService);
-            services.AddTransient<MainWindowViewModel>();
+            services.AddSingleton<IScrambleGenerator>(new RandomScrambleGenerator());
+            services.AddTransient(services => 
+                new MainWindowViewModel(
+                    "3x3x3",
+                    services.GetRequiredService<IPastSolvesGetter>(),
+                    services.GetRequiredService<ISolvesSaver>(),
+                    services.GetRequiredService<IScrambleGenerator>()));
             services.AddHttpClient();
             services.AddTransient<MainWindow>();
         }

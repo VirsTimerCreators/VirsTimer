@@ -53,8 +53,9 @@ namespace VirsTimer.DesktopApp.Views
             else if (ViewModel.TimerViewModel.Timer.IsRunning)
             {
                 ViewModel.TimerViewModel.Timer.Stop();
-                ViewModel.SolvesListViewModel.Solves.Add(new Solve(ViewModel.TimerViewModel.SavedTime, ""));
+                ViewModel.SolvesListViewModel.Solves.Add(new Solve(ViewModel.TimerViewModel.SavedTime, ViewModel.ScrambleViewModel.CurrentScramble.Value));
                 ViewModel.SolvesListViewModel.Save();
+                ViewModel.ScrambleViewModel.NextScramble();
             }
         }
 

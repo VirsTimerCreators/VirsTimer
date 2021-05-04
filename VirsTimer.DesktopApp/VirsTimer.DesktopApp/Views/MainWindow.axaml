@@ -12,8 +12,8 @@
 		TransparencyLevelHint="AcrylicBlur"
 		Background="Transparent"
 		ExtendClientAreaToDecorationsHint="True">
-	<Grid RowDefinitions="100,*,*">
-		<ExperimentalAcrylicBorder IsHitTestVisible="False">
+	<Grid RowDefinitions="100,Auto,*,*">
+		<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
 			<ExperimentalAcrylicBorder.Material>
 				<ExperimentalAcrylicMaterial
 					BackgroundSource="Digger"
@@ -25,7 +25,8 @@
 		<Grid Grid.Row="0" ColumnDefinitions="*,*,*">
 			<views:EventView Grid.Column="0" Content="{Binding ViewModel.EventViewModel}" HorizontalAlignment="Left"/>
 		</Grid>
-		<views:TimerView Name="TimerView" Grid.Row="1" Content="{Binding ViewModel.TimerViewModel}"/>
-		<views:SolvesListView Grid.Row="2" Content="{Binding ViewModel.SolvesListViewModel}"/>
+		<views:ScrambleView MinHeight="100" MaxHeight="300" Grid.Row="1" Content="{Binding ViewModel.ScrambleViewModel}"/>
+		<views:TimerView Grid.Row="2" Content="{Binding ViewModel.TimerViewModel}"/>
+		<views:SolvesListView Grid.Row="3" Content="{Binding ViewModel.SolvesListViewModel}"/>
 	</Grid>
 </Window>
