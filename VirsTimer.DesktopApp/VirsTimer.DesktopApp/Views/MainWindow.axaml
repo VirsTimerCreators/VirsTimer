@@ -8,9 +8,24 @@
         x:Class="VirsTimer.DesktopApp.Views.MainWindow"
         Title="MainWindow"
 		KeyDown="WindowKeyDown"
-		KeyUp="WindowKeyUp">
-	<Grid RowDefinitions="*,*">
-		<views:TimerView Grid.Row="0" Content="{Binding ViewModel.TimerViewModel}"/>
-		<views:SolvesListView Grid.Row="1" Content="{Binding ViewModel.SolvesListViewModel}"/>
+		KeyUp="WindowKeyUp"
+		TransparencyLevelHint="AcrylicBlur"
+		Background="Transparent"
+		ExtendClientAreaToDecorationsHint="True">
+	<Grid RowDefinitions="100,*,*">
+		<ExperimentalAcrylicBorder IsHitTestVisible="False">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+					BackgroundSource="Digger"
+					TintColor="Black"
+					TintOpacity="1"
+					MaterialOpacity="0.45" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<Grid Grid.Row="0" ColumnDefinitions="*,*,*">
+			<views:EventView Grid.Column="0" Content="{Binding ViewModel.EventViewModel}" HorizontalAlignment="Left"/>
+		</Grid>
+		<views:TimerView Name="TimerView" Grid.Row="1" Content="{Binding ViewModel.TimerViewModel}"/>
+		<views:SolvesListView Grid.Row="2" Content="{Binding ViewModel.SolvesListViewModel}"/>
 	</Grid>
 </Window>

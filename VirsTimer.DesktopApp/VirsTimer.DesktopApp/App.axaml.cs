@@ -49,6 +49,7 @@ namespace VirsTimer.DesktopApp
 
             services.AddSingleton<IPastSolvesGetter>(fileSolvesService);
             services.AddSingleton<ISolvesSaver>(fileSolvesService);
+            services.AddSingleton<IEventsGetter>(fileSolvesService);
             services.AddTransient<MainWindowViewModel>();
             services.AddHttpClient();
             services.AddTransient<MainWindow>();

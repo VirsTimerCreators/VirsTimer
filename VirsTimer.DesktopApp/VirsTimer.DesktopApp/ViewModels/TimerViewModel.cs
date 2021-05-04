@@ -1,5 +1,6 @@
 ﻿using ReactiveUI;
 using System;
+using System.Threading.Tasks;
 using VirsTimer.Core.Timers;
 
 namespace VirsTimer.DesktopApp.ViewModels
@@ -29,10 +30,13 @@ namespace VirsTimer.DesktopApp.ViewModels
             Timer.Stopped += UpdateSavedTime;
         }
 
-        private void UpdateCurrentTime(object? sender, EventArgs e)
+        private async void UpdateCurrentTime(object? sender, EventArgs e)
         {
-            this.RaisePropertyChanged("Timer");
-            CurrentTime = Timer.CurrentTime;
+            await Task.Run(() =>
+            {
+                this.RaisePropertyChanged("Timer");
+                CurrentTime = Timer.CurrentTime;
+            });
         }
 
         private void UpdateSavedTime()

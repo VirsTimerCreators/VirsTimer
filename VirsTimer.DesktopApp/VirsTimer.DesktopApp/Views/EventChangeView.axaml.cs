@@ -1,13 +1,18 @@
-using Avalonia.Controls;
+using Avalonia;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
+using VirsTimer.DesktopApp.ViewModels;
 
 namespace VirsTimer.DesktopApp.Views
 {
-    public class SolvesListView : UserControl
+    public class EventChangeView : ReactiveWindow<EventChangeViewModel>
     {
-        public SolvesListView()
+        public EventChangeView()
         {
             InitializeComponent();
+#if DEBUG
+            this.AttachDevTools();
+#endif
         }
 
         private void InitializeComponent()

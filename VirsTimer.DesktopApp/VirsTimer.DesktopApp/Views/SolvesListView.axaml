@@ -1,17 +1,29 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="VirsTimer.DesktopApp.Views.SolvesListView">
+<UserControl
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
+	mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+	x:Class="VirsTimer.DesktopApp.Views.SolvesListView">
 
-	<ListBox Items="{Binding Solves}">
-		<ListBox.ItemTemplate>
-			<DataTemplate>
-				<TextBlock Text="{Binding TimeAsSpan, Converter={converters:TimeSpanValueConverter}}"/>
-			</DataTemplate>
-		</ListBox.ItemTemplate>
-	</ListBox>
-	
+	<Panel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<ExperimentalAcrylicBorder IsHitTestVisible="False">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+					BackgroundSource="Digger"
+					TintColor="Black"
+					TintOpacity="1"
+					MaterialOpacity="0.75" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+
+		<ListBox Background="Transparent" Items="{Binding Solves}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Margin="7" Text="{Binding TimeAsSpan, Converter={converters:TimeSpanValueConverter}}"/>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Panel>
 </UserControl>

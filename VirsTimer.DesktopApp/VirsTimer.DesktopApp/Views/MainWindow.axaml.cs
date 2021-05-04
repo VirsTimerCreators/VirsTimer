@@ -2,7 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using System;
+using ReactiveUI;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using VirsTimer.Core.Models;
+using VirsTimer.Core.Services;
 using VirsTimer.DesktopApp.ViewModels;
 
 namespace VirsTimer.DesktopApp.Views
@@ -11,9 +15,11 @@ namespace VirsTimer.DesktopApp.Views
     {
         public MainWindowViewModel ViewModel { get; }
 
+        public ICommand ChangeEventCommand { get; }
+
         public MainWindow() { }
 
-        public MainWindow(MainWindowViewModel mainWindowViewModel)
+        public MainWindow(MainWindowViewModel mainWindowViewModel, IEventsGetter eventsGetter)
         {
             InitializeComponent();
             ViewModel = mainWindowViewModel;
@@ -21,6 +27,17 @@ namespace VirsTimer.DesktopApp.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
+
+            ChangeEventCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                var dialog = new EventChangeView();
+                var eventChangeViewModel = new EventChangeViewModel(eventsGetter);
+                dialog.DataContext = eventChangeViewModel;
+
+                await dialog.ShowDialog(this);
+                if (eventChangeViewModel.Accepted && eventChangeViewModel.SelectedEvent != null)
+                    ViewModel.EventViewModel.CurrentEvent = eventChangeViewModel.SelectedEvent;
+            });
         }
 
         private void InitializeComponent()
@@ -36,7 +53,7 @@ namespace VirsTimer.DesktopApp.Views
             else if (ViewModel.TimerViewModel.Timer.IsRunning)
             {
                 ViewModel.TimerViewModel.Timer.Stop();
-                ViewModel.SolvesListViewModel.Solves.Add(new Core.Models.Solve(ViewModel.TimerViewModel.SavedTime, ""));
+                ViewModel.SolvesListViewModel.Solves.Add(new Solve(ViewModel.TimerViewModel.SavedTime, ""));
                 ViewModel.SolvesListViewModel.Save();
             }
         }
