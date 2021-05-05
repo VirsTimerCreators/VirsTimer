@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services;
 
@@ -13,15 +14,22 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public SolvesListViewModel(IPastSolvesGetter pastSolvesGetter, ISolvesSaver solvesSaver)
         {
-            var pastSolves = pastSolvesGetter.GetSolvesAsync("3x3", "1").GetAwaiter().GetResult().OrderByDescending(x => x.Date);
-            Solves = new ObservableCollection<Solve>(pastSolves);
+            Solves = new ObservableCollection<Solve>();
             _pastSolvesGetter = pastSolvesGetter;
             _solvesSaver = solvesSaver;
         }
 
-        public void Save()
+        public async Task Load(string @event, string session)
         {
-            _solvesSaver.SaveSolvesAsync(Solves, "3x3", "1").GetAwaiter().GetResult();
+            var solves = await _pastSolvesGetter.GetSolvesAsync(@event, session).ConfigureAwait(false);
+            Solves.Clear();
+            foreach (var solve in solves.OrderByDescending(x => x.Date))
+                Solves.Add(solve);
+        }
+
+        public void Save(string @event, string session)
+        {
+            _solvesSaver.SaveSolvesAsync(Solves, @event, session).GetAwaiter().GetResult();
         }
     }
 }
