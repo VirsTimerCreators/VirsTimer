@@ -25,7 +25,7 @@ namespace VirsTimer.Core.Services
 
         public async Task<IReadOnlyList<Solve>> GetSolvesAsync(string @event, string session)
         {
-            var targetFile = _fileSystem.Path.Combine(Application.CommonDirectoryPath, @event, $"{session}{FileExtensions.Json}");
+            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event, $"{session}{FileExtensions.Json}");
             if (!_fileSystem.File.Exists(targetFile))
                 return Array.Empty<Solve>();
 
@@ -37,7 +37,7 @@ namespace VirsTimer.Core.Services
 
         public async Task SaveSolvesAsync(IEnumerable<Solve> solves, string @event, string session)
         {
-            var targetFile = _fileSystem.Path.Combine(Application.CommonDirectoryPath, @event, $"{session}{FileExtensions.Json}");
+            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event, $"{session}{FileExtensions.Json}");
             _fileSystem.Directory.CreateDirectory(_fileSystem.Path.GetDirectoryName(targetFile));
             using var stream = _fileSystem.File.Exists(targetFile) ? _fileSystem.File.Create(targetFile) : _fileSystem.File.OpenWrite(targetFile);
             await JsonSerializer.SerializeAsync(stream, solves).ConfigureAwait(false);

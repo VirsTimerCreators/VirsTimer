@@ -16,10 +16,10 @@ namespace VirsTimer.Core.Constants
         public const string Name = "VirsTimer";
 
         /// <summary>
-        /// Full path to application common directory path.
+        /// Full path to application data directory path.
         /// </summary>
-        public static string CommonDirectoryPath => Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+        public static string ApplicationDataDirectoryPath => Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 Company,
                 Name);
     }
