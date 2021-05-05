@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using ReactiveUI;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services;
@@ -53,7 +52,7 @@ namespace VirsTimer.DesktopApp.Views
             else if (ViewModel.TimerViewModel.Timer.IsRunning)
             {
                 ViewModel.TimerViewModel.Timer.Stop();
-                ViewModel.SolvesListViewModel.Solves.Add(new Solve(ViewModel.TimerViewModel.SavedTime, ViewModel.ScrambleViewModel.CurrentScramble.Value));
+                ViewModel.SolvesListViewModel.Solves.Insert(0, new Solve(ViewModel.TimerViewModel.SavedTime, ViewModel.ScrambleViewModel.CurrentScramble.Value));
                 ViewModel.SolvesListViewModel.Save();
                 ViewModel.ScrambleViewModel.NextScramble();
             }
