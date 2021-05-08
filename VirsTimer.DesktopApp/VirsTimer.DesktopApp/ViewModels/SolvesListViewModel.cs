@@ -19,7 +19,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             _solvesSaver = solvesSaver;
         }
 
-        public async Task Load(string @event, string session)
+        public async Task Load(Event @event, Session session)
         {
             var solves = await _pastSolvesGetter.GetSolvesAsync(@event, session).ConfigureAwait(false);
             Solves.Clear();
@@ -27,7 +27,7 @@ namespace VirsTimer.DesktopApp.ViewModels
                 Solves.Add(solve);
         }
 
-        public void Save(string @event, string session)
+        public void Save(Event @event, Session session)
         {
             _solvesSaver.SaveSolvesAsync(Solves, @event, session).GetAwaiter().GetResult();
         }

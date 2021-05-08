@@ -23,7 +23,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         public ICommand AddCommand { get; }
         public ICommand AcceptCommand { get; }
 
-        public SessionChangeViewModel(string @event, ISessionsManager sessionsManager)
+        public SessionChangeViewModel(Event @event, ISessionsManager sessionsManager)
         {
             Sessions = new ObservableCollection<Session>(sessionsManager.GetSessionsAsync(@event).GetAwaiter().GetResult());
             AddCommand = AcceptCommand = ReactiveCommand.Create(() =>

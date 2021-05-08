@@ -8,7 +8,7 @@ namespace VirsTimer.Core.Services
 {
     public class RandomScrambleGenerator : IScrambleGenerator
     {
-        public Task<IReadOnlyList<Scramble>> GenerateScrambles(string @event, int scramblesAmount)
+        public Task<IReadOnlyList<Scramble>> GenerateScrambles(Event @event, int scramblesAmount)
         {
             var result = new List<Scramble>();
             for (var i = 0; i < scramblesAmount; i++)

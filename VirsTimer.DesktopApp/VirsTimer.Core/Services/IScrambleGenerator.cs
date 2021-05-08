@@ -6,6 +6,6 @@ namespace VirsTimer.Core.Services
 {
     public interface IScrambleGenerator
     {
-        Task<IReadOnlyList<Scramble>> GenerateScrambles(string @event, int scramblesAmount);
+        Task<IReadOnlyList<Scramble>> GenerateScrambles(Event @event, int scramblesAmount);
     }
 }

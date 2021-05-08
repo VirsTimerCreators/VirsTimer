@@ -54,7 +54,7 @@ namespace VirsTimer.DesktopApp
             services.AddSingleton<IScrambleGenerator>(new RandomScrambleGenerator());
             services.AddTransient(services => 
                 new MainWindowViewModel(
-                    "3x3x3",
+                    new Core.Models.Event("3x3x3"),
                     services.GetRequiredService<IPastSolvesGetter>(),
                     services.GetRequiredService<ISolvesSaver>(),
                     services.GetRequiredService<IScrambleGenerator>(),

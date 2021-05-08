@@ -28,7 +28,7 @@ namespace VirsTimer.DesktopApp.Views
             this.AttachDevTools();
 #endif
 
-            ViewModel.SolvesListViewModel.Load(ViewModel.EventViewModel.CurrentEvent.Name, ViewModel.SessionViewModel.CurrentSession.Name).GetAwaiter().GetResult();
+            ViewModel.SolvesListViewModel.Load(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession).GetAwaiter().GetResult();
             ChangeEventCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var dialog = new EventChangeView();
@@ -39,21 +39,21 @@ namespace VirsTimer.DesktopApp.Views
                 if (eventChangeViewModel.Accepted && eventChangeViewModel.SelectedEvent != null)
                 {
                     ViewModel.EventViewModel.CurrentEvent = eventChangeViewModel.SelectedEvent;
-                    await ViewModel.SolvesListViewModel.Load(ViewModel.EventViewModel.CurrentEvent.Name, ViewModel.SessionViewModel.CurrentSession.Name);
+                    await ViewModel.SolvesListViewModel.Load(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
                 }
             });
 
             ChangeSessionCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var dialog = new SessionChangeView();
-                var sessionChangeViewModel = new SessionChangeViewModel(mainWindowViewModel.EventViewModel.CurrentEvent.Name, sessionsManager);
+                var sessionChangeViewModel = new SessionChangeViewModel(mainWindowViewModel.EventViewModel.CurrentEvent, sessionsManager);
                 dialog.DataContext = sessionChangeViewModel;
 
                 await dialog.ShowDialog(this);
                 if (sessionChangeViewModel.Accepted && sessionChangeViewModel.SelectedSession != null)
                 {
                     ViewModel.SessionViewModel.CurrentSession = sessionChangeViewModel.SelectedSession;
-                    await ViewModel.SolvesListViewModel.Load(ViewModel.EventViewModel.CurrentEvent.Name, ViewModel.SessionViewModel.CurrentSession.Name);
+                    await ViewModel.SolvesListViewModel.Load(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
                 }
             });
         }
@@ -72,7 +72,7 @@ namespace VirsTimer.DesktopApp.Views
             {
                 ViewModel.TimerViewModel.Timer.Stop();
                 ViewModel.SolvesListViewModel.Solves.Insert(0, new Solve(ViewModel.TimerViewModel.SavedTime, ViewModel.ScrambleViewModel.CurrentScramble.Value));
-                ViewModel.SolvesListViewModel.Save(ViewModel.EventViewModel.CurrentEvent.Name, ViewModel.SessionViewModel.CurrentSession.Name);
+                ViewModel.SolvesListViewModel.Save(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
                 ViewModel.ScrambleViewModel.NextScramble();
             }
         }

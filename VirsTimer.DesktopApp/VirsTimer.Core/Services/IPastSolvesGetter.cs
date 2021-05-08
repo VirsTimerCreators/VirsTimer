@@ -6,6 +6,6 @@ namespace VirsTimer.Core.Services
 {
     public interface IPastSolvesGetter
     {
-        Task<IReadOnlyList<Solve>> GetSolvesAsync(string @event, string session);
+        Task<IReadOnlyList<Solve>> GetSolvesAsync(Event @event, Session session);
     }
 }

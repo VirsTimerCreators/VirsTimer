@@ -14,9 +14,9 @@ namespace VirsTimer.DesktopApp.ViewModels
             set => this.RaiseAndSetIfChanged(ref currentSession, value);
         }
 
-        public SessionViewModel(string @event, ISessionsManager sessionsManager)
+        public SessionViewModel(Event @event, ISessionsManager sessionsManager)
         {
-            currentSession = sessionsManager.GetSessionsAsync(@event).GetAwaiter().GetResult().FirstOrDefault() ?? new();
+            CurrentSession = sessionsManager.GetSessionsAsync(@event).GetAwaiter().GetResult().FirstOrDefault() ?? new();
         }
     }
 }

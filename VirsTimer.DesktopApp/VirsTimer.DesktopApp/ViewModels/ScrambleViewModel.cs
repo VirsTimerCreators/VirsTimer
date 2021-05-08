@@ -8,7 +8,7 @@ namespace VirsTimer.DesktopApp.ViewModels
     public class ScrambleViewModel : ViewModelBase
     {
         private Scramble currentScramble = new(string.Empty);
-        private string currentEvent;
+        private Event currentEvent;
         private Queue<Scramble> scrambles;
         private readonly IScrambleGenerator scrambleGenerator;
 
@@ -18,7 +18,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             set => this.RaiseAndSetIfChanged(ref currentScramble, value);
         }
 
-        public ScrambleViewModel(string @event, IScrambleGenerator scrambleGenerator)
+        public ScrambleViewModel(Event @event, IScrambleGenerator scrambleGenerator)
         {
             this.currentEvent = @event;
             this.scrambleGenerator = scrambleGenerator;
@@ -26,7 +26,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             CurrentScramble = scrambles.Dequeue();
         }
 
-        public void ChangeEvent(string newEvent)
+        public void ChangeEvent(Event newEvent)
         {
             currentEvent = newEvent;
             scrambles = new Queue<Scramble>(scrambleGenerator.GenerateScrambles(currentEvent, 10).GetAwaiter().GetResult());
