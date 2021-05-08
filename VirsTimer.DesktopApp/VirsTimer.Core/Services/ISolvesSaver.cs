@@ -8,6 +8,6 @@ namespace VirsTimer.Core.Services
 {
     public interface ISolvesSaver
     {
-        Task SaveSolvesAsync(IEnumerable<Solve> solves, string @event, string session);
+        Task SaveSolvesAsync(IEnumerable<Solve> solves, Event @event, Session session);
     }
 }
