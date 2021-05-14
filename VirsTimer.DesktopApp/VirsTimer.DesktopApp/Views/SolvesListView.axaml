@@ -19,9 +19,37 @@
 		</ExperimentalAcrylicBorder>
 
 		<ListBox Background="Transparent" Items="{Binding Solves}">
+			<ListBox.Styles>
+				<Style Selector="ListBoxItem">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+					<Setter Property="VerticalContentAlignment" Value="Center"/>
+				</Style>
+			</ListBox.Styles>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<TextBlock Margin="7" Text="{Binding TimeAsSpan, Converter={converters:TimeSpanValueConverter}}"/>
+					<Grid ColumnDefinitions="*,*">
+						<TextBlock
+							Grid.Column="0"
+							Margin="15 0 0 0"
+							VerticalAlignment="Center"
+							Text="{Binding TimeAsSpan, Converter={converters:TimeSpanValueConverter}}"/>
+						<DockPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
+							<Button
+								DockPanel.Dock="Right"
+								Margin="0 0 15 0"
+								Content="Usuń"
+								Focusable="False"
+								Command="{Binding $parent[UserControl].DataContext.DeleteItemCommand}"
+								CommandParameter="{Binding}"/>
+							<Button
+								DockPanel.Dock="Right"
+								Content="Edytuj"
+								Margin="0 0 15 0"
+								Focusable="False"
+								Command="{Binding $parent[Window].EditSolveCommand}"
+								CommandParameter="{Binding}"/>
+						</DockPanel>
+					</Grid>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>

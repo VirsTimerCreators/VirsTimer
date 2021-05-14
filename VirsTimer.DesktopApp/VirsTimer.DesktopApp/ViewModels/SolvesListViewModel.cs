@@ -1,6 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using ReactiveUI;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services;
 
@@ -12,11 +15,14 @@ namespace VirsTimer.DesktopApp.ViewModels
         private readonly ISolvesSaver _solvesSaver;
         public ObservableCollection<Solve> Solves { get; }
 
+        public ReactiveCommand<Solve, Unit> DeleteItemCommand { get; }
+
         public SolvesListViewModel(IPastSolvesGetter pastSolvesGetter, ISolvesSaver solvesSaver)
         {
             Solves = new ObservableCollection<Solve>();
             _pastSolvesGetter = pastSolvesGetter;
             _solvesSaver = solvesSaver;
+            DeleteItemCommand = ReactiveCommand.Create<Solve>(DeleteItem);
         }
 
         public async Task Load(Event @event, Session session)
@@ -27,9 +33,14 @@ namespace VirsTimer.DesktopApp.ViewModels
                 Solves.Add(solve);
         }
 
-        public void Save(Event @event, Session session)
+        public async Task Save(Event @event, Session session)
         {
-            _solvesSaver.SaveSolvesAsync(Solves, @event, session).GetAwaiter().GetResult();
+            await _solvesSaver.SaveSolvesAsync(Solves, @event, session);
+        }
+
+        private void DeleteItem(Solve solve)
+        {
+            Solves.Remove(solve);
         }
     }
 }

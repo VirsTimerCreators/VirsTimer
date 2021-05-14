@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d" d:DesignWidth="340" d:DesignHeight="100"
+			 xmlns:constatns="clr-namespace:VirsTimer.Core.Constants;assembly=VirsTimer.Core"
+			 x:Class="VirsTimer.DesktopApp.Views.SolveFlagsView">
+	<Grid ColumnDefinitions="*,3*,*,3*,*,3*,*">
+		<RadioButton
+			Name="OkButton"
+			IsChecked="{Binding FlagsArray[0]}"
+			Grid.Column="1"
+			MinWidth="70"
+			VerticalAlignment="Stretch"
+			HorizontalAlignment="Stretch"
+			HorizontalContentAlignment="Center"
+			FontSize="20"
+			Padding="0 4 0 0"
+			VerticalContentAlignment="Top"
+			Content="OK"
+			FontWeight="Bold"/>
+		<RadioButton
+			Name="Plus2Button"
+			IsChecked="{Binding FlagsArray[1]}"
+			Grid.Column="3"
+			MinWidth="70"
+			MinHeight="20"
+			FontSize="20"
+			Padding="0 4 0 0"
+			HorizontalAlignment="Stretch"
+			HorizontalContentAlignment="Center"
+			VerticalAlignment="Stretch"
+			VerticalContentAlignment="Top"
+			Content="+2"
+			FontWeight="Bold"/>
+		<RadioButton
+			Name="DnfButton"
+			IsChecked="{Binding FlagsArray[2]}"
+			Grid.Column="5"
+			Padding="0 4 0 0"
+			MinWidth="70"
+			FontSize="20"
+			MinHeight="20"
+			HorizontalAlignment="Stretch"
+			HorizontalContentAlignment="Center"
+			VerticalAlignment="Stretch"
+			VerticalContentAlignment="Top"
+			Content="DNF"
+			FontWeight="Bold"/>
+	</Grid>
+</UserControl>

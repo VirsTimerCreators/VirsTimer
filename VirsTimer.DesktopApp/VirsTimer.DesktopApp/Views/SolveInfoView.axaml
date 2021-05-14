@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		Height="400" Width="800"
+		MinWidth="800"
+		MinHeight="400"
+		CanResize="True"
+		xmlns:views="clr-namespace:VirsTimer.DesktopApp.Views;assembly=VirsTimer.DesktopApp"
+		xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
+        x:Class="VirsTimer.DesktopApp.Views.SolveInfoView"
+        Title="SolveInfoView"
+		TransparencyLevelHint="AcrylicBlur"
+		Background="Transparent"
+		ExtendClientAreaToDecorationsHint="True">
+	<Panel>
+		<ExperimentalAcrylicBorder IsHitTestVisible="False">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+					BackgroundSource="Digger"
+					TintColor="Black"
+					TintOpacity="1"
+					MaterialOpacity="0.45" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<Grid Margin="30 0 0 0" RowDefinitions="*,*,*,*" ColumnDefinitions="Auto, 50, *">
+			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Czas" Grid.Row="0" Grid.Column="0"/>
+			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Scramble" Grid.Row="1" Grid.Column="0"/>
+			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Data" Grid.Row="2" Grid.Column="0"/>
+			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Flaga" Grid.Row="3" Grid.Column="0"/>
+
+			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="{Binding Solve.TimeAsSpan, Converter={converters:TimeSpanValueConverter}}}" Grid.Row="0" Grid.Column="2"/>
+			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="{Binding Solve.Scramble}" Grid.Row="1" Grid.Column="2"/>
+			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="{Binding Solve.Date}" Grid.Row="2" Grid.Column="2"/>
+			<views:SolveFlagsView  DataContext="{Binding SolveFlagsViewModel}" VerticalAlignment="Center" Grid.Row="3" Grid.Column="2" Margin="0 0 20 0"/>
+		</Grid>
+	</Panel>
+</Window>
