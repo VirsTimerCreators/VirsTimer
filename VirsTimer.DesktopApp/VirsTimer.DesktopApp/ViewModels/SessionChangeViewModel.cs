@@ -34,7 +34,7 @@ namespace VirsTimer.DesktopApp.ViewModels
 
             AcceptCommand = ReactiveCommand.Create<Window>((window) =>
             {
-                Accepted = true;
+                Accepted = SelectedSession != null;
                 window.Close();
             });
         }

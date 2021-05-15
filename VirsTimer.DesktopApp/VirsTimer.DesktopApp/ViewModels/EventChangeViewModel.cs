@@ -26,7 +26,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             Events = new ObservableCollection<Event>(eventsGetter.GetEventsAsync().GetAwaiter().GetResult());
             AcceptCommand = ReactiveCommand.Create<Window>((window) =>
             {
-                Accepted = true;
+                Accepted = SelectedEvent != null;
                 window.Close();
             });
         }
