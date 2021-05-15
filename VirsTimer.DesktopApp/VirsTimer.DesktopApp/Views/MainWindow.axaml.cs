@@ -61,9 +61,9 @@ namespace VirsTimer.DesktopApp.Views
             };
 
             await dialog.ShowDialog(this);
-            if (eventChangeViewModel.Accepted && eventChangeViewModel.SelectedEvent != null)
+            if (eventChangeViewModel.Accepted)
             {
-                ViewModel.EventViewModel.CurrentEvent = eventChangeViewModel.SelectedEvent;
+                ViewModel.EventViewModel.CurrentEvent = eventChangeViewModel.SelectedEvent!;
                 await ViewModel.SolvesListViewModel.Load(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
             }
         }
@@ -86,12 +86,14 @@ namespace VirsTimer.DesktopApp.Views
 
         private async Task EditSolveAsync(Solve solve)
         {
+            var solveInfoViewModel = new SolveInfoViewModel(solve);
             var dialog = new SolveInfoView
             {
-                DataContext = new SolveInfoViewModel(solve)
+                DataContext = solveInfoViewModel
             };
             await dialog.ShowDialog(this);
-            await ViewModel.SolvesListViewModel.Save(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
+            if (solveInfoViewModel.Accepted)
+                await ViewModel.SolvesListViewModel.Save(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
         }
 
         public async void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)

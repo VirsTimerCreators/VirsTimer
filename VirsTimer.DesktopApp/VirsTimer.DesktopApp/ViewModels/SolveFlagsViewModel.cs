@@ -1,9 +1,7 @@
-﻿using ReactiveUI;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using VirsTimer.Core.Constants;
-using VirsTimer.Core.Models;
 
 namespace VirsTimer.DesktopApp.ViewModels
 {
@@ -13,19 +11,19 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public ObservableCollection<bool> FlagsArray => flagsArray;
 
-        public Solve Solve { get; }
+        public SolveFlag ChoosenFlag { get; set; }
 
-        public SolveFlagsViewModel(Solve solve)
+        public SolveFlagsViewModel(SolveFlag initilaFlag)
         {
-            var flags = Enum.GetValues<SolveFlag>().Select(flag => flag == solve.Flag);
+            var flags = Enum.GetValues<SolveFlag>().Select(flag => flag == initilaFlag);
             flagsArray = new ObservableCollection<bool>(flags);
             flagsArray.CollectionChanged += FlagChanged;
-            this.Solve = solve;
+            ChoosenFlag = initilaFlag;
         }
 
         public void FlagChanged(object? sender, EventArgs e)
         {
-            Solve.Flag = (SolveFlag)FlagsArray.IndexOf(true);
+            ChoosenFlag = (SolveFlag)FlagsArray.IndexOf(true);
         }
     }
 }

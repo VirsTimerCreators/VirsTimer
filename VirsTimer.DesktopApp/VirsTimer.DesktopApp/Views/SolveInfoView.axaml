@@ -23,7 +23,7 @@
 					MaterialOpacity="0.45" />
 			</ExperimentalAcrylicBorder.Material>
 		</ExperimentalAcrylicBorder>
-		<Grid Margin="30 0 0 0" RowDefinitions="*,*,*,*" ColumnDefinitions="Auto, 50, *">
+		<Grid Margin="30 0 0 0" RowDefinitions="*,*,*,*,auto" ColumnDefinitions="Auto, 50, *">
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Czas" Grid.Row="0" Grid.Column="0"/>
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Scramble" Grid.Row="1" Grid.Column="0"/>
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Data" Grid.Row="2" Grid.Column="0"/>
@@ -33,6 +33,7 @@
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="{Binding Solve.Scramble}" Grid.Row="1" Grid.Column="2"/>
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="{Binding Solve.Date}" Grid.Row="2" Grid.Column="2"/>
 			<views:SolveFlagsView  DataContext="{Binding SolveFlagsViewModel}" VerticalAlignment="Center" Grid.Row="3" Grid.Column="2" Margin="0 0 20 0"/>
+			<Button Content="Akceptuj" Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="20 0 20 20" Command="{Binding AcceptCommand}" CommandParameter="{Binding $parent[Window]}"/>
 		</Grid>
 	</Panel>
 </Window>
