@@ -1,9 +1,9 @@
-﻿using ReactiveUI;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services;
 
@@ -13,15 +13,16 @@ namespace VirsTimer.DesktopApp.ViewModels
     {
         private readonly IPastSolvesGetter _pastSolvesGetter;
         private readonly ISolvesSaver _solvesSaver;
-        public ObservableCollection<Solve> Solves { get; }
 
+        public ObservableCollection<Solve> Solves { get; }
         public ReactiveCommand<Solve, Unit> DeleteItemCommand { get; }
 
-        public SolvesListViewModel(IPastSolvesGetter pastSolvesGetter, ISolvesSaver solvesSaver)
+        public SolvesListViewModel()
         {
+            _pastSolvesGetter = Ioc.Services.GetRequiredService<IPastSolvesGetter>();
+            _solvesSaver = Ioc.Services.GetRequiredService<ISolvesSaver>();
+
             Solves = new ObservableCollection<Solve>();
-            _pastSolvesGetter = pastSolvesGetter;
-            _solvesSaver = solvesSaver;
             DeleteItemCommand = ReactiveCommand.Create<Solve>(DeleteItem);
         }
 

@@ -9,34 +9,29 @@ namespace VirsTimer.DesktopApp.ViewModels
 {
     public class SessionChangeViewModel : ViewModelBase
     {
-        private Session? selectedSession;
-        public Session? SelectedSession
-        {
-            get => selectedSession;
-            set => this.RaiseAndSetIfChanged(ref selectedSession, value);
-        }
+        private readonly ISessionsManager _sessionsManager;
+        private Session? _selectedSession;
 
         public bool Accepted { get; private set; } = false;
-
         public ObservableCollection<Session> Sessions { get; }
-
-        public ICommand AddCommand { get; }
+        public Session? SelectedSession
+        {
+            get => _selectedSession;
+            set => this.RaiseAndSetIfChanged(ref _selectedSession, value);
+        }
         public ICommand AcceptCommand { get; }
 
-        public SessionChangeViewModel(Event @event, ISessionsManager sessionsManager)
+        public SessionChangeViewModel(Event @event)
         {
-            Sessions = new ObservableCollection<Session>(sessionsManager.GetSessionsAsync(@event).GetAwaiter().GetResult());
-            AddCommand = AcceptCommand = ReactiveCommand.Create(() =>
-            {
-                var session = new Session();
-                sessionsManager.AddSessionAsync(@event, session);
-            });
+            _sessionsManager = Ioc.GetService<ISessionsManager>();
+            Sessions = new ObservableCollection<Session>(_sessionsManager.GetSessionsAsync(@event).GetAwaiter().GetResult());
+            AcceptCommand = ReactiveCommand.Create<Window>(AcceptSession);
+        }
 
-            AcceptCommand = ReactiveCommand.Create<Window>((window) =>
-            {
-                Accepted = SelectedSession != null;
-                window.Close();
-            });
+        private void AcceptSession(Window window)
+        {
+            Accepted = SelectedSession != null;
+            window.Close();
         }
     }
 }

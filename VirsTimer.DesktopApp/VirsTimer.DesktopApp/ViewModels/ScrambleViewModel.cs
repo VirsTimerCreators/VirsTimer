@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ReactiveUI;
 using System.Collections.Generic;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services;
@@ -7,40 +8,38 @@ namespace VirsTimer.DesktopApp.ViewModels
 {
     public class ScrambleViewModel : ViewModelBase
     {
-        private Scramble currentScramble = new(string.Empty);
-        private Event currentEvent;
-        private Queue<Scramble> scrambles;
-        private readonly IScrambleGenerator scrambleGenerator;
+        private readonly IScrambleGenerator _scrambleGenerator;
+        private Event _currentEvent = null!;
+        private Scramble _currentScramble = null!;
+        private Queue<Scramble> _scrambles = null!;
 
         public Scramble CurrentScramble
         {
-            get => currentScramble;
-            set => this.RaiseAndSetIfChanged(ref currentScramble, value);
+            get => _currentScramble;
+            set => this.RaiseAndSetIfChanged(ref _currentScramble, value);
         }
 
-        public ScrambleViewModel(Event @event, IScrambleGenerator scrambleGenerator)
+        public ScrambleViewModel(Event @event)
         {
-            this.currentEvent = @event;
-            this.scrambleGenerator = scrambleGenerator;
-            this.scrambles = new Queue<Scramble>(scrambleGenerator.GenerateScrambles(@event, 10).GetAwaiter().GetResult());
-            CurrentScramble = scrambles.Dequeue();
+            _scrambleGenerator = Ioc.Services.GetRequiredService<IScrambleGenerator>();
+            ChangeEvent(@event);
         }
 
         public void ChangeEvent(Event newEvent)
         {
-            currentEvent = newEvent;
-            scrambles = new Queue<Scramble>(scrambleGenerator.GenerateScrambles(currentEvent, 10).GetAwaiter().GetResult());
-            CurrentScramble = scrambles.Dequeue();
+            _currentEvent = newEvent;
+            _scrambles = new Queue<Scramble>(_scrambleGenerator.GenerateScrambles(_currentEvent, 10).GetAwaiter().GetResult());
+            CurrentScramble = _scrambles.Dequeue();
         }
 
         public void NextScramble()
         {
-            CurrentScramble = scrambles.Dequeue();
-            if (scrambles.Count < 5)
+            CurrentScramble = _scrambles.Dequeue();
+            if (_scrambles.Count < 5)
             {
-                var generatedScrambles = scrambleGenerator.GenerateScrambles(currentEvent, 5).GetAwaiter().GetResult();
+                var generatedScrambles = _scrambleGenerator.GenerateScrambles(_currentEvent, 5).GetAwaiter().GetResult();
                 foreach (var scramble in generatedScrambles)
-                    scrambles.Enqueue(scramble);
+                    _scrambles.Enqueue(scramble);
             }
         }
     }

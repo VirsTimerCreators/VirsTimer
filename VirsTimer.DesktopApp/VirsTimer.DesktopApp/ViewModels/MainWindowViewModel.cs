@@ -1,5 +1,4 @@
 ﻿using VirsTimer.Core.Models;
-using VirsTimer.Core.Services;
 
 namespace VirsTimer.DesktopApp.ViewModels
 {
@@ -11,13 +10,13 @@ namespace VirsTimer.DesktopApp.ViewModels
         public SolvesListViewModel SolvesListViewModel { get; }
         public ScrambleViewModel ScrambleViewModel { get; }
 
-        public MainWindowViewModel(Event @event, IPastSolvesGetter pastSolvesGetter, ISolvesSaver solvesSaver, IScrambleGenerator scrambleGenerator, ISessionsManager sessionsManager)
+        public MainWindowViewModel(Event @event)
         {
             EventViewModel = new EventViewModel();
-            SessionViewModel = new SessionViewModel(EventViewModel.CurrentEvent, sessionsManager);
+            SessionViewModel = new SessionViewModel(EventViewModel.CurrentEvent);
             TimerViewModel = new TimerViewModel();
-            SolvesListViewModel = new SolvesListViewModel(pastSolvesGetter, solvesSaver);
-            ScrambleViewModel = new ScrambleViewModel(@event, scrambleGenerator);
+            SolvesListViewModel = new SolvesListViewModel();
+            ScrambleViewModel = new ScrambleViewModel(@event);
         }
     }
 }

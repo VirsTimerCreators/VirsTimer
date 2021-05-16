@@ -5,11 +5,11 @@ namespace VirsTimer.DesktopApp.ViewModels
 {
     public class EventViewModel : ViewModelBase
     {
-        private Event currentEvent = new("3x3x3");
+        private Event _currentEvent = new("3x3x3");
         public Event CurrentEvent
         {
-            get => currentEvent;
-            set => this.RaiseAndSetIfChanged(ref currentEvent, value);
+            get => _currentEvent;
+            set => this.RaiseAndSetIfChanged(ref _currentEvent, value);
         }
     }
 }

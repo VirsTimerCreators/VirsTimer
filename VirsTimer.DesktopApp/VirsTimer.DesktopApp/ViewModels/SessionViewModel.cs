@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ReactiveUI;
 using System.Linq;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services;
@@ -7,16 +8,16 @@ namespace VirsTimer.DesktopApp.ViewModels
 {
     public class SessionViewModel : ViewModelBase
     {
-        private Session currentSession = new();
+        private Session _currentSession = new();
         public Session CurrentSession
         {
-            get => currentSession;
-            set => this.RaiseAndSetIfChanged(ref currentSession, value);
+            get => _currentSession;
+            set => this.RaiseAndSetIfChanged(ref _currentSession, value);
         }
 
-        public SessionViewModel(Event @event, ISessionsManager sessionsManager)
+        public SessionViewModel(Event @event)
         {
-            CurrentSession = sessionsManager.GetSessionsAsync(@event).GetAwaiter().GetResult().FirstOrDefault() ?? new();
+            CurrentSession = Ioc.Services.GetRequiredService<ISessionsManager>().GetSessionsAsync(@event).GetAwaiter().GetResult().FirstOrDefault() ?? new();
         }
     }
 }

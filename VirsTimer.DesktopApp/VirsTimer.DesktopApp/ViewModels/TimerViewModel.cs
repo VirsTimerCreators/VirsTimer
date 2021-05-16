@@ -7,20 +7,20 @@ namespace VirsTimer.DesktopApp.ViewModels
 {
     public class TimerViewModel : ViewModelBase
     {
-        private TimeSpan currentTime = TimeSpan.Zero;
-        private TimeSpan savedTime = TimeSpan.Zero;
+        private TimeSpan _currentTime = TimeSpan.Zero;
+        private TimeSpan _savedTime = TimeSpan.Zero;
 
         public DelayStopwatchTimer Timer { get; }
         public TimeSpan SavedTime
         {
-            get => savedTime;
-            set => this.RaiseAndSetIfChanged(ref savedTime, value);
+            get => _savedTime;
+            set => this.RaiseAndSetIfChanged(ref _savedTime, value);
         }
 
         public TimeSpan CurrentTime
         {
-            get => currentTime;
-            set => this.RaiseAndSetIfChanged(ref currentTime, value);
+            get => _currentTime;
+            set => this.RaiseAndSetIfChanged(ref _currentTime, value);
         }
 
         public TimerViewModel()
@@ -34,7 +34,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         {
             await Task.Run(() =>
             {
-                this.RaisePropertyChanged("Timer");
+                this.RaisePropertyChanged(nameof(Timer));
                 CurrentTime = Timer.CurrentTime;
             });
         }
