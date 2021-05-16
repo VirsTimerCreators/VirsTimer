@@ -8,42 +8,34 @@ using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VirsTimer.Core.Models;
-using VirsTimer.Core.Services;
 using VirsTimer.DesktopApp.ViewModels;
 
 namespace VirsTimer.DesktopApp.Views
 {
     public class MainWindow : Window
     {
-        private readonly IEventsGetter eventsGetter;
-        private readonly ISessionsManager sessionsManager;
-
         public MainWindowViewModel ViewModel { get; }
-
         public ICommand ChangeEventCommand { get; }
         public ICommand ChangeSessionCommand { get; }
         public ReactiveCommand<Solve, Unit> EditSolveCommand { get; }
 
         private event Func<Task> Constructed;
 
-        public MainWindow() { }
-
-        public MainWindow(MainWindowViewModel mainWindowViewModel, IEventsGetter eventsGetter, ISessionsManager sessionsManager)
+        public MainWindow()
         {
             InitializeComponent();
-            ViewModel = mainWindowViewModel;
-            DataContext = this;
+
 #if DEBUG
             this.AttachDevTools();
 #endif
             this.Constructed += LoadSolvesAsync;
-            this.eventsGetter = eventsGetter;
-            this.sessionsManager = sessionsManager;
 
-
+            ViewModel = new MainWindowViewModel(new Event("3x3x3"));
             ChangeEventCommand = ReactiveCommand.CreateFromTask(ChangeEventAsync);
             ChangeSessionCommand = ReactiveCommand.CreateFromTask(ChangeSessionAsync);
             EditSolveCommand = ReactiveCommand.CreateFromTask<Solve>(EditSolveAsync);
+            DataContext = this;
+
             Constructed();
         }
 
@@ -54,7 +46,7 @@ namespace VirsTimer.DesktopApp.Views
 
         private async Task ChangeEventAsync()
         {
-            var eventChangeViewModel = new EventChangeViewModel(eventsGetter);
+            var eventChangeViewModel = new EventChangeViewModel();
             var dialog = new EventChangeView
             {
                 DataContext = eventChangeViewModel
@@ -70,7 +62,7 @@ namespace VirsTimer.DesktopApp.Views
 
         private async Task ChangeSessionAsync()
         {
-            var sessionChangeViewModel = new SessionChangeViewModel(ViewModel.EventViewModel.CurrentEvent, sessionsManager);
+            var sessionChangeViewModel = new SessionChangeViewModel(ViewModel.EventViewModel.CurrentEvent);
             var dialog = new SessionChangeView
             {
                 DataContext = sessionChangeViewModel

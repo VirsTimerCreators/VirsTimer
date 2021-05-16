@@ -10,7 +10,6 @@ namespace VirsTimer.DesktopApp.ViewModels
         private readonly ObservableCollection<bool> flagsArray;
 
         public ObservableCollection<bool> FlagsArray => flagsArray;
-
         public SolveFlag ChoosenFlag { get; set; }
 
         public SolveFlagsViewModel(SolveFlag initilaFlag)

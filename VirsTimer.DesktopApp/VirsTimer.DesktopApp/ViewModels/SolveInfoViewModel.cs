@@ -10,7 +10,6 @@ namespace VirsTimer.DesktopApp.ViewModels
         public bool Accepted { get; private set; }
         public Solve Solve { get; }
         public SolveFlagsViewModel SolveFlagsViewModel { get; }
-
         public ICommand AcceptCommand { get; }
 
         public SolveInfoViewModel(Solve solve)

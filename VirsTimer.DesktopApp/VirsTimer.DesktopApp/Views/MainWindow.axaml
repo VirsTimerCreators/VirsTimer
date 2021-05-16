@@ -38,6 +38,6 @@
 		<views:ScrambleView MinHeight="100" MaxHeight="300" Grid.Row="1" Content="{Binding ViewModel.ScrambleViewModel}"/>
 		<views:TimerView Grid.Row="2" Content="{Binding ViewModel.TimerViewModel}"/>
 		<!--<views:SolveFlagsView Grid.Row="3" Padding="0 0 0 20" Content="{Binding ViewModel.SolveFlagsViewModel}" HorizontalAlignment="Stretch"/>-->
-		<views:SolvesListView Grid.Row="4" DataContext="{Binding ViewModel.SolvesListViewModel}"/>
+		<views:SolvesListView Grid.Row="4" Content="{Binding ViewModel.SolvesListViewModel}"/>
 	</Grid>
 </Window>

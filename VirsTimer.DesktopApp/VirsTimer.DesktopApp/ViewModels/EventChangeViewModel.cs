@@ -9,21 +9,21 @@ namespace VirsTimer.DesktopApp.ViewModels
 {
     public class EventChangeViewModel : ViewModelBase
     {
-        private Event? selectedEvent;
-        public Event? SelectedEvent
-        {
-            get => selectedEvent;
-            set => this.RaiseAndSetIfChanged(ref selectedEvent, value);
-        }
+        private Event? _selectedEvent;
 
         public bool Accepted { get; private set; } = false;
-
         public ObservableCollection<Event> Events { get; }
+        public Event? SelectedEvent
+        {
+            get => _selectedEvent;
+            set => this.RaiseAndSetIfChanged(ref _selectedEvent, value);
+        }
 
         public ICommand AcceptCommand { get; }
-        public EventChangeViewModel(IEventsGetter eventsGetter)
+
+        public EventChangeViewModel()
         {
-            Events = new ObservableCollection<Event>(eventsGetter.GetEventsAsync().GetAwaiter().GetResult());
+            Events = new ObservableCollection<Event>(Ioc.GetService<IEventsGetter>().GetEventsAsync().GetAwaiter().GetResult());
             AcceptCommand = ReactiveCommand.Create<Window>((window) =>
             {
                 Accepted = SelectedEvent != null;
