@@ -2,6 +2,7 @@
 using Avalonia.Markup.Xaml;
 using System;
 using System.Globalization;
+using VirsTimer.DesktopApp.Extensions;
 
 namespace VirsTimer.DesktopApp.ValueConverters
 {
@@ -16,14 +17,9 @@ namespace VirsTimer.DesktopApp.ValueConverters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is TimeSpan timeSpan))
-                return string.Empty;
-            if (timeSpan.Hours > 0)
-                return timeSpan.ToString("hh\\:mm\\:ss\\.ff");
-            else if (timeSpan.Minutes > 0)
-                return timeSpan.ToString("mm\\:ss\\.ff");
-            else
-                return timeSpan.ToString("ss\\.ff");
+            return value is not TimeSpan timeSpan
+                ? throw new ArgumentException(nameof(timeSpan))
+                : timeSpan.ToDynamicString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -2,11 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace VirsTimer.DesktopApp.Views
+namespace VirsTimer.DesktopApp.Views.Solves
 {
-    public partial class SolveInfoView : Window
+    public partial class SolveView : Window
     {
-        public SolveInfoView()
+        public SolveView()
         {
             InitializeComponent();
 #if DEBUG

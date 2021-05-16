@@ -17,7 +17,7 @@ namespace VirsTimer.DesktopApp.ValueConverters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is Core.Timers.DelayStopwatchTimer delayFireTimer))
+            if (value is not Core.Timers.DelayStopwatchTimer delayFireTimer)
                 return Brushes.DarkGray;
             else if (delayFireTimer.CountdownStarted && !delayFireTimer.CanFire)
                 return Brushes.IndianRed;
