@@ -4,7 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 mc:Ignorable="d" d:DesignWidth="340" d:DesignHeight="100"
 			 xmlns:constatns="clr-namespace:VirsTimer.Core.Constants;assembly=VirsTimer.Core"
-			 x:Class="VirsTimer.DesktopApp.Views.SolveFlagsView">
+			 x:Class="VirsTimer.DesktopApp.Views.Solves.SolveFlagsView">
 	<Grid ColumnDefinitions="*,3*,*,3*,*,3*,*">
 		<RadioButton
 			Name="OkButton"

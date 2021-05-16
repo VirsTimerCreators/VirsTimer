@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using VirsTimer.Core.Constants;
 
-namespace VirsTimer.DesktopApp.ViewModels
+namespace VirsTimer.DesktopApp.ViewModels.Solves
 {
     public class SolveFlagsViewModel : ViewModelBase
     {

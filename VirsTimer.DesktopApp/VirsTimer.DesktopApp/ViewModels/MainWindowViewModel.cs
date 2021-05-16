@@ -1,4 +1,5 @@
 ﻿using VirsTimer.Core.Models;
+using VirsTimer.DesktopApp.ViewModels.Solves;
 
 namespace VirsTimer.DesktopApp.ViewModels
 {

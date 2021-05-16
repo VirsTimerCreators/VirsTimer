@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.ViewModels;
+using VirsTimer.DesktopApp.ViewModels.Solves;
+using VirsTimer.DesktopApp.Views.Solves;
 
 namespace VirsTimer.DesktopApp.Views
 {
@@ -17,7 +19,7 @@ namespace VirsTimer.DesktopApp.Views
         public MainWindowViewModel ViewModel { get; }
         public ICommand ChangeEventCommand { get; }
         public ICommand ChangeSessionCommand { get; }
-        public ReactiveCommand<Solve, Unit> EditSolveCommand { get; }
+        public ReactiveCommand<SolveViewModel, Unit> EditSolveCommand { get; }
 
         private event Func<Task> Constructed;
 
@@ -33,7 +35,7 @@ namespace VirsTimer.DesktopApp.Views
             ViewModel = new MainWindowViewModel(new Event("3x3x3"));
             ChangeEventCommand = ReactiveCommand.CreateFromTask(ChangeEventAsync);
             ChangeSessionCommand = ReactiveCommand.CreateFromTask(ChangeSessionAsync);
-            EditSolveCommand = ReactiveCommand.CreateFromTask<Solve>(EditSolveAsync);
+            EditSolveCommand = ReactiveCommand.CreateFromTask<SolveViewModel>(EditSolveAsync);
             DataContext = this;
 
             Constructed();
@@ -76,15 +78,14 @@ namespace VirsTimer.DesktopApp.Views
             }
         }
 
-        private async Task EditSolveAsync(Solve solve)
+        private async Task EditSolveAsync(SolveViewModel solveViewModel)
         {
-            var solveInfoViewModel = new SolveInfoViewModel(solve);
-            var dialog = new SolveInfoView
+            var dialog = new SolveView
             {
-                DataContext = solveInfoViewModel
+                DataContext = solveViewModel
             };
             await dialog.ShowDialog(this);
-            if (solveInfoViewModel.Accepted)
+            if (solveViewModel.Accepted)
                 await ViewModel.SolvesListViewModel.Save(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
         }
 
@@ -96,7 +97,9 @@ namespace VirsTimer.DesktopApp.Views
             else if (ViewModel.TimerViewModel.Timer.IsRunning)
             {
                 ViewModel.TimerViewModel.Timer.Stop();
-                ViewModel.SolvesListViewModel.Solves.Insert(0, new Solve(ViewModel.TimerViewModel.SavedTime, ViewModel.ScrambleViewModel.CurrentScramble.Value));
+
+                var solve = new Solve(ViewModel.TimerViewModel.SavedTime, ViewModel.ScrambleViewModel.CurrentScramble.Value);
+                ViewModel.SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve));
                 await ViewModel.SolvesListViewModel.Save(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
                 ViewModel.ScrambleViewModel.NextScramble();
             }

@@ -5,7 +5,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
 	mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-	x:Class="VirsTimer.DesktopApp.Views.SolvesListView">
+	x:Class="VirsTimer.DesktopApp.Views.Solves.SolvesListView">
 
 	<Panel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 		<ExperimentalAcrylicBorder IsHitTestVisible="False">
@@ -32,7 +32,7 @@
 							Grid.Column="0"
 							Margin="15 0 0 0"
 							VerticalAlignment="Center"
-							Text="{Binding TimeAsSpan, Converter={converters:TimeSpanValueConverter}}"/>
+							Text="{Binding Summary}"/>
 						<DockPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
 							<Button
 								DockPanel.Dock="Right"
