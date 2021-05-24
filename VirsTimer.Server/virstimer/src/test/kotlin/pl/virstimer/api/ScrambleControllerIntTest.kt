@@ -1,7 +1,5 @@
 package pl.virstimer.api
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
