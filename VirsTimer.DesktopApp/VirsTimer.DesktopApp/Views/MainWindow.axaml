@@ -4,8 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:views="clr-namespace:VirsTimer.DesktopApp.Views;assembly=VirsTimer.DesktopApp"
 		xmlns:solveViews="clr-namespace:VirsTimer.DesktopApp.Views.Solves;assembly=VirsTimer.DesktopApp"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-		Height="1000" Width="1500"
+		Height="1050" Width="1500"
         x:Class="VirsTimer.DesktopApp.Views.MainWindow"
         Title="MainWindow"
 		KeyDown="WindowKeyDown"
@@ -13,7 +12,7 @@
 		TransparencyLevelHint="AcrylicBlur"
 		Background="Transparent"
 		ExtendClientAreaToDecorationsHint="True">
-	<Grid RowDefinitions="100,Auto,*,80,*">
+	<Grid RowDefinitions="100,Auto,*,0,*,Auto">
 		<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
 			<ExperimentalAcrylicBorder.Material>
 				<ExperimentalAcrylicMaterial
@@ -38,7 +37,7 @@
 		</Grid>
 		<views:ScrambleView MinHeight="100" MaxHeight="300" Grid.Row="1" Content="{Binding ViewModel.ScrambleViewModel}"/>
 		<views:TimerView Grid.Row="2" Content="{Binding ViewModel.TimerViewModel}"/>
-		<!--<views:SolveFlagsView Grid.Row="3" Padding="0 0 0 20" Content="{Binding ViewModel.SolveFlagsViewModel}" HorizontalAlignment="Stretch"/>-->
 		<solveViews:SolvesListView Grid.Row="4" Content="{Binding ViewModel.SolvesListViewModel}"/>
+		<Button Grid.Row="5" HorizontalAlignment="Right" Command="{Binding AddSolveManualyCommand}" Background="#0959db" Content="Dodaj ręcznie" Margin="20 12 20 12"/>
 	</Grid>
 </Window>

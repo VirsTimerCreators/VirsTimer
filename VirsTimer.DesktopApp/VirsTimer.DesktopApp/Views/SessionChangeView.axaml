@@ -40,6 +40,7 @@
 			Margin="20"
 			Content="Akceptuj"
 			Command="{Binding AcceptCommand}"
+			Background="#0959db"
 			CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, 
                            AncestorType={x:Type Window}}}"/>
 	</Grid>
