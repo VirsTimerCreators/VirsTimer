@@ -21,7 +21,7 @@
 					BackgroundSource="Digger"
 					TintColor="Black"
 					TintOpacity="1"
-					MaterialOpacity="0.45" />
+					MaterialOpacity="0.75" />
 			</ExperimentalAcrylicBorder.Material>
 		</ExperimentalAcrylicBorder>
 		<Grid Margin="30 0 0 0" RowDefinitions="*,*,*,*,auto" ColumnDefinitions="Auto, 50, *">
@@ -34,7 +34,7 @@
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="{Binding Scramble}" Grid.Row="1" Grid.Column="2"/>
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="{Binding Date}" Grid.Row="2" Grid.Column="2"/>
 			<solveViews:SolveFlagsView  DataContext="{Binding SolveFlagsViewModel}" VerticalAlignment="Center" Grid.Row="3" Grid.Column="2" Margin="0 0 20 0"/>
-			<Button Content="Akceptuj" Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Right" Margin="20 0 20 20" Command="{Binding AcceptCommand}" CommandParameter="{Binding $parent[Window]}"/>
+			<Button Content="Akceptuj" Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Right" Background="#0959db" Margin="20 0 20 20" Command="{Binding AcceptCommand}" CommandParameter="{Binding $parent[Window]}"/>
 		</Grid>
 	</Panel>
 </Window>

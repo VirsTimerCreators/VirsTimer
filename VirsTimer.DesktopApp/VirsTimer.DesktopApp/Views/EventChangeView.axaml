@@ -36,6 +36,7 @@
 			HorizontalAlignment="Right"
 			Margin="20"
 			Content="Akceptuj"
+			Background="#0959db"
 			Command="{Binding AcceptCommand}"
 			CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, 
                            AncestorType={x:Type Window}}}"/>

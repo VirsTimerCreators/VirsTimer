@@ -1,4 +1,5 @@
-﻿using VirsTimer.Core.Models;
+﻿using System.Threading.Tasks;
+using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.ViewModels.Solves;
 
 namespace VirsTimer.DesktopApp.ViewModels
@@ -18,6 +19,18 @@ namespace VirsTimer.DesktopApp.ViewModels
             TimerViewModel = new TimerViewModel();
             SolvesListViewModel = new SolvesListViewModel();
             ScrambleViewModel = new ScrambleViewModel(@event);
+        }
+
+        public Task LoadSolvesAsync()
+        {
+            return SolvesListViewModel.LoadAsync(EventViewModel.CurrentEvent, SessionViewModel.CurrentSession);
+        }
+
+        public async Task SaveSolveAsync(Solve solve)
+        {
+            SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve));
+            await SolvesListViewModel.SaveAsync(EventViewModel.CurrentEvent, SessionViewModel.CurrentSession);
+            ScrambleViewModel.NextScramble();
         }
     }
 }

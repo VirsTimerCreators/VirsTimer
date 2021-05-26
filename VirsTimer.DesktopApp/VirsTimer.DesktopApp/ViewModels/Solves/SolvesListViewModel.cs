@@ -26,7 +26,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
             DeleteItemCommand = ReactiveCommand.Create<SolveViewModel>(DeleteItem);
         }
 
-        public async Task Load(Event @event, Session session)
+        public async Task LoadAsync(Event @event, Session session)
         {
             var solves = await _pastSolvesGetter.GetSolvesAsync(@event, session).ConfigureAwait(false);
             Solves.Clear();
@@ -34,7 +34,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
                 Solves.Add(new SolveViewModel(solve));
         }
 
-        public async Task Save(Event @event, Session session)
+        public async Task SaveAsync(Event @event, Session session)
         {
             await _solvesSaver.SaveSolvesAsync(Solves.Select(x => x.Model), @event, session);
         }

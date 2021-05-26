@@ -19,6 +19,7 @@ namespace VirsTimer.DesktopApp.Views
         public MainWindowViewModel ViewModel { get; }
         public ICommand ChangeEventCommand { get; }
         public ICommand ChangeSessionCommand { get; }
+        public ICommand AddSolveManualyCommand { get; }
         public ReactiveCommand<SolveViewModel, Unit> EditSolveCommand { get; }
 
         private event Func<Task> Constructed;
@@ -30,14 +31,15 @@ namespace VirsTimer.DesktopApp.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
-            this.Constructed += LoadSolvesAsync;
 
             ViewModel = new MainWindowViewModel(new Event("3x3x3"));
             ChangeEventCommand = ReactiveCommand.CreateFromTask(ChangeEventAsync);
             ChangeSessionCommand = ReactiveCommand.CreateFromTask(ChangeSessionAsync);
             EditSolveCommand = ReactiveCommand.CreateFromTask<SolveViewModel>(EditSolveAsync);
+            AddSolveManualyCommand = ReactiveCommand.Create(AddSolveManually);
             DataContext = this;
 
+            this.Constructed += ViewModel.LoadSolvesAsync;
             Constructed();
         }
 
@@ -58,7 +60,7 @@ namespace VirsTimer.DesktopApp.Views
             if (eventChangeViewModel.Accepted)
             {
                 ViewModel.EventViewModel.CurrentEvent = eventChangeViewModel.SelectedEvent!;
-                await ViewModel.SolvesListViewModel.Load(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
+                await ViewModel.LoadSolvesAsync();
             }
         }
 
@@ -74,7 +76,7 @@ namespace VirsTimer.DesktopApp.Views
             if (sessionChangeViewModel.Accepted)
             {
                 ViewModel.SessionViewModel.CurrentSession = sessionChangeViewModel.SelectedSession!;
-                await ViewModel.SolvesListViewModel.Load(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
+                await ViewModel.LoadSolvesAsync();
             }
         }
 
@@ -86,7 +88,21 @@ namespace VirsTimer.DesktopApp.Views
             };
             await dialog.ShowDialog(this);
             if (solveViewModel.Accepted)
-                await ViewModel.SolvesListViewModel.Save(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
+                await ViewModel.SolvesListViewModel.SaveAsync(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
+        }
+
+        private async Task AddSolveManually()
+        {
+            var solveAddViewModel = new SolveAddViewModel();
+            var solveAddView = new SolveAddView
+            {
+                DataContext = solveAddViewModel
+            };
+            await solveAddView.ShowDialog(this);
+            if (!solveAddViewModel.Accepted)
+                return;
+            var solve = new Solve(solveAddViewModel.SolveTime, ViewModel.ScrambleViewModel.CurrentScramble.Value);
+            await ViewModel.SaveSolveAsync(solve);
         }
 
         public async void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)
@@ -99,9 +115,7 @@ namespace VirsTimer.DesktopApp.Views
                 ViewModel.TimerViewModel.Timer.Stop();
 
                 var solve = new Solve(ViewModel.TimerViewModel.SavedTime, ViewModel.ScrambleViewModel.CurrentScramble.Value);
-                ViewModel.SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve));
-                await ViewModel.SolvesListViewModel.Save(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
-                ViewModel.ScrambleViewModel.NextScramble();
+                await ViewModel.SaveSolveAsync(solve);
             }
         }
 
@@ -109,11 +123,6 @@ namespace VirsTimer.DesktopApp.Views
         {
             if (keyEventArgs.Key == Key.Space && !ViewModel.TimerViewModel.Timer.IsRunning)
                 ViewModel.TimerViewModel.Timer.Start();
-        }
-
-        private async Task LoadSolvesAsync()
-        {
-            await ViewModel.SolvesListViewModel.Load(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
         }
     }
 }
