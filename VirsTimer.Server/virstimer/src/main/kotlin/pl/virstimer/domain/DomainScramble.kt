@@ -9,5 +9,15 @@ data class DomainScramble (
 )
 
 enum class PuzzleType {
-    THREE_BY_THREE
+    TWO_BY_TWO,
+    THREE_BY_THREE,
+    FOUR_BY_FOUR,
+    FIVE_BY_FIVE,
+    SIX_BY_SIX,
+    SEVEN_BY_SEVEN,
+    CLOCK,
+    MEGAMINX,
+    PYRAMINX,
+    SKWEB,
+    SQUARE_ONE,
 }
