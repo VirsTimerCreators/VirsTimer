@@ -9,10 +9,12 @@
         Title="MainWindow"
 		KeyDown="WindowKeyDown"
 		KeyUp="WindowKeyUp"
+		xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
 		TransparencyLevelHint="AcrylicBlur"
 		Background="Transparent"
+		WindowState="FullScreen"
 		ExtendClientAreaToDecorationsHint="True">
-	<Grid RowDefinitions="100,Auto,*,0,*,Auto">
+	<Grid RowDefinitions="100,Auto,300,*">
 		<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
 			<ExperimentalAcrylicBorder.Material>
 				<ExperimentalAcrylicMaterial
@@ -37,7 +39,12 @@
 		</Grid>
 		<views:ScrambleView MinHeight="100" MaxHeight="300" Grid.Row="1" Content="{Binding ViewModel.ScrambleViewModel}"/>
 		<views:TimerView Grid.Row="2" Content="{Binding ViewModel.TimerViewModel}"/>
-		<solveViews:SolvesListView Grid.Row="4" Content="{Binding ViewModel.SolvesListViewModel}"/>
-		<Button Grid.Row="5" HorizontalAlignment="Right" Command="{Binding AddSolveManualyCommand}" Background="#0959db" Content="Dodaj ręcznie" Margin="20 12 20 12"/>
+		<Grid Grid.Row="3" ColumnDefinitions="*,*" RowDefinitions="*, Auto">
+			<solveViews:SolvesListView Grid.Row="0" Content="{Binding ViewModel.SolvesListViewModel}"/>
+			<Button Grid.Row="1" HorizontalAlignment="Right" Command="{Binding AddSolveManualyCommand}" Background="#0959db" Content="Dodaj ręcznie" HorizontalContentAlignment="Center" Width="130" Margin="20 12 26 12"/>
+			<Grid Grid.Column="1" RowDefinitions="*,*">
+				<Image Name="ImageLayout" Grid.Column="1" Focusable="False" Source="{Binding ViewModel.ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
+			</Grid>
+		</Grid>
 	</Grid>
 </Window>
