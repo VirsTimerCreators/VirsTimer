@@ -6,7 +6,7 @@ using VirsTimer.Core.Services;
 
 namespace VirsTimer.DesktopApp.ViewModels
 {
-    public class SessionViewModel : ViewModelBase
+    public class SessionSummaryViewModel : ViewModelBase
     {
         private Session _currentSession = new();
         public Session CurrentSession
@@ -15,7 +15,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             set => this.RaiseAndSetIfChanged(ref _currentSession, value);
         }
 
-        public SessionViewModel(Event @event)
+        public SessionSummaryViewModel(Event @event)
         {
             CurrentSession = Ioc.Services.GetRequiredService<ISessionsManager>().GetSessionsAsync(@event).GetAwaiter().GetResult().FirstOrDefault() ?? new();
         }

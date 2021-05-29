@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="VirsTimer.DesktopApp.Views.SessionChangeView"
         Title="SessionChangeView"
@@ -19,10 +20,55 @@
 			</ExperimentalAcrylicBorder.Material>
 		</ExperimentalAcrylicBorder>
 		<Panel Grid.Row="0"/>
-		<ListBox Background="Transparent" Grid.Row="1" Items="{Binding Sessions}" SelectedItem="{Binding SelectedSession}">
+		<ListBox
+			Name="SessionsListBox"
+			Background="Transparent"
+			Grid.Row="1" 
+			Items="{Binding Sessions}"
+			SelectedItem="{Binding SelectedSession}"
+			SelectionChanged="ListBoxSelectionChanged">
+			<ListBox.Styles>
+				<Style Selector="ListBoxItem">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+					<Setter Property="VerticalContentAlignment" Value="Center"/>
+				</Style>
+			</ListBox.Styles>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<TextBlock Margin="7" Text="{Binding Name}"/>
+					<Grid ColumnDefinitions="*, Auto, Auto">
+						<TextBlock 
+							Margin="7" 
+							Text="{Binding Name}" 
+							IsVisible="{Binding EditingSession, Converter={converters:InverseBooleanConverter}}"/>
+						<TextBox
+							GotFocus="ListItemTextBoxGotFocus"
+							Margin="7" 
+							Text="{Binding Name, Mode=TwoWay}"
+							IsVisible="{Binding EditingSession}"/>
+						
+						<Button 
+							Grid.Column="1"
+							HorizontalContentAlignment="Center" 
+							Content="Edytuj"
+							Command="{Binding EditSessionCommand}"
+							Click="ClickWithUnselect"
+							IsVisible="{Binding EditingSession, Converter={converters:InverseBooleanConverter}}"/>
+						<Button 
+							Margin="15 0 0 0"
+							Grid.Column="2" 
+							HorizontalContentAlignment="Center" 
+							Content="Usuń"
+							Click="ClickWithUnselect"
+							IsVisible="{Binding EditingSession, Converter={converters:InverseBooleanConverter}}"/>
+						<Button 
+							Grid.Column="1"
+							Grid.ColumnSpan="2" 
+							HorizontalContentAlignment="Center" 
+							Content="Akceptuj" 
+							IsVisible="{Binding EditingSession}"
+							Command="{Binding $parent[Window].DataContext.AcceptRenameSessionCommand}"
+							CommandParameter="{Binding}"/>
+					</Grid>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
@@ -32,7 +78,7 @@
 			HorizontalAlignment="Left"
 			Margin="20"
 			Content="Dodaj"
-			Command="{Binding AddCommand}"/>
+			Command="{Binding AddSessionCommand}"/>
 		<Button
 			Grid.Row="2"
 			VerticalAlignment="Center"
@@ -41,7 +87,6 @@
 			Content="Akceptuj"
 			Command="{Binding AcceptCommand}"
 			Background="#0959db"
-			CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, 
-                           AncestorType={x:Type Window}}}"/>
+			CommandParameter="{Binding $parent[Window]}"/>
 	</Grid>
 </Window>

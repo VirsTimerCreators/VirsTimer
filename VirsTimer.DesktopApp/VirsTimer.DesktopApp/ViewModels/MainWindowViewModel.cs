@@ -7,7 +7,7 @@ namespace VirsTimer.DesktopApp.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         public EventViewModel EventViewModel { get; }
-        public SessionViewModel SessionViewModel { get; }
+        public SessionSummaryViewModel SessionSummaryViewModel{ get; }
         public TimerViewModel TimerViewModel { get; }
         public SolvesListViewModel SolvesListViewModel { get; }
         public ScrambleViewModel ScrambleViewModel { get; }
@@ -15,7 +15,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         public MainWindowViewModel(Event @event)
         {
             EventViewModel = new EventViewModel();
-            SessionViewModel = new SessionViewModel(EventViewModel.CurrentEvent);
+            SessionSummaryViewModel = new SessionSummaryViewModel(EventViewModel.CurrentEvent);
             TimerViewModel = new TimerViewModel();
             SolvesListViewModel = new SolvesListViewModel();
             ScrambleViewModel = new ScrambleViewModel(@event);
@@ -23,13 +23,13 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public Task LoadSolvesAsync()
         {
-            return SolvesListViewModel.LoadAsync(EventViewModel.CurrentEvent, SessionViewModel.CurrentSession);
+            return SolvesListViewModel.LoadAsync(EventViewModel.CurrentEvent, SessionSummaryViewModel.CurrentSession);
         }
 
         public async Task SaveSolveAsync(Solve solve)
         {
             SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve));
-            await SolvesListViewModel.SaveAsync(EventViewModel.CurrentEvent, SessionViewModel.CurrentSession);
+            await SolvesListViewModel.SaveAsync(EventViewModel.CurrentEvent, SessionSummaryViewModel.CurrentSession);
             ScrambleViewModel.NextScramble();
         }
     }

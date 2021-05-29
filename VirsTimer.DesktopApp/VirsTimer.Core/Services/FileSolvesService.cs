@@ -13,6 +13,7 @@ namespace VirsTimer.Core.Services
 {
     public partial class FileSolvesService : IPastSolvesGetter, ISolvesSaver, IEventsGetter, ISessionsManager
     {
+        private const string EmptyArrayJson = "[]";
         private readonly IFileSystem _fileSystem;
 
         public FileSolvesService(IFileSystem? fileSystem = null)
@@ -58,14 +59,26 @@ namespace VirsTimer.Core.Services
             await JsonSerializer.SerializeAsync(stream, solves).ConfigureAwait(false);
         }
 
-        public Task AddSessionAsync(Event @event, Session session)
+        public Task<Session> AddSessionAsync(Event @event, string name)
         {
-            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Name, $"{session.Name}{FileExtensions.Json}");
+            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Name, $"{name}{FileExtensions.Json}");
             _fileSystem.Directory.CreateDirectory(_fileSystem.Path.GetDirectoryName(targetFile));
             if (!_fileSystem.File.Exists(targetFile))
-                _fileSystem.File.Create(targetFile);
+            {
+                using var stream = _fileSystem.File.Create(targetFile);
+                stream.Write(Encoding.UTF8.GetBytes(EmptyArrayJson), 0, EmptyArrayJson.Length);
+            }
+            var session = new Session(name);
+            return Task.FromResult(session);
+        }
 
-            return Task.CompletedTask;
+        public Task<Session> RenameSessionAsync(Event @event, Session session, string newName)
+        {
+            var sourceFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Name, $"{session.Name}{FileExtensions.Json}");
+            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Name, $"{newName}{FileExtensions.Json}");
+            _fileSystem.File.Move(sourceFile, targetFile);
+
+            return Task.FromResult(new Session(session.Id, newName));
         }
     }
 }

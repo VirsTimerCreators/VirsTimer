@@ -36,7 +36,7 @@
 				</ExperimentalAcrylicBorder.Material>
 			</ExperimentalAcrylicBorder>
 			<views:EventView Grid.Column="0" Content="{Binding ViewModel.EventViewModel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-			<views:SessionView Grid.Column="1" Content="{Binding ViewModel.SessionViewModel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<views:SessionSummaryView Grid.Column="1" Content="{Binding ViewModel.SessionSummaryViewModel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 		</Grid>
 		<views:ScrambleView MinHeight="100" MaxHeight="300" Grid.Row="1" Content="{Binding ViewModel.ScrambleViewModel}"/>
 		<views:TimerView Grid.Row="2" Content="{Binding ViewModel.TimerViewModel}"/>

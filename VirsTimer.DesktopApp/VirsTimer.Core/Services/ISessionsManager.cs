@@ -6,7 +6,8 @@ namespace VirsTimer.Core.Services
 {
     public interface ISessionsManager
     {
-        Task AddSessionAsync(Event @event, Session session);
+        Task<Session> AddSessionAsync(Event @event, string name);
         Task<IReadOnlyList<Session>> GetSessionsAsync(Event @event);
+        Task<Session> RenameSessionAsync(Event @event, Session session, string newName);
     }
 }
