@@ -19,11 +19,15 @@ class ScrambleService {
             PuzzleType.FIVE_BY_FIVE -> scrambleFiveByFive()
             PuzzleType.SIX_BY_SIX -> scrambleSixBySix()
             PuzzleType.SEVEN_BY_SEVEN -> scrambleSevenBySeven()
+            PuzzleType.THREE_BY_THREE_BLINDFOLDED -> scrambleThreeByThree()
+            PuzzleType.THREE_BY_THREE_OH -> scrambleThreeByThree()
             PuzzleType.CLOCK -> scrambleClock()
             PuzzleType.MEGAMINX -> scrambleMegaminx()
             PuzzleType.PYRAMINX -> scramblePyraminx()
             PuzzleType.SKWEB -> scrambleSkweb()
             PuzzleType.SQUARE_ONE -> scrambleSquareOne()
+            PuzzleType.FOUR_BY_FOUR_BLINDFOLDED -> scrambleFourByFour()
+            PuzzleType.FIVE_BY_FIVE_BLINDFOLDED -> scrambleFiveByFive()
         }
 
 
