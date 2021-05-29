@@ -5,6 +5,7 @@
 		xmlns:views="clr-namespace:VirsTimer.DesktopApp.Views;assembly=VirsTimer.DesktopApp"
 		xmlns:solveViews="clr-namespace:VirsTimer.DesktopApp.Views.Solves;assembly=VirsTimer.DesktopApp"
 		Height="1050" Width="1500"
+		MinHeight="700" MinWidth="1000"
         x:Class="VirsTimer.DesktopApp.Views.MainWindow"
         Title="MainWindow"
 		KeyDown="WindowKeyDown"

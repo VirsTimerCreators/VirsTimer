@@ -11,6 +11,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
     public class SolveViewModel : ViewModelBase
     {
         private string _summary = string.Empty;
+        private string _index = "-1.";
 
         public bool Accepted { get; private set; }
         public Solve Model { get; }
@@ -22,6 +23,11 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
         {
             get => _summary;
             set => this.RaiseAndSetIfChanged(ref _summary, value);
+        }
+        public string Index
+        {
+            get => _index;
+            set => this.RaiseAndSetIfChanged(ref _index, value);
         }
         public SolveFlagsViewModel SolveFlagsViewModel { get; }
         public ICommand AcceptCommand { get; }
