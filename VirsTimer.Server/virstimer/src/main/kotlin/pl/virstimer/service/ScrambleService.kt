@@ -2,6 +2,7 @@ package pl.virstimer.service
 
 import org.springframework.stereotype.Component
 import org.worldcubeassociation.tnoodle.puzzle.*
+import org.worldcubeassociation.tnoodle.scrambles.Puzzle
 import pl.virstimer.domain.DomainScramble
 import pl.virstimer.domain.PuzzleType
 import java.util.*
@@ -13,142 +14,30 @@ class ScrambleService {
 
     fun generateScrambleAndSvg(puzzleType: PuzzleType): DomainScramble =
         when (puzzleType) {
-            PuzzleType.TWO_BY_TWO -> scrambleTwoByTwo()
-            PuzzleType.THREE_BY_THREE -> scrambleThreeByThree()
-            PuzzleType.FOUR_BY_FOUR -> scrambleFourByFour()
-            PuzzleType.FIVE_BY_FIVE -> scrambleFiveByFive()
-            PuzzleType.SIX_BY_SIX -> scrambleSixBySix()
-            PuzzleType.SEVEN_BY_SEVEN -> scrambleSevenBySeven()
-            PuzzleType.THREE_BY_THREE_BLINDFOLDED -> scrambleThreeByThree()
-            PuzzleType.THREE_BY_THREE_OH -> scrambleThreeByThree()
-            PuzzleType.CLOCK -> scrambleClock()
-            PuzzleType.MEGAMINX -> scrambleMegaminx()
-            PuzzleType.PYRAMINX -> scramblePyraminx()
-            PuzzleType.SKWEB -> scrambleSkweb()
-            PuzzleType.SQUARE_ONE -> scrambleSquareOne()
-            PuzzleType.FOUR_BY_FOUR_BLINDFOLDED -> scrambleFourByFour()
-            PuzzleType.FIVE_BY_FIVE_BLINDFOLDED -> scrambleFiveByFive()
+            PuzzleType.TWO_BY_TWO -> scramble(TwoByTwoCubePuzzle(), puzzleType)
+            PuzzleType.THREE_BY_THREE -> scramble(ThreeByThreeCubePuzzle(), puzzleType)
+            PuzzleType.FOUR_BY_FOUR -> scramble(FourByFourCubePuzzle(), puzzleType)
+            PuzzleType.FIVE_BY_FIVE -> scramble(NoInspectionFiveByFiveCubePuzzle(), puzzleType)
+            PuzzleType.SIX_BY_SIX -> scramble(CubePuzzle(6), puzzleType)
+            PuzzleType.SEVEN_BY_SEVEN -> scramble(CubePuzzle(7), puzzleType)
+            PuzzleType.THREE_BY_THREE_BLINDFOLDED -> scramble(ThreeByThreeCubePuzzle(), puzzleType)
+            PuzzleType.THREE_BY_THREE_OH -> scramble(ThreeByThreeCubePuzzle(), puzzleType)
+            PuzzleType.CLOCK -> scramble(ClockPuzzle(), puzzleType)
+            PuzzleType.MEGAMINX -> scramble(MegaminxPuzzle(), puzzleType)
+            PuzzleType.PYRAMINX -> scramble(PyraminxPuzzle(), puzzleType)
+            PuzzleType.SKWEB -> scramble(SkewbPuzzle(), puzzleType)
+            PuzzleType.SQUARE_ONE -> scramble(SquareOnePuzzle(), puzzleType)
+            PuzzleType.FOUR_BY_FOUR_BLINDFOLDED -> scramble(FourByFourCubePuzzle(), puzzleType)
+            PuzzleType.FIVE_BY_FIVE_BLINDFOLDED -> scramble(NoInspectionFiveByFiveCubePuzzle(), puzzleType)
         }
 
-
-    private fun scrambleTwoByTwo(): DomainScramble {
-        val puzzle = TwoByTwoCubePuzzle()
+    private fun scramble(puzzle: Puzzle, puzzleType: PuzzleType): DomainScramble {
         val wcaScramble = puzzle.generateWcaScramble(random)
 
         return DomainScramble(
             wcaScramble,
             puzzle.drawScramble(wcaScramble, puzzle.defaultColorScheme),
-            PuzzleType.TWO_BY_TWO
-        )
-    }
-
-    private fun scrambleThreeByThree(): DomainScramble {
-        val puzzle = ThreeByThreeCubePuzzle()
-        val wcaScramble = puzzle.generateWcaScramble(random)
-
-        return DomainScramble(
-            wcaScramble,
-            puzzle.drawScramble(wcaScramble, puzzle.defaultColorScheme),
-            PuzzleType.THREE_BY_THREE
-        )
-    }
-
-    private fun scrambleFourByFour(): DomainScramble {
-        val puzzle = FourByFourCubePuzzle()
-        val wcaScramble = puzzle.generateWcaScramble(random)
-
-        return DomainScramble(
-            wcaScramble,
-            puzzle.drawScramble(wcaScramble, puzzle.defaultColorScheme),
-            PuzzleType.FOUR_BY_FOUR
-        )
-    }
-
-    private fun scrambleFiveByFive(): DomainScramble {
-        val puzzle = NoInspectionFiveByFiveCubePuzzle()
-        val wcaScramble = puzzle.generateWcaScramble(random)
-
-        return DomainScramble(
-            wcaScramble,
-            puzzle.drawScramble(wcaScramble, puzzle.defaultColorScheme),
-            PuzzleType.FIVE_BY_FIVE
-        )
-    }
-
-    private fun scrambleSixBySix(): DomainScramble {
-        val puzzle = CubePuzzle(6)
-        val wcaScramble = puzzle.generateWcaScramble(random)
-
-        return DomainScramble(
-            wcaScramble,
-            puzzle.drawScramble(wcaScramble, puzzle.defaultColorScheme),
-            PuzzleType.SIX_BY_SIX
-        )
-    }
-
-    private fun scrambleSevenBySeven(): DomainScramble {
-        val puzzle = CubePuzzle(7)
-        val wcaScramble = puzzle.generateWcaScramble(random)
-
-        return DomainScramble(
-            wcaScramble,
-            puzzle.drawScramble(wcaScramble, puzzle.defaultColorScheme),
-            PuzzleType.SEVEN_BY_SEVEN
-        )
-    }
-
-    private fun scrambleClock(): DomainScramble {
-        val puzzle = ClockPuzzle()
-        val wcaScramble = puzzle.generateWcaScramble(random)
-
-        return DomainScramble(
-            wcaScramble,
-            puzzle.drawScramble(wcaScramble, puzzle.defaultColorScheme),
-            PuzzleType.CLOCK
-        )
-    }
-
-    private fun scrambleMegaminx(): DomainScramble {
-        val puzzle = MegaminxPuzzle()
-        val wcaScramble = puzzle.generateWcaScramble(random)
-
-        return DomainScramble(
-            wcaScramble,
-            puzzle.drawScramble(wcaScramble, puzzle.defaultColorScheme),
-            PuzzleType.MEGAMINX
-        )
-    }
-
-    private fun scramblePyraminx(): DomainScramble {
-        val puzzle = PyraminxPuzzle()
-        val wcaScramble = puzzle.generateWcaScramble(random)
-
-        return DomainScramble(
-            wcaScramble,
-            puzzle.drawScramble(wcaScramble, puzzle.defaultColorScheme),
-            PuzzleType.PYRAMINX
-        )
-    }
-
-    private fun scrambleSkweb(): DomainScramble {
-        val puzzle = SkewbPuzzle()
-        val wcaScramble = puzzle.generateWcaScramble(random)
-
-        return DomainScramble(
-            wcaScramble,
-            puzzle.drawScramble(wcaScramble, puzzle.defaultColorScheme),
-            PuzzleType.SKWEB
-        )
-    }
-
-    private fun scrambleSquareOne(): DomainScramble {
-        val puzzle = SquareOnePuzzle()
-        val wcaScramble = puzzle.generateWcaScramble(random)
-
-        return DomainScramble(
-            wcaScramble,
-            puzzle.drawScramble(wcaScramble, puzzle.defaultColorScheme),
-            PuzzleType.SQUARE_ONE
+            puzzleType
         )
     }
 
