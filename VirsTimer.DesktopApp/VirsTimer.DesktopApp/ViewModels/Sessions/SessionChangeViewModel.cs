@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Sessions;
@@ -14,9 +13,6 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
 {
     public class SessionChangeViewModel : ViewModelBase
     {
-        private const string SessionNameBase = "Sesja";
-        private static readonly Regex DefaultSessionNameRegex = new($"{SessionNameBase}([0-9]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
         private readonly Event _event;
         private readonly ISessionsManager _sessionsManager;
 
@@ -68,13 +64,13 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
         private async Task<bool> AddSessionAsync()
         {
             var maxSessionNumber = Sessions
-                .Select(sessionVM => DefaultSessionNameRegex.Match(sessionVM.Session.Name))
+                .Select(sessionVM => Constants.Sessions.NewSessionNameRegex.Match(sessionVM.Session.Name))
                 .Where(match => match.Success)
                 .Select(match => int.Parse(match.Groups[1].Value))
                 .DefaultIfEmpty(0)
                 .Max();
             var nextAvailableNumber = maxSessionNumber + 1;
-            var session = await _sessionsManager.AddSessionAsync(_event, $"{SessionNameBase}{nextAvailableNumber}");
+            var session = await _sessionsManager.AddSessionAsync(_event, $"{Constants.Sessions.NewSessionNameBase}{nextAvailableNumber}");
             if (session == null)
                 return false;
 
