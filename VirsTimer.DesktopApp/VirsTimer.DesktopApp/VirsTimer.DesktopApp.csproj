@@ -24,7 +24,7 @@
     <ProjectReference Include="..\VirsTimer.Core\VirsTimer.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\SessionSummaryView.axaml.cs">
+    <Compile Update="Views\Sessions\SessionSummaryView.axaml.cs">
       <DependentUpon>SessionSummaryView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Solves\SolveView.axaml.cs">

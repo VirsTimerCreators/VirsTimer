@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using VirsTimer.Core.Models;
+using VirsTimer.DesktopApp.ViewModels.Sessions;
 using VirsTimer.DesktopApp.ViewModels.Solves;
 
 namespace VirsTimer.DesktopApp.ViewModels
@@ -7,7 +8,7 @@ namespace VirsTimer.DesktopApp.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         public EventViewModel EventViewModel { get; }
-        public SessionSummaryViewModel SessionSummaryViewModel{ get; }
+        public SessionSummaryViewModel SessionSummaryViewModel { get; }
         public TimerViewModel TimerViewModel { get; }
         public SolvesListViewModel SolvesListViewModel { get; }
         public ScrambleViewModel ScrambleViewModel { get; }

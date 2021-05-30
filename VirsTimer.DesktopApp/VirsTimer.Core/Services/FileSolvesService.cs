@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Services.Sessions;
 
 namespace VirsTimer.Core.Services
 {
@@ -27,7 +28,7 @@ namespace VirsTimer.Core.Services
         }
 
         private static readonly Regex JsonFileRegex = new Regex("([^<>:\"/\\|?*]+)\\.json", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        public Task<IReadOnlyList<Session>> GetSessionsAsync(Event @event)
+        public Task<IReadOnlyList<Session>> GetAllSessionsAsync(Event @event)
         {
             var targetDirectory = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Name);
             var sessions = _fileSystem.Directory.EnumerateFiles(targetDirectory)
@@ -46,7 +47,7 @@ namespace VirsTimer.Core.Services
                 return Array.Empty<Solve>();
 
             using var stream = _fileSystem.File.OpenRead(targetFile);
-            var solves = await JsonSerializer.DeserializeAsync<SolvesCollection>(stream).ConfigureAwait(false);
+            var solves = await JsonSerializer.DeserializeAsync<IReadOnlyList<Solve>>(stream).ConfigureAwait(false);
 
             return solves;
         }

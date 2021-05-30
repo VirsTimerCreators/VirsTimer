@@ -4,19 +4,19 @@ namespace VirsTimer.Core.Models
 {
     public class Session
     {
-        public Guid Id { get; }
+        public string Id { get; }
         public string Name { get; set; }
 
         public Session(string? name = null)
         {
-            Id = Guid.NewGuid();
-            Name = name ?? Id.ToString();
+            Id = Guid.NewGuid().ToString();
+            Name = name ?? Id;
         }
 
-        public Session(Guid id, string? name = null)
+        public Session(string id, string name)
         {
             Id = id;
-            Name = name ?? Id.ToString();
+            Name = name;
         }
     }
 }

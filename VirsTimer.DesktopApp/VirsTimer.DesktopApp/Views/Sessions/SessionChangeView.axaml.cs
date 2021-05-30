@@ -5,9 +5,9 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
 using System.Linq;
-using VirsTimer.DesktopApp.ViewModels;
+using VirsTimer.DesktopApp.ViewModels.Sessions;
 
-namespace VirsTimer.DesktopApp.Views
+namespace VirsTimer.DesktopApp.Views.Sessions
 {
     public class SessionChangeView : Window
     {

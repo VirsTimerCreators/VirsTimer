@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.ViewModels;
+using VirsTimer.DesktopApp.ViewModels.Sessions;
 using VirsTimer.DesktopApp.ViewModels.Solves;
+using VirsTimer.DesktopApp.Views.Sessions;
 using VirsTimer.DesktopApp.Views.Solves;
 
 namespace VirsTimer.DesktopApp.Views

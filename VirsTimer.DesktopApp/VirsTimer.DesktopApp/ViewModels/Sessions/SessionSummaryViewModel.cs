@@ -2,9 +2,9 @@
 using ReactiveUI;
 using System.Linq;
 using VirsTimer.Core.Models;
-using VirsTimer.Core.Services;
+using VirsTimer.Core.Services.Sessions;
 
-namespace VirsTimer.DesktopApp.ViewModels
+namespace VirsTimer.DesktopApp.ViewModels.Sessions
 {
     public class SessionSummaryViewModel : ViewModelBase
     {
@@ -17,7 +17,7 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public SessionSummaryViewModel(Event @event)
         {
-            CurrentSession = Ioc.Services.GetRequiredService<ISessionsManager>().GetSessionsAsync(@event).GetAwaiter().GetResult().FirstOrDefault() ?? new();
+            CurrentSession = Ioc.Services.GetRequiredService<ISessionsManager>().GetAllSessionsAsync(@event).GetAwaiter().GetResult().FirstOrDefault() ?? new();
         }
     }
 }

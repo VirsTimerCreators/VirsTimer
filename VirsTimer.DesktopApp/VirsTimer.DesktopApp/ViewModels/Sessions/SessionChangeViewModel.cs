@@ -8,10 +8,9 @@ using System.Reactive;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
-using VirsTimer.Core.Services;
-using VirsTimer.DesktopApp.ViewModels.Sessions;
+using VirsTimer.Core.Services.Sessions;
 
-namespace VirsTimer.DesktopApp.ViewModels
+namespace VirsTimer.DesktopApp.ViewModels.Sessions
 {
     public class SessionChangeViewModel : ViewModelBase
     {
@@ -53,8 +52,8 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         private async void LoadSessionsAsync()
         {
-            var sessions = await _sessionsManager.GetSessionsAsync(_event).ConfigureAwait(false);
-            var sessionsVM = sessions.Select(session => new SessionViewModel(session));
+            var sessions = await _sessionsManager.GetAllSessionsAsync(_event).ConfigureAwait(false);
+            var sessionsVM = sessions.Select(session => new SessionViewModel(this, session));
             Sessions = new ObservableCollection<SessionViewModel>(sessionsVM);
             foreach (var session in Sessions)
                 session.PropertyChanged += UpdateCanRename;
@@ -79,7 +78,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             if (session == null)
                 return false;
 
-            var sessionVM = new SessionViewModel(session);
+            var sessionVM = new SessionViewModel(this, session);
             sessionVM.PropertyChanged += UpdateCanRename;
             Sessions.Add(sessionVM);
             return true;
@@ -92,7 +91,7 @@ namespace VirsTimer.DesktopApp.ViewModels
                 return true;
 
             var renamed = await _sessionsManager.RenameSessionAsync(_event, sessionViewModel.Session, sessionViewModel.Name).ConfigureAwait(false);
-            Sessions[Sessions.IndexOf(sessionViewModel)] = new SessionViewModel(renamed);
+            Sessions[Sessions.IndexOf(sessionViewModel)] = new SessionViewModel(this, renamed);
             return renamed != null;
         }
 
