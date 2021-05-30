@@ -18,7 +18,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
 
         public SolveAddViewModel()
         {
-            AcceptCommand = ReactiveCommand.Create<Window>(SaveSolve);
+            var acceptedEnabled = this.WhenAnyValue(x => x.SolveTime, x => x > TimeSpan.Zero);
+            AcceptCommand = ReactiveCommand.Create<Window>(SaveSolve, acceptedEnabled);
         }
 
         private void SaveSolve(Window window)

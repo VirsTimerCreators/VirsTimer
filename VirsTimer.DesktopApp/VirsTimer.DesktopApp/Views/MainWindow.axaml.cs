@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.ViewModels;
+using VirsTimer.DesktopApp.ViewModels.Sessions;
 using VirsTimer.DesktopApp.ViewModels.Solves;
+using VirsTimer.DesktopApp.Views.Sessions;
 using VirsTimer.DesktopApp.Views.Solves;
 
 namespace VirsTimer.DesktopApp.Views
@@ -75,7 +77,7 @@ namespace VirsTimer.DesktopApp.Views
             await dialog.ShowDialog(this);
             if (sessionChangeViewModel.Accepted)
             {
-                ViewModel.SessionViewModel.CurrentSession = sessionChangeViewModel.SelectedSession!;
+                ViewModel.SessionSummaryViewModel.CurrentSession = sessionChangeViewModel.SelectedSession!.Session;
                 await ViewModel.LoadSolvesAsync();
             }
         }
@@ -88,7 +90,7 @@ namespace VirsTimer.DesktopApp.Views
             };
             await dialog.ShowDialog(this);
             if (solveViewModel.Accepted)
-                await ViewModel.SolvesListViewModel.SaveAsync(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionViewModel.CurrentSession);
+                await ViewModel.SolvesListViewModel.SaveAsync(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionSummaryViewModel.CurrentSession);
         }
 
         private async Task AddSolveManually()

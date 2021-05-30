@@ -15,4 +15,8 @@
     <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\FileService\" />
+  </ItemGroup>
+
 </Project>

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using VirsTimer.Core.Services;
+using VirsTimer.Core.Services.Sessions;
 
 namespace VirsTimer.DesktopApp
 {
