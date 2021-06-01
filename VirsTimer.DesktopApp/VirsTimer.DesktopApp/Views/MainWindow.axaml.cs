@@ -5,7 +5,6 @@ using Avalonia.Markup.Xaml;
 using ReactiveUI;
 using System.Reactive;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.ViewModels;
@@ -17,7 +16,6 @@ namespace VirsTimer.DesktopApp.Views
     public class MainWindow : Window
     {
         public MainWindowViewModel ViewModel { get; }
-        public ICommand AddSolveManualyCommand { get; }
         public ReactiveCommand<SolveViewModel, Unit> EditSolveCommand { get; }
 
         public MainWindow()
@@ -30,7 +28,6 @@ namespace VirsTimer.DesktopApp.Views
 
             ViewModel = new MainWindowViewModel(new Event(Server.Events.ThreeByThree));
             EditSolveCommand = ReactiveCommand.CreateFromTask<SolveViewModel>(EditSolveAsync);
-            AddSolveManualyCommand = ReactiveCommand.Create(AddSolveManually);
             DataContext = this;
         }
 
@@ -48,20 +45,6 @@ namespace VirsTimer.DesktopApp.Views
             await dialog.ShowDialog(this);
             if (solveViewModel.Accepted)
                 await ViewModel.SolvesListViewModel.SaveAsync(ViewModel.EventViewModel.CurrentEvent, ViewModel.SessionSummaryViewModel.CurrentSession);
-        }
-
-        private async Task AddSolveManually()
-        {
-            var solveAddViewModel = new SolveAddViewModel();
-            var solveAddView = new SolveAddView
-            {
-                DataContext = solveAddViewModel
-            };
-            await solveAddView.ShowDialog(this);
-            if (!solveAddViewModel.Accepted)
-                return;
-            var solve = new Solve(solveAddViewModel.SolveTime, ViewModel.ScrambleViewModel.CurrentScramble.Value);
-            await ViewModel.SaveSolveAsync(solve);
         }
 
         public async void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)

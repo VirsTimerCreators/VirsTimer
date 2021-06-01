@@ -43,7 +43,16 @@
 		<views:TimerView Grid.Row="2" Content="{Binding ViewModel.TimerViewModel}"/>
 		<Grid Grid.Row="3" ColumnDefinitions="5*,*,3*,*" RowDefinitions="*, Auto">
 			<solveViews:SolvesListView Grid.Row="0" Content="{Binding ViewModel.SolvesListViewModel}"/>
-			<Button Grid.Row="1" HorizontalAlignment="Right" Command="{Binding AddSolveManualyCommand}" Background="#0959db" Content="Dodaj ręcznie" HorizontalContentAlignment="Center" Width="130" Margin="20 12 26 12"/>
+			<Button 
+				Grid.Row="1"
+				HorizontalAlignment="Right"
+				Command="{Binding ViewModel.AddSolveManualyCommand}"
+				CommandParameter="{Binding}"
+				Background="#0959db" 
+				Content="Dodaj ręcznie" 
+				HorizontalContentAlignment="Center"
+				Width="130"
+				Margin="20 12 26 12"/>
 			<Grid Grid.Column="2" RowDefinitions="*,*">
 				<Image Name="ImageLayout" Stretch="Fill" Focusable="False" Source="{Binding ViewModel.ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
 			</Grid>
