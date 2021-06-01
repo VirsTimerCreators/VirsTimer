@@ -54,8 +54,8 @@
 								Content="Edytuj"
 								Margin="0 0 15 0"
 								Focusable="False"
-								Command="{Binding $parent[Window].EditSolveCommand}"
-								CommandParameter="{Binding}"/>
+								Command="{Binding EditSolveCommand}"
+								CommandParameter="{Binding $parent[Window]}"/>
 						</DockPanel>
 					</Grid>
 				</DataTemplate>

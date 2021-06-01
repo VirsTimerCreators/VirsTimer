@@ -1,36 +1,34 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using System;
-using System.Windows.Input;
+using System.Reactive;
+using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.Extensions;
+using VirsTimer.DesktopApp.Views.Solves;
 
 namespace VirsTimer.DesktopApp.ViewModels.Solves
 {
     public class SolveViewModel : ViewModelBase
     {
-        private string _summary = string.Empty;
-        private string _index = "-1.";
-
         public bool Accepted { get; private set; }
         public Solve Model { get; }
         public TimeSpan Time { get; }
         public SolveFlag Flag { get; set; }
         public DateTime Date { get; }
         public string Scramble { get; }
-        public string Summary
-        {
-            get => _summary;
-            set => this.RaiseAndSetIfChanged(ref _summary, value);
-        }
-        public string Index
-        {
-            get => _index;
-            set => this.RaiseAndSetIfChanged(ref _index, value);
-        }
+
+        [Reactive]
+        public string Summary { get; set; } = string.Empty;
+
+        [Reactive]
+        public string Index { get; set; } = "-1";
+
+        public ReactiveCommand<Window, Unit> EditSolveCommand { get; }
         public SolveFlagsViewModel SolveFlagsViewModel { get; }
-        public ICommand AcceptCommand { get; }
+        public ReactiveCommand<Window, Unit> AcceptCommand { get; }
 
         public SolveViewModel(Solve solve)
         {
@@ -41,9 +39,21 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
             Scramble = solve.Scramble;
 
             SolveFlagsViewModel = new SolveFlagsViewModel(solve.Flag);
+
+            EditSolveCommand = ReactiveCommand.CreateFromTask<Window>(EditSolve);
             AcceptCommand = ReactiveCommand.Create<Window>(SaveFlag);
 
             UpdateSummary();
+        }
+
+        private async Task EditSolve(Window window)
+        {
+            var dialog = new SolveView
+            {
+                DataContext = this
+            };
+            await dialog.ShowDialog(window);
+            //TODO save solve to server
         }
 
         private void SaveFlag(Window window)
