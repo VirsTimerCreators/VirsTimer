@@ -24,6 +24,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             ScrambleViewModel = new ScrambleViewModel(@event);
 
             EventViewModel.PropertyChanged += OnEventChangeAsync;
+            SessionSummaryViewModel.PropertyChanged += OnSessionChangeAsync;
             OnConstructedAsync(this, EventArgs.Empty);
         }
 
@@ -39,7 +40,15 @@ namespace VirsTimer.DesktopApp.ViewModels
 
             await SessionSummaryViewModel.ChangeSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(false);
             await ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent).ConfigureAwait(false);
-            await SolvesListViewModel.LoadAsync(EventViewModel.CurrentEvent, SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
+            await LoadSolvesAsync().ConfigureAwait(false);
+        }
+
+        private async void OnSessionChangeAsync(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(SessionSummaryViewModel.CurrentSession))
+                return;
+
+            await LoadSolvesAsync().ConfigureAwait(false);
         }
 
         public Task LoadSolvesAsync()

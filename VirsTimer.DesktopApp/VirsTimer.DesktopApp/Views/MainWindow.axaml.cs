@@ -9,9 +9,7 @@ using System.Windows.Input;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.ViewModels;
-using VirsTimer.DesktopApp.ViewModels.Sessions;
 using VirsTimer.DesktopApp.ViewModels.Solves;
-using VirsTimer.DesktopApp.Views.Sessions;
 using VirsTimer.DesktopApp.Views.Solves;
 
 namespace VirsTimer.DesktopApp.Views
@@ -19,7 +17,6 @@ namespace VirsTimer.DesktopApp.Views
     public class MainWindow : Window
     {
         public MainWindowViewModel ViewModel { get; }
-        public ICommand ChangeSessionCommand { get; }
         public ICommand AddSolveManualyCommand { get; }
         public ReactiveCommand<SolveViewModel, Unit> EditSolveCommand { get; }
 
@@ -32,7 +29,6 @@ namespace VirsTimer.DesktopApp.Views
 #endif
 
             ViewModel = new MainWindowViewModel(new Event(Server.Events.ThreeByThree));
-            ChangeSessionCommand = ReactiveCommand.CreateFromTask(ChangeSessionAsync);
             EditSolveCommand = ReactiveCommand.CreateFromTask<SolveViewModel>(EditSolveAsync);
             AddSolveManualyCommand = ReactiveCommand.Create(AddSolveManually);
             DataContext = this;
@@ -41,22 +37,6 @@ namespace VirsTimer.DesktopApp.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-        }
-
-        private async Task ChangeSessionAsync()
-        {
-            var sessionChangeViewModel = new SessionChangeViewModel(ViewModel.EventViewModel.CurrentEvent);
-            var dialog = new SessionChangeView
-            {
-                DataContext = sessionChangeViewModel
-            };
-
-            await dialog.ShowDialog(this);
-            if (sessionChangeViewModel.Accepted)
-            {
-                ViewModel.SessionSummaryViewModel.CurrentSession = sessionChangeViewModel.SelectedSession!.Session;
-                await ViewModel.LoadSolvesAsync();
-            }
         }
 
         private async Task EditSolveAsync(SolveViewModel solveViewModel)

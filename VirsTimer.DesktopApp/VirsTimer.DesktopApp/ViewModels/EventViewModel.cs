@@ -21,7 +21,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             ChangeEventCommand = ReactiveCommand.CreateFromTask<Window>(ChangeEventAsync);
         }
 
-        public async Task ChangeEventAsync(Window window)
+        private async Task ChangeEventAsync(Window window)
         {
             var eventChangeViewModel = new EventChangeViewModel();
             var dialog = new EventChangeView

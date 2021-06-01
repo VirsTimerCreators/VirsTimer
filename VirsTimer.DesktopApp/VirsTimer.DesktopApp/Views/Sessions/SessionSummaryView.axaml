@@ -13,9 +13,11 @@
         <Panel
             VerticalAlignment="Center"
             HorizontalAlignment="Stretch">
-            <Button Focusable="False"
+            <Button 
+                Focusable="False"
                 Content="{Binding CurrentSession.Name}"
-                Command="{Binding $parent[Window].ChangeSessionCommand}"
+                Command="{Binding ChangeSessionCommand}"
+                CommandParameter="{Binding $parent[Window]}"
                 MinWidth="200"
                 HorizontalContentAlignment="Center"
                 HorizontalAlignment="Center"
