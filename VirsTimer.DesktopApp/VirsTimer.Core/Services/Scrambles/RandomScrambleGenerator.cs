@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 
-namespace VirsTimer.Core.Services
+namespace VirsTimer.Core.Services.Scrambles
 {
     public class RandomScrambleGenerator : IScrambleGenerator
     {
@@ -12,7 +12,7 @@ namespace VirsTimer.Core.Services
         {
             var result = new List<Scramble>();
             for (var i = 0; i < scramblesAmount; i++)
-                result.Add(new Scramble(Generate3x3x3Scramble()));
+                result.Add(new Scramble { Value = Generate3x3x3Scramble() });
 
             return Task.FromResult<IReadOnlyList<Scramble>>(result);
         }

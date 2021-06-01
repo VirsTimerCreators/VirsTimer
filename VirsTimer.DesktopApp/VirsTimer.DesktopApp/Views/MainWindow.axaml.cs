@@ -3,10 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using ReactiveUI;
-using System;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.ViewModels;
 using VirsTimer.DesktopApp.ViewModels.Sessions;
@@ -19,12 +19,9 @@ namespace VirsTimer.DesktopApp.Views
     public class MainWindow : Window
     {
         public MainWindowViewModel ViewModel { get; }
-        public ICommand ChangeEventCommand { get; }
         public ICommand ChangeSessionCommand { get; }
         public ICommand AddSolveManualyCommand { get; }
         public ReactiveCommand<SolveViewModel, Unit> EditSolveCommand { get; }
-
-        private event Func<Task> Constructed;
 
         public MainWindow()
         {
@@ -34,36 +31,16 @@ namespace VirsTimer.DesktopApp.Views
             this.AttachDevTools();
 #endif
 
-            ViewModel = new MainWindowViewModel(new Event("3x3x3"));
-            ChangeEventCommand = ReactiveCommand.CreateFromTask(ChangeEventAsync);
+            ViewModel = new MainWindowViewModel(new Event(Server.Events.ThreeByThree));
             ChangeSessionCommand = ReactiveCommand.CreateFromTask(ChangeSessionAsync);
             EditSolveCommand = ReactiveCommand.CreateFromTask<SolveViewModel>(EditSolveAsync);
             AddSolveManualyCommand = ReactiveCommand.Create(AddSolveManually);
             DataContext = this;
-
-            this.Constructed += ViewModel.LoadSolvesAsync;
-            Constructed();
         }
 
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-        }
-
-        private async Task ChangeEventAsync()
-        {
-            var eventChangeViewModel = new EventChangeViewModel();
-            var dialog = new EventChangeView
-            {
-                DataContext = eventChangeViewModel
-            };
-
-            await dialog.ShowDialog(this);
-            if (eventChangeViewModel.Accepted)
-            {
-                ViewModel.EventViewModel.CurrentEvent = eventChangeViewModel.SelectedEvent!;
-                await ViewModel.LoadSolvesAsync();
-            }
         }
 
         private async Task ChangeSessionAsync()

@@ -24,20 +24,46 @@ namespace VirsTimer.Core.Services
 
         public Task<IReadOnlyList<Event>> GetEventsAsync()
         {
-            return Task.FromResult<IReadOnlyList<Event>>(new[] { new Event("3x3x3") });
+            var events = new[]
+            {
+                new Event(Server.Events.ThreeByThree),
+                new Event(Server.Events.TwoByTwo),
+                new Event(Server.Events.FourByFour),
+                new Event(Server.Events.FiveByFive),
+                new Event(Server.Events.SixBySix),
+                new Event(Server.Events.SevenBySeven),
+                new Event(Server.Events.Megaminx),
+                new Event(Server.Events.Pyraminx),
+                new Event(Server.Events.Skewb),
+                new Event(Server.Events.Square_One),
+                new Event(Server.Events.Clock),
+                new Event(Server.Events.ThreeByThreeOneHand),
+                new Event(Server.Events.ThreeByThreeBlindfold),
+                new Event(Server.Events.FourByFourBlindfold),
+                new Event(Server.Events.FiveByFiveBlindfold),
+            };
+            return Task.FromResult<IReadOnlyList<Event>>(events);
         }
 
         private static readonly Regex JsonFileRegex = new Regex("([^<>:\"/\\|?*]+)\\.json", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        public Task<IReadOnlyList<Session>> GetAllSessionsAsync(Event @event)
+        public async Task<IReadOnlyList<Session>> GetAllSessionsAsync(Event @event)
         {
             var targetDirectory = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Name);
+            if (!_fileSystem.Directory.Exists(targetDirectory))
+                _fileSystem.Directory.CreateDirectory(targetDirectory);
             var sessions = _fileSystem.Directory.EnumerateFiles(targetDirectory)
                 .Select(path => JsonFileRegex.Match(_fileSystem.Path.GetFileName(path)))
                 .Where(match => match.Success)
                 .Select(match => new Session(match.Groups[1].Value))
                 .ToList();
 
-            return Task.FromResult<IReadOnlyList<Session>>(sessions);
+            if (sessions.Count == 0)
+            {
+                var session = await AddSessionAsync(@event, "Sesja1").ConfigureAwait(false);
+                sessions = new List<Session> { session };
+            }
+
+            return sessions;
         }
 
         public async Task<IReadOnlyList<Solve>> GetSolvesAsync(Event @event, Session session)

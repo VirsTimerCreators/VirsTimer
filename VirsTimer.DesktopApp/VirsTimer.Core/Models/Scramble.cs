@@ -1,19 +1,29 @@
-﻿namespace VirsTimer.Core.Models
+﻿using System.Text.Json.Serialization;
+using VirsTimer.Core.Constants;
+
+namespace VirsTimer.Core.Models
 {
+    /// <summary>
+    /// Represents scramble.
+    /// </summary>
     public class Scramble
     {
-        public string Value { get; }
-        public string? Svg { get; }
+        private string _value = string.Empty;
 
-        public Scramble(string value)
+        /// <summary>
+        /// Value of scramble.
+        /// </summary>
+        [JsonPropertyName("scramble")]
+        public string Value
         {
-            Value = value;
+            get => _value;
+            init => _value = Regexes.WhiteSpaces.Replace(value, " ");
         }
 
-        public Scramble(string value, string svg)
-            : this(value)
-        {
-            Svg = svg;
-        }
+        /// <summary>
+        /// Svg generating scramble image.
+        /// </summary>
+        [JsonPropertyName("svgTag")]
+        public string? Svg { get; init; }
     }
 }
