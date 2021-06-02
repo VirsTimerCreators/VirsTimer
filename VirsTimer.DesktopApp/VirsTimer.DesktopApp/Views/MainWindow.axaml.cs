@@ -1,17 +1,15 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.ViewModels;
 
 namespace VirsTimer.DesktopApp.Views
 {
-    public class MainWindow : Window
+    public class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
-        public MainWindowViewModel ViewModel { get; }
-
         public MainWindow()
         {
             InitializeComponent();
@@ -21,7 +19,6 @@ namespace VirsTimer.DesktopApp.Views
 #endif
 
             ViewModel = new MainWindowViewModel(new Event(Server.Events.ThreeByThree));
-            DataContext = this;
         }
 
         private void InitializeComponent()

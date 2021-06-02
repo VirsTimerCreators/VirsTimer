@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services;
 
-namespace VirsTimer.DesktopApp.ViewModels
+namespace VirsTimer.DesktopApp.ViewModels.Scrambles
 {
     public class ScrambleViewModel : ViewModelBase
     {
@@ -15,7 +15,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         private Queue<Scramble> _scrambles = null!;
 
         [Reactive]
-        public Scramble CurrentScramble { get; set; } = null!;
+        public Scramble CurrentScramble { get; set; } = new Scramble();
 
         public ScrambleViewModel(Event @event)
         {

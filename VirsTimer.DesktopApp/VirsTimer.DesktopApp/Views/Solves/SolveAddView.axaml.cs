@@ -3,11 +3,13 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 using System;
+using VirsTimer.DesktopApp.ViewModels.Solves;
 
 namespace VirsTimer.DesktopApp.Views.Solves
 {
-    public partial class SolveAddView : Window
+    public partial class SolveAddView : ReactiveWindow<SolveAddViewModel>
     {
         private readonly TextBox solveTextBox;
 
@@ -51,7 +53,7 @@ namespace VirsTimer.DesktopApp.Views.Solves
                 || textBox.CaretIndex == 8)
                 textBox.CaretIndex++;
 
-            if ((textBox.CaretIndex == 3 || textBox.CaretIndex == 6) && number  > 5)
+            if ((textBox.CaretIndex == 3 || textBox.CaretIndex == 6) && number > 5)
             {
                 e.Handled = true;
                 return;

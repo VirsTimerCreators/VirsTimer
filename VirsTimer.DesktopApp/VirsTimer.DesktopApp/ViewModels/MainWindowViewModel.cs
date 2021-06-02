@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
+using VirsTimer.DesktopApp.ViewModels.Events;
+using VirsTimer.DesktopApp.ViewModels.Scrambles;
 using VirsTimer.DesktopApp.ViewModels.Sessions;
 using VirsTimer.DesktopApp.ViewModels.Solves;
 using VirsTimer.DesktopApp.Views.Solves;
