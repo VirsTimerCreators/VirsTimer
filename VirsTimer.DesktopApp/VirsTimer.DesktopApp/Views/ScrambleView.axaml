@@ -21,8 +21,8 @@
 			MinWidth="200"
 			FontSize="42"
 			Foreground="White"
-			FontFamily="Verdana"
+			FontFamily="Consolas"
 			FontWeight="Regular"
-			Margin="15"/>
+			Padding="30"/>
 	</Panel>
 </UserControl>

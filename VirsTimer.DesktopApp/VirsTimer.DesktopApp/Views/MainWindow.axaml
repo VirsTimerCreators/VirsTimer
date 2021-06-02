@@ -39,13 +39,22 @@
 			<views:EventView Grid.Column="0" Content="{Binding ViewModel.EventViewModel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 			<sessionsViews:SessionSummaryView Grid.Column="1" Content="{Binding ViewModel.SessionSummaryViewModel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 		</Grid>
-		<views:ScrambleView MinHeight="100" MaxHeight="300" Grid.Row="1" Content="{Binding ViewModel.ScrambleViewModel}"/>
+		<views:ScrambleView MinHeight="100" Grid.Row="1" Content="{Binding ViewModel.ScrambleViewModel}"/>
 		<views:TimerView Grid.Row="2" Content="{Binding ViewModel.TimerViewModel}"/>
-		<Grid Grid.Row="3" ColumnDefinitions="*,*" RowDefinitions="*, Auto">
+		<Grid Grid.Row="3" ColumnDefinitions="5*,*,3*,*" RowDefinitions="*, Auto">
 			<solveViews:SolvesListView Grid.Row="0" Content="{Binding ViewModel.SolvesListViewModel}"/>
-			<Button Grid.Row="1" HorizontalAlignment="Right" Command="{Binding AddSolveManualyCommand}" Background="#0959db" Content="Dodaj ręcznie" HorizontalContentAlignment="Center" Width="130" Margin="20 12 26 12"/>
-			<Grid Grid.Column="1" RowDefinitions="*,*">
-				<Image Name="ImageLayout" Grid.Column="1" Focusable="False" Source="{Binding ViewModel.ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
+			<Button 
+				Grid.Row="1"
+				HorizontalAlignment="Right"
+				Command="{Binding ViewModel.AddSolveManualyCommand}"
+				CommandParameter="{Binding}"
+				Background="#0959db" 
+				Content="Dodaj ręcznie" 
+				HorizontalContentAlignment="Center"
+				Width="130"
+				Margin="20 12 26 12"/>
+			<Grid Grid.Column="2" RowDefinitions="*,*">
+				<Image Name="ImageLayout" Stretch="Fill" Focusable="False" Source="{Binding ViewModel.ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
 			</Grid>
 		</Grid>
 	</Grid>

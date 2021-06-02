@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services;
 
@@ -9,35 +11,38 @@ namespace VirsTimer.DesktopApp.ViewModels
     public class ScrambleViewModel : ViewModelBase
     {
         private readonly IScrambleGenerator _scrambleGenerator;
-        private Event _currentEvent = null!;
-        private Scramble _currentScramble = null!;
+        private Event _currentEvent;
         private Queue<Scramble> _scrambles = null!;
 
-        public Scramble CurrentScramble
-        {
-            get => _currentScramble;
-            set => this.RaiseAndSetIfChanged(ref _currentScramble, value);
-        }
+        [Reactive]
+        public Scramble CurrentScramble { get; set; } = null!;
 
         public ScrambleViewModel(Event @event)
         {
             _scrambleGenerator = Ioc.Services.GetRequiredService<IScrambleGenerator>();
-            ChangeEvent(@event);
+            _currentEvent = @event;
+            OnConstructedAsync(this, EventArgs.Empty);
         }
 
-        public void ChangeEvent(Event newEvent)
+        protected override async void OnConstructedAsync(object? sender, EventArgs e)
+        {
+            await ChangeEventAsync(_currentEvent).ConfigureAwait(false);
+        }
+
+        public async Task ChangeEventAsync(Event newEvent)
         {
             _currentEvent = newEvent;
-            _scrambles = new Queue<Scramble>(_scrambleGenerator.GenerateScrambles(_currentEvent, 10).GetAwaiter().GetResult());
+            var scrabmles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 10).ConfigureAwait(false);
+            _scrambles = new Queue<Scramble>(scrabmles);
             CurrentScramble = _scrambles.Dequeue();
         }
 
-        public void NextScramble()
+        public async Task GetNextScrambleAsync()
         {
             CurrentScramble = _scrambles.Dequeue();
-            if (_scrambles.Count < 5)
+            if (_scrambles.Count < 3)
             {
-                var generatedScrambles = _scrambleGenerator.GenerateScrambles(_currentEvent, 5).GetAwaiter().GetResult();
+                var generatedScrambles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 5).ConfigureAwait(false);
                 foreach (var scramble in generatedScrambles)
                     _scrambles.Enqueue(scramble);
             }
