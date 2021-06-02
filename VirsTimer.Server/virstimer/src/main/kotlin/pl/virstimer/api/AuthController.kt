@@ -9,8 +9,8 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
+import pl.virstimer.db.security.model.ERole
 import pl.virstimer.db.security.model.Role
-import pl.virstimer.db.security.model.RoleName
 import pl.virstimer.db.security.model.User
 import pl.virstimer.db.security.repository.RoleRepository
 import pl.virstimer.db.security.repository.UserRepository
@@ -81,27 +81,29 @@ class AuthController(
         )
 
         val strRoles: Set<String> = signUpRequest.roles
-        val roles: MutableSet<Role> = HashSet<Role>()
+        val roles: MutableSet<Role> = HashSet()
 
-        strRoles.forEach(Consumer { role: String? ->
-            when (role) {
-                "admin" -> {
-                    val adminRole: Role =
-                        roleRepository.findByRoleName(RoleName.ADMIN) ?: throw RuntimeException("Error: Role is not found.")
-                    roles.add(adminRole)
+        if (strRoles == null) {
+            val userRole: Role = roleRepository.findByName(ERole.ROLE_USER) ?: throw RuntimeException("Error: Role is not found.")
+            roles.add(userRole)
+        } else {
+            strRoles.forEach(Consumer { role: String? ->
+                when (role) {
+                    "admin" -> {
+                        val adminRole: Role = roleRepository.findByName(ERole.ROLE_ADMIN) ?: throw RuntimeException("Error: Role is not found.")
+                        roles.add(adminRole)
+                    }
+                    "mod" -> {
+                        val modRole: Role = roleRepository.findByName(ERole.ROLE_MODERATOR) ?: throw RuntimeException("Error: Role is not found.")
+                        roles.add(modRole)
+                    }
+                    else -> {
+                        val userRole: Role = roleRepository.findByName(ERole.ROLE_USER) ?: throw RuntimeException("Error: Role is not found.")
+                        roles.add(userRole)
+                    }
                 }
-                "mod" -> {
-                    val modRole: Role = roleRepository.findByRoleName(RoleName.MODERATOR)
-                        ?: throw RuntimeException("Error: Role is not found.")
-                    roles.add(modRole)
-                }
-                else -> {
-                    val userRole: Role =
-                        roleRepository.findByRoleName(RoleName.USER) ?: throw RuntimeException("Error: Role is not found.")
-                    roles.add(userRole)
-                }
-            }
-        })
+            })
+        }
 
         user.roles = roles
         userRepository.save(user)

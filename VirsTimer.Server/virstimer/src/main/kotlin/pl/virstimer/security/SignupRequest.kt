@@ -8,6 +8,11 @@ import javax.validation.constraints.Size
 class LoginRequest {
     var username: @NotBlank String? = null
     var password: @NotBlank String? = null
+
+    constructor(username: @NotBlank String?, password: @NotBlank String?) {
+        this.username = username
+        this.password = password
+    }
 }
 
 data class SignupRequest (

@@ -1,5 +1,6 @@
 package pl.virstimer.api
 
+import org.springframework.security.access.annotation.Secured
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,7 +18,7 @@ class TestController {
     }
 
     @GetMapping("/user")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @Secured("ROLE_USER")
     fun userAccess(): String {
         return "User Content."
     }

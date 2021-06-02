@@ -10,7 +10,7 @@ plugins {
 
 group = "pl"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 configurations {
 	compileOnly {
@@ -36,6 +36,8 @@ dependencies {
 	implementation("com.jayway.jsonpath:json-path-assert:2.5.0")
 	implementation("org.hamcrest:hamcrest-all:1.3")
 	implementation("io.jsonwebtoken:jjwt:0.9.1")
+	implementation("javax.xml.bind:jaxb-api")
+	implementation("com.google.code.gson:gson")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

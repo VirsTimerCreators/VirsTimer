@@ -27,7 +27,6 @@ class ScrambleControllerIntTest{
 
     @Test
     fun should_return_scramble() {
-        mongoTemplate.insert(User("dsadsad", "email", "password")) // TODO: Remove
 
         mockMvc.perform(get("/scramble/THREE_BY_THREE"))
                 .andExpect(jsonPath("$.scramble").isNotEmpty)

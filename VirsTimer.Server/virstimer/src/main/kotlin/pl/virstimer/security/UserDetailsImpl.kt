@@ -6,6 +6,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import pl.virstimer.db.security.model.User
 import java.util.*
+import java.util.stream.Collectors
+
+
+
 
 
 class UserDetailsImpl(
@@ -68,10 +72,9 @@ class UserDetailsImpl(
     companion object {
         private const val serialVersionUID = 1L
         fun build(user: User): UserDetailsImpl {
-            val authorities: List<GrantedAuthority> = user.roles
-                .map { role -> SimpleGrantedAuthority(role.roleName.name) }
-                .toList()
-
+            val authorities: List<GrantedAuthority> = user.roles.stream()
+                .map { role -> SimpleGrantedAuthority(role.name.name) }
+                .collect(Collectors.toList())
             return UserDetailsImpl(
                 user.id!!,
                 user.username!!,

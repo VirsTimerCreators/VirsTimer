@@ -6,11 +6,9 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document(collection = "roles")
 data class Role(
     @Id val id: String,
-    val roleName: RoleName
+    val name: ERole
 )
 
-enum class RoleName {
-    USER,
-    MODERATOR,
-    ADMIN
+enum class ERole {
+    ROLE_USER, ROLE_MODERATOR, ROLE_ADMIN
 }
