@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-	  <Nullable>enable</Nullable>
-	  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+      <Nullable>enable</Nullable>
+      <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -15,9 +15,4 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\FileService\" />
-  </ItemGroup>
-
 </Project>
