@@ -4,9 +4,9 @@ using ReactiveUI.Fody.Helpers;
 using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
-using VirsTimer.DesktopApp.Views;
+using VirsTimer.DesktopApp.Views.Events;
 
-namespace VirsTimer.DesktopApp.ViewModels
+namespace VirsTimer.DesktopApp.ViewModels.Events
 {
     public class EventViewModel : ViewModelBase
     {

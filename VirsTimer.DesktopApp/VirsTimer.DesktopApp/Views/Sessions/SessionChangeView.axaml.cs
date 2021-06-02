@@ -3,13 +3,14 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 using System;
 using System.Linq;
 using VirsTimer.DesktopApp.ViewModels.Sessions;
 
 namespace VirsTimer.DesktopApp.Views.Sessions
 {
-    public class SessionChangeView : Window
+    public class SessionChangeView : ReactiveWindow<SessionChangeViewModel>
     {
         private readonly ListBox _sessionsListBox;
 
