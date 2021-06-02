@@ -30,6 +30,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
         public ReactiveCommand<Window, Unit> AcceptCommand { get; }
         public ReactiveCommand<Unit, bool> AddSessionCommand { get; }
         public ReactiveCommand<SessionViewModel, bool> AcceptRenameSessionCommand { get; }
+        public ReactiveCommand<SessionViewModel, Unit> DeleteSessionCommand { get; }
 
         public SessionChangeViewModel(Event @event)
         {
@@ -43,6 +44,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
 
             var acceptRenameSessionEnabled = this.WhenAnyValue(x => x.CanRename, x => x == true);
             AcceptRenameSessionCommand = ReactiveCommand.CreateFromTask<SessionViewModel, bool>(AcceptRename, acceptRenameSessionEnabled);
+            DeleteSessionCommand = ReactiveCommand.CreateFromTask<SessionViewModel>(DeleteSessionAsync);
+
             LoadSessionsAsync();
         }
 
@@ -80,7 +83,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
             return true;
         }
 
-        public async Task<bool> AcceptRename(SessionViewModel sessionViewModel)
+        private async Task<bool> AcceptRename(SessionViewModel sessionViewModel)
         {
             sessionViewModel.EditingSession = false;
             if (sessionViewModel.Name == sessionViewModel.Session.Name)
@@ -98,6 +101,12 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
 
             var names = Sessions.Select(x => x.Name).ToList();
             CanRename = names.All(name => !string.IsNullOrWhiteSpace(name)) && names.Count == names.Distinct().Count();
+        }
+
+        private async Task DeleteSessionAsync(SessionViewModel sessionViewModel)
+        {
+            await _sessionsManager.DeleteSessionAsync(_event, sessionViewModel.Session).ConfigureAwait(false);
+            Sessions.Remove(sessionViewModel);
         }
     }
 }

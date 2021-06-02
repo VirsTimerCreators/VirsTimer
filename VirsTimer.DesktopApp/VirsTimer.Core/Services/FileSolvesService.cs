@@ -107,5 +107,13 @@ namespace VirsTimer.Core.Services
 
             return Task.FromResult(new Session(session.Id, newName));
         }
+
+        public Task DeleteSessionAsync(Event @event, Session session)
+        {
+            var sourceFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Name, $"{session.Name}{FileExtensions.Json}");
+            _fileSystem.File.Delete(sourceFile);
+
+            return Task.CompletedTask;
+        }
     }
 }
