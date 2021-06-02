@@ -18,7 +18,7 @@
 		</ExperimentalAcrylicBorder>
 		<TextBlock x:Name="TimerTextBlock"
 				   Text="{Binding CurrentTime, Converter={converters:TimeSpanValueConverter}}"
-				   Foreground="{Binding Timer, Converter={converters:DelayStopwatchTimer}}"
+				   Foreground="{Binding Timer, Converter={converters:DelayStopwatchTimerConverter}}"
 				   HorizontalAlignment="Center"
 				   VerticalAlignment="Center"
 				   FontSize="144"
