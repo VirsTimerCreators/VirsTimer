@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
@@ -14,7 +16,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
         private readonly IPastSolvesGetter _pastSolvesGetter;
         private readonly ISolvesSaver _solvesSaver;
 
-        public ObservableCollection<SolveViewModel> Solves { get; }
+        [Reactive]
+        public ObservableCollection<SolveViewModel> Solves { get; set; }
+
         public ReactiveCommand<SolveViewModel, Unit> DeleteItemCommand { get; }
 
         public SolvesListViewModel()
@@ -23,25 +27,29 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
             _solvesSaver = Ioc.Services.GetRequiredService<ISolvesSaver>();
 
             Solves = new ObservableCollection<SolveViewModel>();
-            DeleteItemCommand = ReactiveCommand.Create<SolveViewModel>(DeleteItem);
+            Solves.CollectionChanged += UpdateIndexes;
+
+            DeleteItemCommand = ReactiveCommand.Create<SolveViewModel>((solve) => Solves.Remove(solve));
         }
 
-        public async Task Load(Event @event, Session session)
+        public async Task LoadAsync(Event @event, Session session)
         {
             var solves = await _pastSolvesGetter.GetSolvesAsync(@event, session).ConfigureAwait(false);
-            Solves.Clear();
-            foreach (var solve in solves.OrderByDescending(x => x.Date))
-                Solves.Add(new SolveViewModel(solve));
+            var ordered = solves.OrderByDescending(solve => solve.Date).Select(solve => new SolveViewModel(solve));
+            Solves = new ObservableCollection<SolveViewModel>(ordered);
+            Solves.CollectionChanged += UpdateIndexes;
+            UpdateIndexes(null, EventArgs.Empty);
         }
 
-        public async Task Save(Event @event, Session session)
+        private void UpdateIndexes(object? sender, EventArgs e)
         {
-            await _solvesSaver.SaveSolvesAsync(Solves.Select(x => x.Model), @event, session);
+            foreach (var solve in Solves)
+                solve.Index = $"{Solves.Count - Solves.IndexOf(solve)}.";
         }
 
-        private void DeleteItem(SolveViewModel solve)
+        public Task SaveAsync(Event @event, Session session)
         {
-            Solves.Remove(solve);
+            return _solvesSaver.SaveSolvesAsync(Solves.Select(x => x.Model), @event, session);
         }
     }
 }

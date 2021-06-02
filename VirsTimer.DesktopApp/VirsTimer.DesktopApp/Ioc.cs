@@ -2,7 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
+using VirsTimer.Core.Constants;
 using VirsTimer.Core.Services;
+using VirsTimer.Core.Services.Scrambles;
+using VirsTimer.Core.Services.Sessions;
 
 namespace VirsTimer.DesktopApp
 {
@@ -41,11 +44,15 @@ namespace VirsTimer.DesktopApp
         {
             var fileSolvesService = new FileSolvesService();
 
+            services.AddHttpClient(
+                Server.ScrambleEndpoint,
+                client => client.BaseAddress = new Uri(Path.Combine(Server.Address, Server.ScrambleEndpoint)));
+
             services.AddSingleton<IPastSolvesGetter>(fileSolvesService);
             services.AddSingleton<ISolvesSaver>(fileSolvesService);
             services.AddSingleton<IEventsGetter>(fileSolvesService);
             services.AddSingleton<ISessionsManager>(fileSolvesService);
-            services.AddSingleton<IScrambleGenerator>(new RandomScrambleGenerator());
+            services.AddSingleton<IScrambleGenerator, ServerScrambleGenerator>();
             services.AddHttpClient();
         }
     }

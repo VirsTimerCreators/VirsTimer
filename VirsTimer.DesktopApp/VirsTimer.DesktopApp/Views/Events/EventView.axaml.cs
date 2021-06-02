@@ -1,17 +1,13 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace VirsTimer.DesktopApp.Views
+namespace VirsTimer.DesktopApp.Views.Events
 {
-    public class SessionChangeView : Window
+    public class EventView : UserControl
     {
-        public SessionChangeView()
+        public EventView()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         private void InitializeComponent()

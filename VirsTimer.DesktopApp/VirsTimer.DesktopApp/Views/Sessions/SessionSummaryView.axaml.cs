@@ -1,12 +1,11 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace VirsTimer.DesktopApp.Views
+namespace VirsTimer.DesktopApp.Views.Sessions
 {
-    public class ScrambleView : UserControl
+    public class SessionSummaryView : UserControl
     {
-        public ScrambleView()
+        public SessionSummaryView()
         {
             InitializeComponent();
         }

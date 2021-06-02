@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="400" Height="240"
+        CanResize="False"
+        x:Class="VirsTimer.DesktopApp.Views.Solves.SolveAddView"
+        xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
+        Title="SolveAddView"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        ExtendClientAreaToDecorationsHint="True">
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.45" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+        <Grid RowDefinitions="*,2*,2*" Margin="20">
+            <TextBox
+                Grid.Row="1"
+                Name="SolveTextBox"
+                Text="{Binding SolveTime, Mode=OneWayToSource, Converter={converters:TimeSpanFullValueConverter}}"
+                MaxLength="11"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                FontSize="32"
+                FontFamily="Verdana"
+                FontWeight="Medium"/>
+            <Button 
+                Grid.Row="2" 
+                Content="Akceptuj"
+                Background="#0959db"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Command="{Binding AcceptCommand}"
+                CommandParameter="{Binding $parent[Window]}"/>
+        </Grid>
+        </Panel>
+</Window>

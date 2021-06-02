@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using System;
 using System.Threading.Tasks;
 using VirsTimer.Core.Timers;
@@ -7,21 +8,13 @@ namespace VirsTimer.DesktopApp.ViewModels
 {
     public class TimerViewModel : ViewModelBase
     {
-        private TimeSpan _currentTime = TimeSpan.Zero;
-        private TimeSpan _savedTime = TimeSpan.Zero;
-
         public DelayStopwatchTimer Timer { get; }
-        public TimeSpan SavedTime
-        {
-            get => _savedTime;
-            set => this.RaiseAndSetIfChanged(ref _savedTime, value);
-        }
 
-        public TimeSpan CurrentTime
-        {
-            get => _currentTime;
-            set => this.RaiseAndSetIfChanged(ref _currentTime, value);
-        }
+        [Reactive]
+        public TimeSpan SavedTime { get; set; } = TimeSpan.Zero;
+
+        [Reactive]
+        public TimeSpan CurrentTime { get; set; } = TimeSpan.Zero;
 
         public TimerViewModel()
         {
