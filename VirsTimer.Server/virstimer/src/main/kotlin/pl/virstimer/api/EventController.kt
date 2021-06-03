@@ -17,7 +17,6 @@ internal class EventController(val repository: EventRepository) {
     fun createEvent(@RequestBody request: EventRequest): ResponseEntity<Event> {
         val event = repository.save(
             Event(
-                id = request.id,
                 userId = request.userId,
                 puzzleType = request.puzzleType
             )

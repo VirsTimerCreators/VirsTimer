@@ -11,13 +11,13 @@ import pl.virstimer.repository.SessionRepository
 @RequestMapping("/session")
 class SessionController(val repository: SessionRepository) {
 
-    @GetMapping("/sessions/all")
+    @GetMapping("/all")
     fun findAllSession(): MutableList<Session> = repository.findAll()
 
-    @GetMapping("/sessions/user/{userId}")
+    @GetMapping("/user/{userId}")
     fun findAllUserId(@PathVariable userId: String): List<Session> = repository.findAllByUserId(userId)
 
-    @GetMapping("/sessions/event/{eventId}")
+    @GetMapping("/event/{eventId}")
     fun findAllEventId(@PathVariable eventId: String): List<Session> = repository.findAllByEventId(eventId)
 
     @GetMapping("/{eventId}")
@@ -27,7 +27,7 @@ class SessionController(val repository: SessionRepository) {
 
 
     @PostMapping
-    fun createEvent(@RequestBody request: SessionRequest): ResponseEntity<Session> {
+    fun createController(@RequestBody request: SessionRequest): ResponseEntity<Session> {
         val session = repository.save(
             Session(
                 id = request.id,
