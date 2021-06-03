@@ -12,9 +12,11 @@ using VirsTimer.Core.Services.Sessions;
 
 namespace VirsTimer.Core.Services
 {
-    public partial class FileSolvesService : IPastSolvesGetter, ISolvesSaver, IEventsGetter, ISessionsManager
+    public partial class FileSolvesService : IEventsGetter, ISessionsManager
     {
         private const string EmptyArrayJson = "[]";
+        private static readonly Regex JsonFileRegex = new Regex("([^<>:\"/\\|?*]+)\\.json", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         private readonly IFileSystem _fileSystem;
 
         public FileSolvesService(IFileSystem? fileSystem = null)
@@ -45,7 +47,6 @@ namespace VirsTimer.Core.Services
             return Task.FromResult<IReadOnlyList<Event>>(events);
         }
 
-        private static readonly Regex JsonFileRegex = new Regex("([^<>:\"/\\|?*]+)\\.json", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         public async Task<IReadOnlyList<Session>> GetAllSessionsAsync(Event @event)
         {
             var targetDirectory = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Name);
@@ -73,17 +74,16 @@ namespace VirsTimer.Core.Services
                 return Array.Empty<Solve>();
 
             using var stream = _fileSystem.File.OpenRead(targetFile);
-            var solves = await JsonSerializer.DeserializeAsync<IReadOnlyList<Solve>>(stream).ConfigureAwait(false);
+            var solves = await JsonSerializer.DeserializeAsync<IReadOnlyList<Solve>>(stream).ConfigureAwait(false) ?? Array.Empty<Solve>();
+            await Task.WhenAll(
+                solves.Select(solve => Task.Run(() =>
+                {
+                    solve.Event = @event;
+                    solve.Session = session;
+                })))
+                .ConfigureAwait(false);
 
             return solves;
-        }
-
-        public async Task SaveSolvesAsync(IEnumerable<Solve> solves, Event @event, Session session)
-        {
-            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Name, $"{session.Name}{FileExtensions.Json}");
-            _fileSystem.Directory.CreateDirectory(_fileSystem.Path.GetDirectoryName(targetFile));
-            using var stream = _fileSystem.File.Exists(targetFile) ? _fileSystem.File.Create(targetFile) : _fileSystem.File.OpenWrite(targetFile);
-            await JsonSerializer.SerializeAsync(stream, solves).ConfigureAwait(false);
         }
 
         public Task<Session> AddSessionAsync(Event @event, string name)
@@ -115,5 +115,6 @@ namespace VirsTimer.Core.Services
 
             return Task.CompletedTask;
         }
+
     }
 }

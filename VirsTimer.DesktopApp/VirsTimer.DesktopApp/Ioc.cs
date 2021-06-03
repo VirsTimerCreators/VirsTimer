@@ -2,10 +2,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Services;
 using VirsTimer.Core.Services.Scrambles;
 using VirsTimer.Core.Services.Sessions;
+using VirsTimer.Core.Services.Solves;
 
 namespace VirsTimer.DesktopApp
 {
@@ -48,8 +50,8 @@ namespace VirsTimer.DesktopApp
                 Server.ScrambleEndpoint,
                 client => client.BaseAddress = new Uri(Path.Combine(Server.Address, Server.ScrambleEndpoint)));
 
-            services.AddSingleton<IPastSolvesGetter>(fileSolvesService);
-            services.AddSingleton<ISolvesSaver>(fileSolvesService);
+            services.AddSingleton<IFileSystem, FileSystem>();
+            services.AddSingleton<ISolvesRepository, FileSolvesRepository>();
             services.AddSingleton<IEventsGetter>(fileSolvesService);
             services.AddSingleton<ISessionsManager>(fileSolvesService);
             services.AddSingleton<IScrambleGenerator, ServerScrambleGenerator>();

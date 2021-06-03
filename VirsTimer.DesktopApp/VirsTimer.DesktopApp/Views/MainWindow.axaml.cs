@@ -13,11 +13,9 @@ namespace VirsTimer.DesktopApp.Views
         public MainWindow()
         {
             InitializeComponent();
-
 #if DEBUG
             this.AttachDevTools();
 #endif
-
             ViewModel = new MainWindowViewModel(new Event(Server.Events.ThreeByThree));
         }
 
@@ -35,8 +33,13 @@ namespace VirsTimer.DesktopApp.Views
             {
                 ViewModel.TimerViewModel.Timer.Stop();
 
-                var solve = new Solve(ViewModel.TimerViewModel.SavedTime, ViewModel.ScrambleViewModel.CurrentScramble.Value);
-                await ViewModel.SaveSolveAsync(solve);
+                var solve = new Solve(
+                    ViewModel.EventViewModel.CurrentEvent,
+                    ViewModel.SessionSummaryViewModel.CurrentSession,
+                    ViewModel.TimerViewModel.SavedTime,
+                    ViewModel.ScrambleViewModel.CurrentScramble.Value);
+
+                await ViewModel.SaveSolveAsync(solve).ConfigureAwait(false);
             }
         }
 

@@ -6,6 +6,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.Extensions;
 using VirsTimer.DesktopApp.Views.Solves;
 
@@ -13,6 +14,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
 {
     public class SolveViewModel : ViewModelBase
     {
+        private readonly ISolvesRepository _solvesRepository;
+
         public bool Accepted { get; private set; }
         public Solve Model { get; }
         public TimeSpan Time { get; }
@@ -30,8 +33,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
         public SolveFlagsViewModel SolveFlagsViewModel { get; }
         public ReactiveCommand<Window, Unit> AcceptCommand { get; }
 
-        public SolveViewModel(Solve solve)
+        public SolveViewModel(Solve solve, ISolvesRepository solvesSaver)
         {
+            _solvesRepository = solvesSaver;
+
             Model = solve;
             Time = solve.TimeAsSpan;
             Flag = solve.Flag;
@@ -41,7 +46,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
             SolveFlagsViewModel = new SolveFlagsViewModel(solve.Flag);
 
             EditSolveCommand = ReactiveCommand.CreateFromTask<Window>(EditSolve);
-            AcceptCommand = ReactiveCommand.Create<Window>(SaveFlag);
+            AcceptCommand = ReactiveCommand.CreateFromTask<Window>(SaveFlag);
 
             UpdateSummary();
         }
@@ -53,13 +58,14 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
                 DataContext = this
             };
             await dialog.ShowDialog(window);
-            //TODO save solve to server
         }
 
-        private void SaveFlag(Window window)
+        private async Task SaveFlag(Window window)
         {
+            //TODO watchout for exception - rollback flag change
             Accepted = Flag != SolveFlagsViewModel.ChoosenFlag;
             Model.Flag = Flag = SolveFlagsViewModel.ChoosenFlag;
+            await _solvesRepository.UpdateSolveAsync(Model).ConfigureAwait(true);
             UpdateSummary();
             window.Close();
         }
