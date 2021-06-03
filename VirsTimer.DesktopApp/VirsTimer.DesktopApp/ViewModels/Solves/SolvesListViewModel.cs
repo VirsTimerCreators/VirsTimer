@@ -7,49 +7,66 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
-using VirsTimer.Core.Services;
+using VirsTimer.Core.Services.Solves;
 
 namespace VirsTimer.DesktopApp.ViewModels.Solves
 {
     public class SolvesListViewModel : ViewModelBase
     {
-        private readonly IPastSolvesGetter _pastSolvesGetter;
-        private readonly ISolvesSaver _solvesSaver;
+        private readonly ISolvesRepository _solvesRepository;
+        private Event _event;
+        private Session _session;
 
         [Reactive]
         public ObservableCollection<SolveViewModel> Solves { get; set; }
 
         public ReactiveCommand<SolveViewModel, Unit> DeleteItemCommand { get; }
 
-        public SolvesListViewModel()
+        public SolvesListViewModel(Event @event, Session session)
         {
-            _pastSolvesGetter = Ioc.Services.GetRequiredService<IPastSolvesGetter>();
-            _solvesSaver = Ioc.Services.GetRequiredService<ISolvesSaver>();
+            _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
+
+            _event = @event;
+            _session = session;
 
             Solves = new ObservableCollection<SolveViewModel>();
-            Solves.CollectionChanged += UpdateIndexes;
+            Solves.CollectionChanged += UpdateIndexesAsync;
 
-            DeleteItemCommand = ReactiveCommand.Create<SolveViewModel>((solve) => Solves.Remove(solve));
+            DeleteItemCommand = ReactiveCommand.CreateFromTask<SolveViewModel>(DeleteSolveAsync);
+            OnConstructedAsync(this, EventArgs.Empty);
         }
 
-        public async Task LoadAsync(Event @event, Session session)
+        protected override async void OnConstructedAsync(object? sender, EventArgs e)
         {
-            var solves = await _pastSolvesGetter.GetSolvesAsync(@event, session).ConfigureAwait(false);
-            var ordered = solves.OrderByDescending(solve => solve.Date).Select(solve => new SolveViewModel(solve));
+            await ChangeEventAndSession(_event, _session).ConfigureAwait(false);
+        }
+
+        public Task ChangeEventAndSession(Event @event, Session session)
+        {
+            _event = @event;
+            _session = session;
+            return LoadAsync();
+        }
+
+        private async Task LoadAsync()
+        {
+            var solves = await _solvesRepository.GetSolvesAsync(_event, _session).ConfigureAwait(false);
+            var ordered = solves.OrderByDescending(solve => solve.Date).Select(solve => new SolveViewModel(solve, _solvesRepository));
             Solves = new ObservableCollection<SolveViewModel>(ordered);
-            Solves.CollectionChanged += UpdateIndexes;
-            UpdateIndexes(null, EventArgs.Empty);
+            Solves.CollectionChanged += UpdateIndexesAsync;
+            UpdateIndexesAsync(this, EventArgs.Empty);
         }
 
-        private void UpdateIndexes(object? sender, EventArgs e)
+        private async void UpdateIndexesAsync(object? sender, EventArgs e)
         {
-            foreach (var solve in Solves)
-                solve.Index = $"{Solves.Count - Solves.IndexOf(solve)}.";
+            var tasks = Solves.Select(solve => Task.Run(() => solve.Index = $"{Solves.Count - Solves.IndexOf(solve)}."));
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
-        public Task SaveAsync(Event @event, Session session)
+        private async Task DeleteSolveAsync(SolveViewModel solveViewModel)
         {
-            return _solvesSaver.SaveSolvesAsync(Solves.Select(x => x.Model), @event, session);
+            await _solvesRepository.DeleteSolveAsync(solveViewModel.Model).ConfigureAwait(false);
+            Solves.Remove(solveViewModel);
         }
     }
 }

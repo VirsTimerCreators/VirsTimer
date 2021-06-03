@@ -1,10 +1,11 @@
 ﻿using Avalonia.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
-using System;
 using System.ComponentModel;
 using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.ViewModels.Events;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
 using VirsTimer.DesktopApp.ViewModels.Sessions;
@@ -15,6 +16,8 @@ namespace VirsTimer.DesktopApp.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private readonly ISolvesRepository _solvesRepository;
+
         public EventViewModel EventViewModel { get; }
         public SessionSummaryViewModel SessionSummaryViewModel { get; }
         public TimerViewModel TimerViewModel { get; }
@@ -25,34 +28,25 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public MainWindowViewModel(Event @event)
         {
+            _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
+
             EventViewModel = new EventViewModel(@event);
             SessionSummaryViewModel = new SessionSummaryViewModel(EventViewModel.CurrentEvent);
             TimerViewModel = new TimerViewModel();
-            SolvesListViewModel = new SolvesListViewModel();
+            SolvesListViewModel = new SolvesListViewModel(EventViewModel.CurrentEvent, SessionSummaryViewModel.CurrentSession);
             ScrambleViewModel = new ScrambleViewModel(@event);
 
             AddSolveManualyCommand = ReactiveCommand.CreateFromTask<Window>(AddSolveManually);
 
             EventViewModel.PropertyChanged += OnEventChangeAsync;
             SessionSummaryViewModel.PropertyChanged += OnSessionChangeAsync;
-            OnConstructedAsync(this, EventArgs.Empty);
         }
 
         public async Task SaveSolveAsync(Solve solve)
         {
-            SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve));
-            await SolvesListViewModel.SaveAsync(EventViewModel.CurrentEvent, SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
+            SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve, _solvesRepository));
+            await _solvesRepository.SaveSolveAsync(solve).ConfigureAwait(false);
             await ScrambleViewModel.GetNextScrambleAsync().ConfigureAwait(false);
-        }
-
-        public Task LoadSolvesAsync()
-        {
-            return SolvesListViewModel.LoadAsync(EventViewModel.CurrentEvent, SessionSummaryViewModel.CurrentSession);
-        }
-
-        protected override async void OnConstructedAsync(object? sender, EventArgs e)
-        {
-            await LoadSolvesAsync().ConfigureAwait(false);
         }
 
         private async Task AddSolveManually(Window window)
@@ -65,8 +59,13 @@ namespace VirsTimer.DesktopApp.ViewModels
             await solveAddView.ShowDialog(window);
             if (!solveAddViewModel.Accepted)
                 return;
-            var solve = new Solve(solveAddViewModel.SolveTime, ScrambleViewModel.CurrentScramble.Value);
-            await SaveSolveAsync(solve);
+            var solve = new Solve(
+                EventViewModel.CurrentEvent,
+                SessionSummaryViewModel.CurrentSession,
+                solveAddViewModel.SolveTime,
+                ScrambleViewModel.CurrentScramble.Value);
+
+            await _solvesRepository.SaveSolveAsync(solve).ConfigureAwait(false);
         }
 
         private async void OnEventChangeAsync(object? sender, PropertyChangedEventArgs e)
@@ -86,7 +85,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             if (e.PropertyName != nameof(SessionSummaryViewModel.CurrentSession))
                 return;
 
-            await LoadSolvesAsync().ConfigureAwait(false);
+            await SolvesListViewModel.ChangeEventAndSession(EventViewModel.CurrentEvent, SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
         }
     }
 }
