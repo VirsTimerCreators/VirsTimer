@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Abstractions;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Services;
+using VirsTimer.Core.Services.Events;
 using VirsTimer.Core.Services.Scrambles;
 using VirsTimer.Core.Services.Sessions;
 using VirsTimer.Core.Services.Solves;
@@ -52,7 +53,7 @@ namespace VirsTimer.DesktopApp
 
             services.AddSingleton<IFileSystem, FileSystem>();
             services.AddSingleton<ISolvesRepository, FileSolvesRepository>();
-            services.AddSingleton<IEventsGetter>(fileSolvesService);
+            services.AddSingleton<IEventsRepository, FileEventsRepository>();
             services.AddSingleton<ISessionsManager>(fileSolvesService);
             services.AddSingleton<IScrambleGenerator, ServerScrambleGenerator>();
             services.AddHttpClient();

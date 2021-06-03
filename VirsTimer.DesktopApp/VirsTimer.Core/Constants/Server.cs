@@ -94,6 +94,28 @@
             /// 5x5x5 blindfolded.
             /// </summary>
             public const string FiveByFiveBlindfold = "FIVE_BY_FIVE_BLINDFOLDED";
+
+            /// <summary>
+            /// All predefined events.
+            /// </summary>
+            public static readonly string[] All = new[]
+            {
+                ThreeByThree,
+                TwoByTwo,
+                FourByFour,
+                FiveByFive,
+                SixBySix,
+                SevenBySeven,
+                Megaminx,
+                Pyraminx,
+                Skewb,
+                Square_One,
+                Clock,
+                ThreeByThreeOneHand,
+                ThreeByThreeBlindfold,
+                FourByFourBlindfold,
+                FiveByFiveBlindfold,
+            };
         }
     }
 }

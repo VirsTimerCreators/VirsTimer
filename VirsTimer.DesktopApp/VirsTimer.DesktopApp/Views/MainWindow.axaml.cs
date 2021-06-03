@@ -2,8 +2,9 @@ using Avalonia;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using VirsTimer.Core.Constants;
+using Microsoft.Extensions.DependencyInjection;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Services.Events;
 using VirsTimer.DesktopApp.ViewModels;
 
 namespace VirsTimer.DesktopApp.Views
@@ -16,7 +17,8 @@ namespace VirsTimer.DesktopApp.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
-            ViewModel = new MainWindowViewModel(new Event(Server.Events.ThreeByThree));
+            var eventsRepository = Ioc.Services.GetRequiredService<IEventsRepository>();
+            ViewModel = new MainWindowViewModel(eventsRepository);
         }
 
         private void InitializeComponent()
