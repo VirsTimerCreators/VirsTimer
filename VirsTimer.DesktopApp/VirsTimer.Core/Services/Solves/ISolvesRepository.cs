@@ -5,7 +5,7 @@ using VirsTimer.Core.Models;
 namespace VirsTimer.Core.Services.Solves
 {
     /// <summary>
-    /// Client providing operations for <see cref="Solve"/> model.
+    /// Service providing repository operations for <see cref="Solve"/> model.
     /// </summary>
     public interface ISolvesRepository
     {
