@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Services.Events;
 using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.ViewModels.Events;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
@@ -26,15 +27,15 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public ReactiveCommand<Window, Unit> AddSolveManualyCommand { get; }
 
-        public MainWindowViewModel(Event @event)
+        public MainWindowViewModel(IEventsRepository eventsRepository)
         {
             _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
 
-            EventViewModel = new EventViewModel(@event);
+            EventViewModel = new EventViewModel(eventsRepository);
             SessionSummaryViewModel = new SessionSummaryViewModel(EventViewModel.CurrentEvent);
             TimerViewModel = new TimerViewModel();
             SolvesListViewModel = new SolvesListViewModel(EventViewModel.CurrentEvent, SessionSummaryViewModel.CurrentSession);
-            ScrambleViewModel = new ScrambleViewModel(@event);
+            ScrambleViewModel = new ScrambleViewModel(EventViewModel.CurrentEvent);
 
             AddSolveManualyCommand = ReactiveCommand.CreateFromTask<Window>(AddSolveManually);
 

@@ -6,6 +6,11 @@
     public class Event
     {
         /// <summary>
+        /// Event id.
+        /// </summary>
+        public string Id { get; }
+
+        /// <summary>
         /// Event name.
         /// </summary>
         public string Name { get; }
@@ -15,6 +20,8 @@
         /// </summary>
         public Event(string name)
         {
+            //TODO id.
+            Id = string.Empty;
             Name = name;
         }
     }
