@@ -30,7 +30,12 @@ namespace VirsTimer.DesktopApp.ViewModels
         public LoginViewModel(ILoginRepository loginRepository)
         {
             _loginRepository = loginRepository;
-            AcceptLoginCommand = ReactiveCommand.CreateFromTask<Window>(AcceptLoginAsync);
+ 
+            var acceptLoginEnabled = this.WhenAnyValue(
+                x => x.LoginName,
+                x => x.LoginPassowd,
+                (name, password) => !string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(password));
+            AcceptLoginCommand = ReactiveCommand.CreateFromTask<Window>(AcceptLoginAsync, acceptLoginEnabled);
         }
  
         private async Task AcceptLoginAsync(Window parent)
