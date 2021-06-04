@@ -2,51 +2,79 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:views="clr-namespace:VirsTimer.DesktopApp.Views;assembly=VirsTimer.DesktopApp"
-		xmlns:solveViews="clr-namespace:VirsTimer.DesktopApp.Views.Solves;assembly=VirsTimer.DesktopApp"
-		xmlns:sessionsViews="clr-namespace:VirsTimer.DesktopApp.Views.Sessions;assembly=VirsTimer.DesktopApp"
-		Height="1050" Width="1500"
-		MinHeight="700" MinWidth="1000"
+        xmlns:views="clr-namespace:VirsTimer.DesktopApp.Views;assembly=VirsTimer.DesktopApp"
+        xmlns:solvesViews="clr-namespace:VirsTimer.DesktopApp.Views.Solves;assembly=VirsTimer.DesktopApp"
+        xmlns:eventsViews="clr-namespace:VirsTimer.DesktopApp.Views.Events;assembly=VirsTimer.DesktopApp"
+        xmlns:sessionsViews="clr-namespace:VirsTimer.DesktopApp.Views.Sessions;assembly=VirsTimer.DesktopApp"
+        xmlns:scramblesViews="clr-namespace:VirsTimer.DesktopApp.Views.Scrambles;assembly=VirsTimer.DesktopApp"
+        Height="1050" Width="1500"
+        MinHeight="700" MinWidth="1000"
         x:Class="VirsTimer.DesktopApp.Views.MainWindow"
         Title="MainWindow"
-		KeyDown="WindowKeyDown"
-		KeyUp="WindowKeyUp"
-		xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
-		TransparencyLevelHint="AcrylicBlur"
-		Background="Transparent"
-		WindowState="FullScreen"
-		ExtendClientAreaToDecorationsHint="True">
-	<Grid RowDefinitions="100,Auto,300,*">
-		<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
-			<ExperimentalAcrylicBorder.Material>
-				<ExperimentalAcrylicMaterial
-					BackgroundSource="Digger"
-					TintColor="Black"
-					TintOpacity="1"
-					MaterialOpacity="0.75" />
-			</ExperimentalAcrylicBorder.Material>
-		</ExperimentalAcrylicBorder>
-		<Grid Grid.Row="0" ColumnDefinitions="*,*,*">
-			<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="3">
-				<ExperimentalAcrylicBorder.Material>
-					<ExperimentalAcrylicMaterial
-						BackgroundSource="Digger"
-						TintColor="Black"
-						TintOpacity="1"
-						MaterialOpacity="0.45" />
-				</ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
-			<views:EventView Grid.Column="0" Content="{Binding ViewModel.EventViewModel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-			<sessionsViews:SessionSummaryView Grid.Column="1" Content="{Binding ViewModel.SessionSummaryViewModel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-		</Grid>
-		<views:ScrambleView MinHeight="100" MaxHeight="300" Grid.Row="1" Content="{Binding ViewModel.ScrambleViewModel}"/>
-		<views:TimerView Grid.Row="2" Content="{Binding ViewModel.TimerViewModel}"/>
-		<Grid Grid.Row="3" ColumnDefinitions="*,*" RowDefinitions="*, Auto">
-			<solveViews:SolvesListView Grid.Row="0" Content="{Binding ViewModel.SolvesListViewModel}"/>
-			<Button Grid.Row="1" HorizontalAlignment="Right" Command="{Binding AddSolveManualyCommand}" Background="#0959db" Content="Dodaj ręcznie" HorizontalContentAlignment="Center" Width="130" Margin="20 12 26 12"/>
-			<Grid Grid.Column="1" RowDefinitions="*,*">
-				<Image Name="ImageLayout" Grid.Column="1" Focusable="False" Source="{Binding ViewModel.ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
-			</Grid>
-		</Grid>
-	</Grid>
+        KeyDown="WindowKeyDown"
+        KeyUp="WindowKeyUp"
+        xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        WindowState="FullScreen"
+        ExtendClientAreaToDecorationsHint="True">
+    <Grid RowDefinitions="100,Auto,300,*">
+        <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.75" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+        <Grid Grid.Row="0" ColumnDefinitions="*,*,*">
+            <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="3">
+                <ExperimentalAcrylicBorder.Material>
+                    <ExperimentalAcrylicMaterial
+                        BackgroundSource="Digger"
+                        TintColor="Black"
+                        TintOpacity="1"
+                        MaterialOpacity="0.45" />
+                </ExperimentalAcrylicBorder.Material>
+            </ExperimentalAcrylicBorder>
+            <eventsViews:EventView Grid.Column="0" Content="{Binding EventViewModel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <sessionsViews:SessionSummaryView Grid.Column="1" Content="{Binding SessionSummaryViewModel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+        <scramblesViews:ScrambleView
+            MinHeight="100" 
+            MaxHeight="300"
+            Grid.Row="1" 
+            Content="{Binding ScrambleViewModel}"/>
+        <views:TimerView 
+            Grid.Row="2"
+            Content="{Binding TimerViewModel}"/>
+        <Grid 
+            Grid.Row="3" 
+            ColumnDefinitions="*,*"
+            RowDefinitions="*, Auto">
+            <solvesViews:SolvesListView
+                Grid.Row="0"
+                Content="{Binding SolvesListViewModel}"/>
+            <Button 
+                Grid.Row="1"
+                HorizontalAlignment="Right"
+                Command="{Binding AddSolveManualyCommand}"
+                CommandParameter="{Binding $parent[Window]}"
+                Background="#0959db"
+                Content="Dodaj ręcznie" 
+                HorizontalContentAlignment="Center"
+                Width="130" 
+                Margin="20 12 26 12"/>
+            <Grid 
+                Grid.Column="1"
+                RowDefinitions="*,*">
+                <Image
+                    Name="ImageLayout"
+                    Grid.Column="1"
+                    Focusable="False" 
+                    Source="{Binding ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
+            </Grid>
+        </Grid>
+    </Grid>
 </Window>

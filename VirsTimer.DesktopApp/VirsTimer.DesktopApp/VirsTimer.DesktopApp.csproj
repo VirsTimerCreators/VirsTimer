@@ -17,18 +17,11 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+    <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
     <PackageReference Include="ReactiveUI.Fody" Version="13.3.2" />
     <PackageReference Include="Svg" Version="3.2.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirsTimer.Core\VirsTimer.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Views\Sessions\SessionSummaryView.axaml.cs">
-      <DependentUpon>SessionSummaryView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Solves\SolveView.axaml.cs">
-      <DependentUpon>SolveView.axaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 </Project>

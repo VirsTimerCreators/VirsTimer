@@ -6,13 +6,13 @@ using System.Globalization;
 
 namespace VirsTimer.DesktopApp.ValueConverters
 {
-    public class DelayStopwatchTimer : MarkupExtension, IValueConverter
+    public class DelayStopwatchTimerConverter : MarkupExtension, IValueConverter
     {
-        private static DelayStopwatchTimer? _converter = null;
+        private static DelayStopwatchTimerConverter? _converter = null;
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return _converter ??= new DelayStopwatchTimer();
+            return _converter ??= new DelayStopwatchTimerConverter();
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

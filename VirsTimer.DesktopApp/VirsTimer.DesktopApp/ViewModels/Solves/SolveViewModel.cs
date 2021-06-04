@@ -1,17 +1,20 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using System;
-using System.Windows.Input;
+using System.Reactive;
+using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.Extensions;
+using VirsTimer.DesktopApp.Views.Solves;
 
 namespace VirsTimer.DesktopApp.ViewModels.Solves
 {
     public class SolveViewModel : ViewModelBase
     {
-        private string _summary = string.Empty;
-        private string _index = "-1.";
+        private readonly ISolvesRepository _solvesRepository;
 
         public bool Accepted { get; private set; }
         public Solve Model { get; }
@@ -19,21 +22,21 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
         public SolveFlag Flag { get; set; }
         public DateTime Date { get; }
         public string Scramble { get; }
-        public string Summary
-        {
-            get => _summary;
-            set => this.RaiseAndSetIfChanged(ref _summary, value);
-        }
-        public string Index
-        {
-            get => _index;
-            set => this.RaiseAndSetIfChanged(ref _index, value);
-        }
-        public SolveFlagsViewModel SolveFlagsViewModel { get; }
-        public ICommand AcceptCommand { get; }
 
-        public SolveViewModel(Solve solve)
+        [Reactive]
+        public string Summary { get; set; } = string.Empty;
+
+        [Reactive]
+        public string Index { get; set; } = "-1";
+
+        public ReactiveCommand<Window, Unit> EditSolveCommand { get; }
+        public SolveFlagsViewModel SolveFlagsViewModel { get; }
+        public ReactiveCommand<Window, Unit> AcceptCommand { get; }
+
+        public SolveViewModel(Solve solve, ISolvesRepository solvesSaver)
         {
+            _solvesRepository = solvesSaver;
+
             Model = solve;
             Time = solve.TimeAsSpan;
             Flag = solve.Flag;
@@ -41,15 +44,28 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
             Scramble = solve.Scramble;
 
             SolveFlagsViewModel = new SolveFlagsViewModel(solve.Flag);
-            AcceptCommand = ReactiveCommand.Create<Window>(SaveFlag);
+
+            EditSolveCommand = ReactiveCommand.CreateFromTask<Window>(EditSolve);
+            AcceptCommand = ReactiveCommand.CreateFromTask<Window>(SaveFlag);
 
             UpdateSummary();
         }
 
-        private void SaveFlag(Window window)
+        private async Task EditSolve(Window window)
         {
+            var dialog = new SolveView
+            {
+                DataContext = this
+            };
+            await dialog.ShowDialog(window);
+        }
+
+        private async Task SaveFlag(Window window)
+        {
+            //TODO watchout for exception - rollback flag change
             Accepted = Flag != SolveFlagsViewModel.ChoosenFlag;
             Model.Flag = Flag = SolveFlagsViewModel.ChoosenFlag;
+            await _solvesRepository.UpdateSolveAsync(Model).ConfigureAwait(true);
             UpdateSummary();
             window.Close();
         }

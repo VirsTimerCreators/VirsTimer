@@ -1,23 +1,58 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Avalonia.Controls;
 using ReactiveUI;
-using System.Linq;
+using ReactiveUI.Fody.Helpers;
+using System.Collections.Generic;
+using System.Reactive;
+using System.Threading.Tasks;
+using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Sessions;
+using VirsTimer.DesktopApp.Views.Sessions;
 
 namespace VirsTimer.DesktopApp.ViewModels.Sessions
 {
     public class SessionSummaryViewModel : ViewModelBase
     {
-        private Session _currentSession = new();
-        public Session CurrentSession
+        private readonly ISessionRepository _sessionRepository;
+        private IReadOnlyList<Session>? _sessions;
+        private Event _event = null!;
+
+        [Reactive]
+        public Session CurrentSession { get; set; } = null!;
+
+        public ReactiveCommand<Window, Unit> ChangeSessionCommand { get; }
+
+        public SessionSummaryViewModel(ISessionRepository sessionRepository)
         {
-            get => _currentSession;
-            set => this.RaiseAndSetIfChanged(ref _currentSession, value);
+            _sessionRepository = sessionRepository;
+            ChangeSessionCommand = ReactiveCommand.CreateFromTask<Window>(ChangeSessionAsync);
         }
 
-        public SessionSummaryViewModel(Event @event)
+        public async Task ChangeSessionAsync(Event @event)
         {
-            CurrentSession = Ioc.Services.GetRequiredService<ISessionsManager>().GetAllSessionsAsync(@event).GetAwaiter().GetResult().FirstOrDefault() ?? new();
+            _event = @event;
+            _sessions = await _sessionRepository.GetSessionsAsync(_event).ConfigureAwait(false);
+            if (_sessions.IsNullOrEmpty())
+            {
+                var session = new Session(@event, $"{Constants.Sessions.NewSessionNameBase}1");
+                await _sessionRepository.AddSessionAsync(session).ConfigureAwait(false);
+                return;
+            }
+
+            CurrentSession = _sessions[0];
+        }
+
+        private async Task ChangeSessionAsync(Window window)
+        {
+            var sessionChangeViewModel = new SessionChangeViewModel(_event, _sessionRepository);
+            var dialog = new SessionChangeView
+            {
+                DataContext = sessionChangeViewModel
+            };
+
+            await dialog.ShowDialog(window);
+            if (sessionChangeViewModel.Accepted)
+                CurrentSession = sessionChangeViewModel.SelectedSession!.Session;
         }
     }
 }

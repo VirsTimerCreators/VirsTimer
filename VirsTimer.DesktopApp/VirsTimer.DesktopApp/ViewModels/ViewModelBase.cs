@@ -1,11 +1,13 @@
 using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace VirsTimer.DesktopApp.ViewModels
 {
     public class ViewModelBase : ReactiveObject
     {
+        public virtual Task ConstructAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

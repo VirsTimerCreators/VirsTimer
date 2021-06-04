@@ -5,11 +5,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import pl.virstimer.TestCommons
+import pl.virstimer.db.security.model.User
+
 
 
 @SpringBootTest
@@ -20,9 +23,9 @@ class ScrambleControllerIntTest : TestCommons(){
     @BeforeEach
     fun injections(){ before_each() }
 
-
     @Test
     fun should_return_scramble() {
+
         mockMvc.perform(get("/scramble/THREE_BY_THREE"))
                 .andExpect(jsonPath("$.scramble").isNotEmpty)
                 .andExpect(jsonPath("$.svgTag").isNotEmpty)

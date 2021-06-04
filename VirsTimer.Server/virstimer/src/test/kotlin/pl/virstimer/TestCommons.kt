@@ -10,7 +10,10 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import pl.virstimer.api.SessionRequest
 import pl.virstimer.model.*
-
+import org.springframework.test.web.servlet.ResultActions
+import pl.virstimer.api.auth.AuthControllerIntTest
+import pl.virstimer.security.LoginRequest
+import pl.virstimer.security.SignupRequest
 
 open class TestCommons {
     @Autowired
@@ -47,6 +50,13 @@ open class TestCommons {
                 .content(
                     Gson().toJson(
                         Event(ObjectId(), userId, puzzleType)
+
+    fun register(username: String, password: String, roles: Set<String> = setOf("USER")) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    Gson().toJson(SignupRequest(username, "email@email.com", roles, password)
                     ).toString()
                 )
 
@@ -63,6 +73,7 @@ open class TestCommons {
                 )
 
         )
+        
     fun createSessionHex(userId: String, eventId: String, name: String) =
         mockMvc.perform(
             MockMvcRequestBuilders.post("/sessions/hex/post")
@@ -70,11 +81,18 @@ open class TestCommons {
                 .content(
                     Gson().toJson(
                         Session(ObjectId("60ce14080000000000000000"), userId, eventId, name)
+
+    fun login(username: String, password: String): ResultActions =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/auth/signin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    Gson().toJson(
+                        LoginRequest(username, password)
                     ).toString()
                 )
 
         )
-
 
     fun patchSession(updateName: String = "updateName", id : String = "60ce14080000000000000000") =
         mockMvc.perform(
@@ -88,5 +106,12 @@ open class TestCommons {
 
         )
 
+    fun ResultActions.bearerToken() : AuthControllerIntTest.LoginResponseData {
+        val map = Gson().fromJson(this.andReturn().response.contentAsString, Map::class.java)
 
+        return AuthControllerIntTest.LoginResponseData(
+            map["tokenType"] as String + " " + map["accessToken"] as String,
+            map["roles"] as ArrayList<String>
+        )
+    }
 }

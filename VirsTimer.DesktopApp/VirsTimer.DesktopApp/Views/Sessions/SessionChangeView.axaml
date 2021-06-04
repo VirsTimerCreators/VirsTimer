@@ -58,6 +58,8 @@
                             Grid.Column="2" 
                             HorizontalContentAlignment="Center" 
                             Content="Usuń"
+                            Command="{Binding ParentViewModel.DeleteSessionCommand}"
+                            CommandParameter="{Binding}"
                             Click="ClickWithUnselect"
                             IsVisible="{Binding EditingSession, Converter={converters:InverseBooleanConverter}}"/>
                         <Button 
