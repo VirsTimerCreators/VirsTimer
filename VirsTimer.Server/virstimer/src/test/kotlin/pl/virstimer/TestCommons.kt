@@ -12,6 +12,9 @@ import pl.virstimer.api.SessionRequest
 import pl.virstimer.model.*
 import org.springframework.test.web.servlet.ResultActions
 import pl.virstimer.api.auth.AuthControllerIntTest
+import pl.virstimer.db.security.model.ERole
+import pl.virstimer.db.security.model.Role
+import pl.virstimer.db.security.model.User
 import pl.virstimer.security.LoginRequest
 import pl.virstimer.security.SignupRequest
 
@@ -25,10 +28,21 @@ open class TestCommons {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
-    fun before_each() {
+    var token: String = ""
+
+    fun beforeEach() {
         mongoTemplate.dropCollection(Event::class.java)
         mongoTemplate.dropCollection(Session::class.java)
         mongoTemplate.dropCollection(Solve::class.java)
+        mongoTemplate.dropCollection(User::class.java)
+        mongoTemplate.dropCollection(Role::class.java)
+        mongoTemplate.insertAll(
+            listOf(
+                Role("ROLE_USER", ERole.ROLE_USER),
+                Role("ROLE_ADMIN", ERole.ROLE_ADMIN),
+                Role("ROLE_MODERATOR", ERole.ROLE_MODERATOR),
+            )
+        )
         mongoTemplate.insertAll(
             listOf(
                 Event(null, "1", "THREE_BY_THREE"),
@@ -43,15 +57,38 @@ open class TestCommons {
         )
     }
 
-    fun createEvent(userId: String, puzzleType: String) =
+    fun registerAndLogin(): String {
+        register("username", "password", setOf("USER"))
+        this.token = login("username", "password").bearerToken().authHeader
+        return token
+    }
+
+    fun createEvent(userId: String, puzzleType: String, token: String) =
         mockMvc.perform(
             MockMvcRequestBuilders.post("/events/post")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     Gson().toJson(
                         Event(ObjectId(), userId, puzzleType)
+                    )
+                )
+                .header("Authorization", token)
+        )
 
-    fun register(username: String, password: String, roles: Set<String> = setOf("USER")) =
+    fun createSession(userId: String, eventId: String, name: String, token: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/sessions/post")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    Gson().toJson(
+                        SessionRequest(userId, eventId, name)
+                    ).toString()
+                )
+                .header("Authorization", token)
+
+        )
+
+    fun register(username: String, password: String, roles: Set<String>)  =
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -61,26 +98,6 @@ open class TestCommons {
                 )
 
         )
-
-    fun createSession(userId: String, eventId: String, name: String) =
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/sessions/post")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    Gson().toJson(
-                        SessionRequest(userId, eventId, name)
-                    ).toString()
-                )
-
-        )
-        
-    fun createSessionHex(userId: String, eventId: String, name: String) =
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/sessions/hex/post")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    Gson().toJson(
-                        Session(ObjectId("60ce14080000000000000000"), userId, eventId, name)
 
     fun login(username: String, password: String): ResultActions =
         mockMvc.perform(
@@ -94,7 +111,19 @@ open class TestCommons {
 
         )
 
-    fun patchSession(updateName: String = "updateName", id : String = "60ce14080000000000000000") =
+    fun createSessionHex(userId: String, eventId: String, name: String, token: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/sessions/hex/post")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    Gson().toJson(
+                        Session(ObjectId("60ce14080000000000000000"), userId, eventId, name)
+                    )
+                )
+                .header("Authorization", token)
+        )
+
+    fun patchSession(updateName: String = "updateName", token: String, id : String = "60ce14080000000000000000") =
         mockMvc.perform(
             MockMvcRequestBuilders.patch("/sessions/patch/$id")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -103,6 +132,7 @@ open class TestCommons {
                         SessionChange(updateName)
                     ).toString()
                 )
+                .header("Authorization", token)
 
         )
 
