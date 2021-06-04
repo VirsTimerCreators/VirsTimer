@@ -15,15 +15,11 @@ import pl.virstimer.repository.SolveCustomRepository
 @RequestMapping("/sessions")
 class SessionController(
     val repository: SessionRepository,
-    val solveRepository: SolveCustomRepository,
-    val mongoTemplate: MongoTemplate
+
 ) {
 
     @GetMapping("/all")
-    fun findAllSessions(): MutableList<Session> {
-        print("dupa")
-        return listOf(Session(ObjectId(), "11", "2", "3")).toMutableList()
-    }
+    fun findAllSessions(): List<Session> = repository.findAll()
 
     @GetMapping("/{sessionId}")
     fun getSession(@PathVariable sessionId: ObjectId): Session = repository.findOneById(sessionId)
@@ -41,8 +37,6 @@ class SessionController(
     fun createSession(@RequestBody request: SessionRequest): ResponseEntity<Session> {
         val session = repository.save(
             Session(
-                //id = request.id, //need hex for testing otherwise i can't find the object
-                id = ObjectId("60ce14080000000000000000"),
                 userId = request.userId,
                 eventId = request.eventId,
                 name = request.name
@@ -74,16 +68,21 @@ class SessionController(
                 userId = original.userId,
                 eventId = original.eventId,
                 name = session.name
-
-
                 )
         )
         return ResponseEntity.ok(updatedSession)
     }
+    @DeleteMapping("delete/{sessionId}")
+    fun deleteSession(@PathVariable sessionId: ObjectId) = repository.deleteSessionById(sessionId)
+
+
+    @DeleteMapping("delete/all")
+    fun deleteSession(){
+       repository.deleteAll()
+    }
 }
 
 data class SessionRequest(
-    val id: ObjectId,
     val userId: String,
     val eventId: String,
     val name: String

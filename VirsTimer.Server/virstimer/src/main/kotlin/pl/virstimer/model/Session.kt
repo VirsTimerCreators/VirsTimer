@@ -8,10 +8,10 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document("sessions")
 class Session(
     @Id
-    val id: ObjectId?=null,
-    val userId: String,
-    val eventId: String,
-    val name: String,
+    var id: ObjectId?=null,
+    var userId: String,
+    var eventId: String,
+    var name: String,
 )
 
 data class SessionChange(val name:String)

@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("events")
 class Event(
-    @Id var id: ObjectId? = null,
+    @Id var id: ObjectId?=null,
     var userId: String,
     var puzzleType: String
 )

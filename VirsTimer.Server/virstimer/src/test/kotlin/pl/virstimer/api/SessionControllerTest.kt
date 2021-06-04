@@ -8,17 +8,17 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import pl.virstimer.TestHelper
+import pl.virstimer.TestCommons
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-internal class SessionControllerTest : TestHelper() {
+internal class SessionControllerTest : TestCommons() {
 
 
     @BeforeEach
     fun injections() {
-        before_all()
+        before_each()
     }
 
 
@@ -55,19 +55,10 @@ internal class SessionControllerTest : TestHelper() {
             .andExpect(MockMvcResultMatchers.status().isOk)
 
     }
-    @Test
-    fun should_return_session() {
-        mockMvc.perform(MockMvcRequestBuilders.get("/sessions/hex/60ce14080000000000000000"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.userId").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.eventId").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.name").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.status().isOk)
 
-    }
     @Test
     fun patching_session_ok() {
-        createSession("1", "1", "before").andExpect(MockMvcResultMatchers.status().isCreated)
+        createSessionHex("1", "1", "before").andExpect(MockMvcResultMatchers.status().isCreated)
         patchSession("updatePls").andExpect(MockMvcResultMatchers.status().isOk)
         //TODO it does work but how can check id $.name is equal to "updatePls"
     }

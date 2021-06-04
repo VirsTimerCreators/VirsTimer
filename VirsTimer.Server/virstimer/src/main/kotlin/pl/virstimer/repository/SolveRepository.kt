@@ -16,7 +16,7 @@ interface SolveRepository : MongoRepository<Solve, ObjectId> {
     fun findOneById(id: ObjectId): Solve
     fun findAllByUserId(UserId: String): List<Solve>
     fun findAllBySessionId(sessionId: String): List<Solve>
-
+    fun deleteSolveById(id:ObjectId)
 
     override fun deleteAll()
 }

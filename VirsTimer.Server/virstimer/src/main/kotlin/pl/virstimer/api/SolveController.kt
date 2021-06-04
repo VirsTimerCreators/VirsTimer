@@ -25,7 +25,7 @@ class SolveController(val repository: SolveRepository) {
     @GetMapping("/user/{userId}")
     fun findAllUser(@PathVariable userId: String): List<Solve> = repository.findAllByUserId(userId)
 
-    @GetMapping("/sessions/{sessionId}")
+    @GetMapping("/session/{sessionId}")
     fun findAllSession(@PathVariable sessionId: String): List<Solve> = repository.findAllBySessionId(sessionId)
 
 
@@ -64,11 +64,17 @@ class SolveController(val repository: SolveRepository) {
         return ResponseEntity.ok(updatedSolve)
     }
 
+    @DeleteMapping("delete/{solveId}")
+    fun deleteSolve(@PathVariable solveId: ObjectId) = repository.deleteSolveById(solveId)
+
+    @DeleteMapping("delete/all")
+    fun deleteSolves(){
+        repository.deleteAll()
+    }
 
 }
 
 data class SolveRequest(
-    val id: ObjectId,
     val userId: String,
     val sessionId: String,
     val scramble: String,

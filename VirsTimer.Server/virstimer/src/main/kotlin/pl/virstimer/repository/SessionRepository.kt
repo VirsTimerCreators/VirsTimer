@@ -17,7 +17,7 @@ interface SessionRepository: MongoRepository<Session, ObjectId> {
     fun findOneById(id: ObjectId): Session
     fun findAllByUserId(UserId: String): List<Session>
     fun findAllByEventId(eventId: String): List<Session>
-
+    fun deleteSessionById(id:ObjectId)
 
 
 }
