@@ -8,10 +8,11 @@ using VirsTimer.Core.Helpers;
 using VirsTimer.Core.Services;
 using VirsTimer.Core.Services.Cache;
 using VirsTimer.Core.Services.Events;
+using VirsTimer.Core.Services.Login;
 using VirsTimer.Core.Services.Scrambles;
 using VirsTimer.Core.Services.Sessions;
 using VirsTimer.Core.Services.Solves;
-
+ 
 namespace VirsTimer.DesktopApp
 {
     /// <summary>
@@ -21,36 +22,36 @@ namespace VirsTimer.DesktopApp
     {
         public static IServiceProvider Services { get; }
         public static IConfiguration Configuration { get; private set; } = null!;
-
+ 
         static Ioc()
         {
             BuildConfiguration();
-
+ 
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
             Services = serviceCollection.BuildServiceProvider();
         }
-
+ 
         public static TService GetService<TService>() where TService : class
         {
             return Services.GetRequiredService<TService>();
         }
-
+ 
         private static void BuildConfiguration()
         {
             var builder = new ConfigurationBuilder()
              .SetBasePath(Directory.GetCurrentDirectory())
              .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
+ 
             Configuration = builder.Build();
         }
-
+ 
         private static void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient(
                 Server.ScrambleEndpoint,
                 client => client.BaseAddress = new Uri(Path.Combine(Server.Address, Server.ScrambleEndpoint)));
-
+ 
             services.AddSingleton<IFileSystem, FileSystem>();
             services.AddSingleton<FileHelper>();
             services.AddSingleton<IApplicationCacheSaver, ApplicationCacheSaver>();
@@ -58,6 +59,7 @@ namespace VirsTimer.DesktopApp
             services.AddSingleton<ISessionRepository, FileSessionRepository>();
             services.AddSingleton<ISolvesRepository, FileSolvesRepository>();
             services.AddSingleton<IScrambleGenerator, ServerScrambleGenerator>();
+            services.AddSingleton<ILoginRepository, DebugLoginRepository>();
             services.AddHttpClient();
         }
     }
