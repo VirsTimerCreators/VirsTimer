@@ -34,3 +34,10 @@ db.roles.insertMany([
    { name: "ROLE_ADMIN" },
 ])
 ```
+
+### Documentation
+
+To access configuration, run application and visit:
+```
+http://localhost:8080/swagger-ui.html
+```
