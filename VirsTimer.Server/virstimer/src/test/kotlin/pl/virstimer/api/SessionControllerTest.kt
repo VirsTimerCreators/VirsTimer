@@ -13,7 +13,7 @@ import pl.virstimer.TestCommons
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-internal class SessionControllerTest : TestCommons() {
+class SessionControllerTest : TestCommons() {
 
 
     @BeforeEach

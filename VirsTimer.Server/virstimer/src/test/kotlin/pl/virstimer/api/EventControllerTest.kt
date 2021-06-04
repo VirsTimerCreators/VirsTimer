@@ -12,7 +12,7 @@ import pl.virstimer.TestCommons
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-internal class EventControllerTest:TestCommons() {
+class EventControllerTest :TestCommons() {
 
 
     @BeforeEach
@@ -25,9 +25,4 @@ internal class EventControllerTest:TestCommons() {
         createEvent("1", "FIVE_BY_FIVE ").andExpect(MockMvcResultMatchers.status().isCreated)
     }
 
-
-
-
-    fun getRepository() {
-    }
 }

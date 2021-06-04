@@ -15,7 +15,7 @@ import pl.virstimer.TestCommons
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-class ScrambleControllerIntTest: TestCommons(){
+class ScrambleControllerIntTest : TestCommons(){
 
     @BeforeEach
     fun injections(){ before_each() }
