@@ -1,15 +1,23 @@
 package pl.virstimer.api
 
 import org.bson.types.ObjectId
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import pl.virstimer.TestCommons
 import pl.virstimer.model.Session
 
-internal class SolveControllerTest : TestCommons(){
-
+@SpringBootTest
+@ExtendWith(SpringExtension::class)
+@AutoConfigureMockMvc
+class SolveControllerTest : TestCommons(){
     @BeforeEach
     fun injections(){
         before_each() }
