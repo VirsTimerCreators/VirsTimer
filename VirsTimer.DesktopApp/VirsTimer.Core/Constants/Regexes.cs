@@ -10,6 +10,11 @@ namespace VirsTimer.Core.Constants
         /// <summary>
         /// Regex matching any whitespace.
         /// </summary>
-        public static readonly Regex WhiteSpaces = new Regex(@"\s+", RegexOptions.Compiled);
+        public static readonly Regex WhiteSpaces = new(@"\s+", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Regex matching files with json extension.
+        /// </summary>
+        public static readonly Regex JsonFile = new("([^<>:\"/\\|?*]+)\\.json", RegexOptions.IgnoreCase | RegexOptions.Compiled);
     }
 }

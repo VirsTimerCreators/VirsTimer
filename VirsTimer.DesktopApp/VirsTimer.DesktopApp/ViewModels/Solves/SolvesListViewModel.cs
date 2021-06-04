@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.ObjectModel;
@@ -14,43 +13,37 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
     public class SolvesListViewModel : ViewModelBase
     {
         private readonly ISolvesRepository _solvesRepository;
-        private Event _event;
-        private Session _session;
+        private Session _session = null!;
 
         [Reactive]
         public ObservableCollection<SolveViewModel> Solves { get; set; }
 
         public ReactiveCommand<SolveViewModel, Unit> DeleteItemCommand { get; }
 
-        public SolvesListViewModel(Event @event, Session session)
+        public SolvesListViewModel(ISolvesRepository solvesRepository)
         {
-            _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
-
-            _event = @event;
-            _session = session;
+            _solvesRepository = solvesRepository;
 
             Solves = new ObservableCollection<SolveViewModel>();
             Solves.CollectionChanged += UpdateIndexesAsync;
 
             DeleteItemCommand = ReactiveCommand.CreateFromTask<SolveViewModel>(DeleteSolveAsync);
-            OnConstructedAsync(this, EventArgs.Empty);
         }
 
-        protected override async void OnConstructedAsync(object? sender, EventArgs e)
+        public override Task ConstructAsync()
         {
-            await ChangeEventAndSession(_event, _session).ConfigureAwait(false);
+            return ChangeSessionAsync(_session);
         }
 
-        public Task ChangeEventAndSession(Event @event, Session session)
+        public Task ChangeSessionAsync(Session session)
         {
-            _event = @event;
             _session = session;
             return LoadAsync();
         }
 
         private async Task LoadAsync()
         {
-            var solves = await _solvesRepository.GetSolvesAsync(_event, _session).ConfigureAwait(false);
+            var solves = await _solvesRepository.GetSolvesAsync(_session).ConfigureAwait(false);
             var ordered = solves.OrderByDescending(solve => solve.Date).Select(solve => new SolveViewModel(solve, _solvesRepository));
             Solves = new ObservableCollection<SolveViewModel>(ordered);
             Solves.CollectionChanged += UpdateIndexesAsync;

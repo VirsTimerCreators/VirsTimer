@@ -4,7 +4,9 @@ using System;
 using System.IO;
 using System.IO.Abstractions;
 using VirsTimer.Core.Constants;
+using VirsTimer.Core.Helpers;
 using VirsTimer.Core.Services;
+using VirsTimer.Core.Services.Cache;
 using VirsTimer.Core.Services.Events;
 using VirsTimer.Core.Services.Scrambles;
 using VirsTimer.Core.Services.Sessions;
@@ -45,16 +47,16 @@ namespace VirsTimer.DesktopApp
 
         private static void ConfigureServices(IServiceCollection services)
         {
-            var fileSolvesService = new FileSolvesService();
-
             services.AddHttpClient(
                 Server.ScrambleEndpoint,
                 client => client.BaseAddress = new Uri(Path.Combine(Server.Address, Server.ScrambleEndpoint)));
 
             services.AddSingleton<IFileSystem, FileSystem>();
-            services.AddSingleton<ISolvesRepository, FileSolvesRepository>();
+            services.AddSingleton<FileHelper>();
+            services.AddSingleton<IApplicationCacheSaver, ApplicationCacheSaver>();
             services.AddSingleton<IEventsRepository, FileEventsRepository>();
-            services.AddSingleton<ISessionsManager>(fileSolvesService);
+            services.AddSingleton<ISessionRepository, FileSessionRepository>();
+            services.AddSingleton<ISolvesRepository, FileSolvesRepository>();
             services.AddSingleton<IScrambleGenerator, ServerScrambleGenerator>();
             services.AddHttpClient();
         }

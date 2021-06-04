@@ -1,9 +1,9 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
+using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Events;
 
@@ -26,11 +26,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
 
             var canAccpet = this.WhenAnyValue<EventChangeViewModel, bool, Event?>(x => x.SelectedEvent, x => x != null);
             AcceptCommand = ReactiveCommand.Create<Window>((window) => { window.Close(); }, canAccpet);
-
-            OnConstructedAsync(this, EventArgs.Empty);
         }
 
-        protected override async void OnConstructedAsync(object? sender, EventArgs e)
+        public override async Task ConstructAsync()
         {
             var events = await _eventsRepository.GetEventsAsync().ConfigureAwait(false);
             Events = new ObservableCollection<Event>(events);

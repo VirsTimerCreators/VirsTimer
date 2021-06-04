@@ -18,10 +18,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Event"/> class.
         /// </summary>
-        public Event(string name)
+        public Event(string id, string name)
         {
-            //TODO id.
-            Id = string.Empty;
+            Id = id;
             Name = name;
         }
     }

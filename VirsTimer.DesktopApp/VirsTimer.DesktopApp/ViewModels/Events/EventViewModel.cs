@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System;
 using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
@@ -23,11 +22,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
         {
             _eventsRepository = eventsRepository;
             ChangeEventCommand = ReactiveCommand.CreateFromTask<Window>(ChangeEventAsync);
-
-            OnConstructedAsync(this, EventArgs.Empty);
         }
 
-        protected override async void OnConstructedAsync(object? sender, EventArgs e)
+        public override async Task ConstructAsync()
         {
             var events = await _eventsRepository.GetEventsAsync().ConfigureAwait(false);
             CurrentEvent = events[0];
@@ -36,6 +33,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
         private async Task ChangeEventAsync(Window window)
         {
             var eventChangeViewModel = new EventChangeViewModel(_eventsRepository);
+            await eventChangeViewModel.ConstructAsync().ConfigureAwait(false);
             var dialog = new EventChangeView
             {
                 DataContext = eventChangeViewModel

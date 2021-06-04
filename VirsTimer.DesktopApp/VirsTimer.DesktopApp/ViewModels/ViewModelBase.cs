@@ -1,16 +1,13 @@
 using ReactiveUI;
-using System;
+using System.Threading.Tasks;
 
 namespace VirsTimer.DesktopApp.ViewModels
 {
     public class ViewModelBase : ReactiveObject
     {
-        protected event EventHandler Constructed;
-        protected virtual void OnConstructedAsync(object? sender, EventArgs e) { }
-
-        public ViewModelBase()
+        public virtual Task ConstructAsync()
         {
-            Constructed += OnConstructedAsync;
+            return Task.CompletedTask;
         }
     }
 }
