@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Solve
+import pl.virstimer.model.SolveChange
 import pl.virstimer.model.Solved
 
 import pl.virstimer.repository.SolveRepository
@@ -15,11 +16,11 @@ import pl.virstimer.repository.SolveRepository
 class SolveController(val repository: SolveRepository) {
 
 
-    @GetMapping("/{objectId}")
-    fun getSolve(@PathVariable objectId: ObjectId): Solve = repository.findOneById(objectId)
-
     @GetMapping("/all")
     fun findAllSolves(): List<Solve> = repository.findAll()
+
+    @GetMapping("/{objectId}")
+    fun getSolve(@PathVariable objectId: ObjectId): Solve = repository.findOneById(objectId)
 
     @GetMapping("/user/{userId}")
     fun findAllUser(@PathVariable userId: String): List<Solve> = repository.findAllByUserId(userId)
@@ -45,12 +46,13 @@ class SolveController(val repository: SolveRepository) {
 
 
     @PatchMapping("/patch/{solvedId}")
-    fun updateSolve(@PathVariable solvedId: ObjectId, @RequestBody solve: Solve): ResponseEntity<Solve> {
+    fun updateSolve(@PathVariable solvedId: ObjectId, @RequestBody solve: SolveChange): ResponseEntity<Solve> {
 
         val original = repository.findOneById(solvedId)
 
         val updatedSolve = repository.save(
             Solve(
+                id = original.id,
                 userId = original.userId,
                 sessionId = original.sessionId,
                 scramble = original.scramble,
@@ -60,7 +62,7 @@ class SolveController(val repository: SolveRepository) {
             )
         )
         return ResponseEntity.ok(updatedSolve)
-    } // Did I just create another Solve object instead of updating existing one?
+    }
 
 
 }

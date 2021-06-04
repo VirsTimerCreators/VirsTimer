@@ -1,5 +1,6 @@
 package pl.virstimer.api
 
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
@@ -24,33 +25,15 @@ internal class EventControllerTest:TestHelper() {
 
 
     @BeforeEach
-    fun before_all() {
-        mongoTemplate.dropCollection(Event::class.java)
-        mongoTemplate.dropCollection(Session::class.java)
-        mongoTemplate.dropCollection(Solve::class.java)
-        mongoTemplate.insertAll(
-            listOf(
-                Event( null,"1", "THREE_BY_THREE"),
-                Event( null,"2", "FOUR_BY_FOUR"),
-            )
-        )
-    }
+    fun injections(){ before_all() }
 
 
     @Test
-    fun posting_event_I_guess()
+    fun posting_event_ok()
     {
-        createEvent("1", "FOUR_BY_FOUR").andExpect(MockMvcResultMatchers.status().isOk)
+        createEvent("1", "FIVE_BY_FIVE ").andExpect(MockMvcResultMatchers.status().isCreated)
     }
-    @Test
-    fun should_return_sessions() {
-        mockMvc.perform(MockMvcRequestBuilders.get("/sessions/all"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.userId").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.puzzleType").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.status().isOk)
 
-    }
 
 
 

@@ -8,19 +8,17 @@ import org.springframework.data.mongodb.core.mapping.Document
 // "timestamp": "Long", // ms, "solved": [ "OK", "PLUS_TWO", "DNF" ] // enum }
 @Document("solves")
 class Solve(
-
+    @Id
+    var id: ObjectId?=null,
     var userId: String,
     var sessionId: String,
     var scramble: String,
     var time: Long,
     var timestamp: Long,
     var solved: Solved
-) {
+)
 
-    @Id
-    lateinit var id: ObjectId // TODO constructor without id in models for repositories
-}
-
+data class SolveChange(val solved:Solved)
 
 enum class Solved {
     OK,
