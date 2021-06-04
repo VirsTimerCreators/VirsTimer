@@ -10,9 +10,9 @@ namespace VirsTimer.Core.Services.Solves
     public interface ISolvesRepository
     {
         /// <summary>
-        /// Gets solves from repository by given <paramref name="event"/> and <paramref name="session"/>. 
+        /// Gets solves from repository by given <paramref name="session"/>. 
         /// </summary>
-        Task<IReadOnlyList<Solve>> GetSolvesAsync(Event @event, Session session);
+        Task<IReadOnlyList<Solve>> GetSolvesAsync(Session session);
 
         /// <summary>
         /// Saves solve in repository.

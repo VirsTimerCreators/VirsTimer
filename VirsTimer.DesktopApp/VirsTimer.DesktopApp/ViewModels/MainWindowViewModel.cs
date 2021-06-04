@@ -5,7 +5,9 @@ using System.ComponentModel;
 using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Services;
 using VirsTimer.Core.Services.Events;
+using VirsTimer.Core.Services.Sessions;
 using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.ViewModels.Events;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
@@ -27,17 +29,25 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public ReactiveCommand<Window, Unit> AddSolveManualyCommand { get; }
 
-        public MainWindowViewModel(IEventsRepository eventsRepository)
+        public MainWindowViewModel(IEventsRepository eventsRepository, ISessionRepository sessionRepository, ISolvesRepository solvesRepository, IScrambleGenerator scrambleGenerator)
         {
             _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
 
             EventViewModel = new EventViewModel(eventsRepository);
-            SessionSummaryViewModel = new SessionSummaryViewModel(EventViewModel.CurrentEvent);
+            SessionSummaryViewModel = new SessionSummaryViewModel(sessionRepository);
             TimerViewModel = new TimerViewModel();
-            SolvesListViewModel = new SolvesListViewModel(EventViewModel.CurrentEvent, SessionSummaryViewModel.CurrentSession);
-            ScrambleViewModel = new ScrambleViewModel(EventViewModel.CurrentEvent);
+            SolvesListViewModel = new SolvesListViewModel(solvesRepository);
+            ScrambleViewModel = new ScrambleViewModel(scrambleGenerator);
 
             AddSolveManualyCommand = ReactiveCommand.CreateFromTask<Window>(AddSolveManually);
+        }
+
+        public override async Task ConstructAsync()
+        {
+            await EventViewModel.ConstructAsync().ConfigureAwait(false);
+            await SessionSummaryViewModel.ChangeSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(false);
+            await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
+            await ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent).ConfigureAwait(false);
 
             EventViewModel.PropertyChanged += OnEventChangeAsync;
             SessionSummaryViewModel.PropertyChanged += OnSessionChangeAsync;
@@ -61,7 +71,6 @@ namespace VirsTimer.DesktopApp.ViewModels
             if (!solveAddViewModel.Accepted)
                 return;
             var solve = new Solve(
-                EventViewModel.CurrentEvent,
                 SessionSummaryViewModel.CurrentSession,
                 solveAddViewModel.SolveTime,
                 ScrambleViewModel.CurrentScramble.Value);
@@ -74,11 +83,8 @@ namespace VirsTimer.DesktopApp.ViewModels
             if (e.PropertyName != nameof(EventViewModel.CurrentEvent))
                 return;
 
-            var scrambleChange = ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
-            var sessionChange = SessionSummaryViewModel.ChangeSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
-
-            await scrambleChange;
-            await sessionChange;
+            await ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
+            await SessionSummaryViewModel.ChangeSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
         }
 
         private async void OnSessionChangeAsync(object? sender, PropertyChangedEventArgs e)
@@ -86,7 +92,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             if (e.PropertyName != nameof(SessionSummaryViewModel.CurrentSession))
                 return;
 
-            await SolvesListViewModel.ChangeEventAndSession(EventViewModel.CurrentEvent, SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
+            await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
         }
     }
 }

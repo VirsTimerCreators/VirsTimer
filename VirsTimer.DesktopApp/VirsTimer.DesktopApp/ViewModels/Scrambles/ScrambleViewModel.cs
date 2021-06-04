@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using ReactiveUI.Fody.Helpers;
-using System;
+﻿using ReactiveUI.Fody.Helpers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
@@ -11,22 +9,20 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
     public class ScrambleViewModel : ViewModelBase
     {
         private readonly IScrambleGenerator _scrambleGenerator;
-        private Event _currentEvent;
+        private Event _currentEvent = null!;
         private Queue<Scramble> _scrambles = null!;
 
         [Reactive]
         public Scramble CurrentScramble { get; set; } = new Scramble();
 
-        public ScrambleViewModel(Event @event)
+        public ScrambleViewModel(IScrambleGenerator scrambleGenerator)
         {
-            _scrambleGenerator = Ioc.Services.GetRequiredService<IScrambleGenerator>();
-            _currentEvent = @event;
-            OnConstructedAsync(this, EventArgs.Empty);
+            _scrambleGenerator = scrambleGenerator;
         }
 
-        protected override async void OnConstructedAsync(object? sender, EventArgs e)
+        public override Task ConstructAsync()
         {
-            await ChangeEventAsync(_currentEvent).ConfigureAwait(false);
+            return ChangeEventAsync(_currentEvent);
         }
 
         public async Task ChangeEventAsync(Event newEvent)

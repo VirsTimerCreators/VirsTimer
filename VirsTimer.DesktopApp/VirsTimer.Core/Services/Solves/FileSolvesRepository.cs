@@ -29,9 +29,9 @@ namespace VirsTimer.Core.Services.Solves
         /// <summary>
         /// Gets solves from local file by given <paramref name="event"/> and <paramref name="session"/>. 
         /// </summary>
-        public async Task<IReadOnlyList<Solve>> GetSolvesAsync(Event @event, Session session)
+        public async Task<IReadOnlyList<Solve>> GetSolvesAsync(Session session)
         {
-            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Name, $"{session.Name}{FileExtensions.Json}");
+            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, session.Event.Id, $"{session.Id}{FileExtensions.Json}");
             if (!_fileSystem.File.Exists(targetFile))
                 return Array.Empty<Solve>();
 
@@ -40,7 +40,6 @@ namespace VirsTimer.Core.Services.Solves
             await Task.WhenAll(
                 solves.Select(solve => Task.Run(() =>
                 {
-                    solve.Event = @event;
                     solve.Session = session;
                 })))
                 .ConfigureAwait(false);
@@ -53,7 +52,7 @@ namespace VirsTimer.Core.Services.Solves
         /// </summary>
         public async Task SaveSolveAsync(Solve solve)
         {
-            var (solves, stream) = await LoadSolvesAsync(solve.Event, solve.Session).ConfigureAwait(false);
+            var (solves, stream) = await LoadSolvesAsync(solve.Session).ConfigureAwait(false);
             solve.Id ??= Guid.NewGuid().ToString();
             solves.Add(solve);
             using (stream)
@@ -65,7 +64,7 @@ namespace VirsTimer.Core.Services.Solves
         /// </summary>
         public async Task UpdateSolveAsync(Solve solve)
         {
-            var (solves, stream) = await LoadSolvesAsync(solve.Event, solve.Session).ConfigureAwait(false);
+            var (solves, stream) = await LoadSolvesAsync(solve.Session).ConfigureAwait(false);
             var foundSolve = solves.Find(x => x.Id == solve.Id);
             if (foundSolve == null)
                 return;
@@ -80,7 +79,7 @@ namespace VirsTimer.Core.Services.Solves
         /// </summary>
         public async Task DeleteSolveAsync(Solve solve)
         {
-            var (solves, stream) = await LoadSolvesAsync(solve.Event, solve.Session).ConfigureAwait(false);
+            var (solves, stream) = await LoadSolvesAsync(solve.Session).ConfigureAwait(false);
             var foundSolve = solves.Find(x => x.Id == solve.Id);
             if (foundSolve == null)
                 return;
@@ -94,9 +93,9 @@ namespace VirsTimer.Core.Services.Solves
         /// Loads solves from file to List.
         /// </summary>
         /// <returns>List of solves and file reseted Stream.</returns>
-        private async Task<(List<Solve>, Stream)> LoadSolvesAsync(Event @event, Session session)
+        private async Task<(List<Solve>, Stream)> LoadSolvesAsync(Session session)
         {
-            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Name, $"{session.Name}{FileExtensions.Json}");
+            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, session.Event.Id, $"{session.Id}{FileExtensions.Json}");
             _fileSystem.Directory.CreateDirectory(_fileSystem.Path.GetDirectoryName(targetFile));
 
             var stream = _fileSystem.File.Open(targetFile, FileMode.OpenOrCreate);

@@ -1,21 +1,44 @@
-﻿using System;
+﻿using System.Text.Json.Serialization;
 
 namespace VirsTimer.Core.Models
 {
+    /// <summary>
+    /// Model representing session.
+    /// </summary>
     public class Session
     {
-        public string Id { get; }
+        /// <summary>
+        /// Session event.
+        /// </summary>
+        [JsonIgnore]
+        public Event Event { get; set; } = null!;
+
+        /// <summary>
+        /// Session id.
+        /// </summary>
+        public string? Id { get; set; }
+
+        /// <summary>
+        /// Session name.
+        /// </summary>
         public string Name { get; set; }
 
-        public Session(string? name = null)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Session"/> class.
+        /// </summary>
+        public Session(Event @event, string id, string name)
         {
-            Id = Guid.NewGuid().ToString();
-            Name = name ?? Id;
+            Event = @event;
+            Id = id;
+            Name = name;
         }
 
-        public Session(string id, string name)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Session"/> class.
+        /// </summary>
+        public Session(Event @event, string name)
         {
-            Id = id;
+            Event = @event;
             Name = name;
         }
     }

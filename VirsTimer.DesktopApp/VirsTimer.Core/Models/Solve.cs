@@ -10,16 +10,10 @@ namespace VirsTimer.Core.Models
     public class Solve
     {
         /// <summary>
-        /// Solve event.
-        /// </summary>
-        [JsonIgnore]
-        public Event? Event { get; set; }
-
-        /// <summary>
         /// Solve session.
         /// </summary>
         [JsonIgnore]
-        public Session? Session { get; set; }
+        public Session Session { get; set; } = null!;
 
         /// <summary>
         /// Solve id.
@@ -68,9 +62,8 @@ namespace VirsTimer.Core.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Solve"/> class.
         /// </summary>
-        public Solve(Event @event, Session session, TimeSpan time, string scramble)
+        public Solve(Session session, TimeSpan time, string scramble)
         {
-            Event = @event;
             Session = session;
             Time = time.Ticks;
             Flag = SolveFlag.OK;
