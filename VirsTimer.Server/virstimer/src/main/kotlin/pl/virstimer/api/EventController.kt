@@ -1,8 +1,8 @@
 package pl.virstimer.api
 
-import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Event
 import pl.virstimer.repository.EventRepository
@@ -12,6 +12,7 @@ internal class EventController(val repository: EventRepository) {
 
 
     @PostMapping("/events/post")
+    @PreAuthorize("hasRole('USER')")
     fun createEvent(@RequestBody request: EventRequest): ResponseEntity<Event> {
         val event = repository.save(
             Event(

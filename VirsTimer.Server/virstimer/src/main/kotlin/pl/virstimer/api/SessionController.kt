@@ -4,6 +4,7 @@ import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Session
 import pl.virstimer.model.SessionChange
@@ -19,21 +20,27 @@ class SessionController(
 ) {
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('USER')")
     fun findAllSessions(): List<Session> = repository.findAll()
 
     @GetMapping("/{sessionId}")
+    @PreAuthorize("hasRole('USER')")
     fun getSession(@PathVariable sessionId: ObjectId): Session = repository.findOneById(sessionId)
+
     @GetMapping("/hex/{sessionId}")
+    @PreAuthorize("hasRole('USER')")
     fun getSessionHex(@PathVariable sessionId: ObjectId): Session = repository.findOneById(ObjectId(sessionId.toHexString()))
 
     @GetMapping("/user/{userId}")
+    @PreAuthorize("hasRole('USER')")
     fun findAllUserId(@PathVariable userId: String): List<Session> = repository.findAllByUserId(userId)
 
     @GetMapping("/event/{eventId}")
+    @PreAuthorize("hasRole('USER')")
     fun findAllEventId(@PathVariable eventId: String): List<Session> = repository.findAllByEventId(eventId)
 
-
     @PostMapping("/post")
+    @PreAuthorize("hasRole('USER')")
     fun createSession(@RequestBody request: SessionRequest): ResponseEntity<Session> {
         val session = repository.save(
             Session(
