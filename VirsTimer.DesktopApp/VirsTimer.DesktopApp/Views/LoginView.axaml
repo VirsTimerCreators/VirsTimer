@@ -4,9 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="VirsTimer.DesktopApp.Views.LoginView"
-        Title="LoginView">
+        Title="Logowanie">
     <Grid 
-        RowDefinitions="3*,Auto,2*,Auto,3*"
+        RowDefinitions="2*,Auto,*,Auto,3*"
         ColumnDefinitions="*,2*,*">
     <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="3" Grid.RowSpan="5">
         <ExperimentalAcrylicBorder.Material>
@@ -20,11 +20,15 @@
     <TextBox
         Grid.Row="1"
         Grid.Column="1"
+		MinHeight="40"
+		VerticalContentAlignment="Center"
         Text="{Binding LoginName}"/>
-    <TextBox 
+    <TextBox
         Name="PasswordTextBox"
         Grid.Row="3"
+		MinHeight="40"
         Grid.Column="1"
+		VerticalContentAlignment="Center"
         Text="{Binding LoginPassowd}"/>
     <Button Grid.Row="5"
             Grid.ColumnSpan="3"
@@ -34,5 +38,21 @@
             Content="Akceptuj"
             Command="{Binding AcceptLoginCommand}"
             CommandParameter="{Binding $parent[Window]}"/>
+    <TextBlock 
+        Grid.Column="1"
+        Padding="20"
+        VerticalAlignment="Bottom"
+        HorizontalAlignment="Center"
+        Grid.Row="5" 
+        Text="Nie udało się zalogować"
+		IsVisible="{Binding IsResponseUnsccesfull}"
+        Background="#ed924c"/>
+		<ProgressBar
+			IsIndeterminate="True"
+			Grid.ColumnSpan="5"
+			HorizontalAlignment="Right"
+			Margin="20"
+			VerticalAlignment="Top"
+			IsVisible="{Binding IsBusy}"/>
     </Grid>
 </Window>
