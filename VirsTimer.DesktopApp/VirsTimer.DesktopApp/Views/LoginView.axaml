@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="VirsTimer.DesktopApp.Views.LoginView"
+        Title="LoginView">
+    <Grid 
+        RowDefinitions="3*,Auto,2*,Auto,3*"
+        ColumnDefinitions="*,2*,*">
+    <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="3" Grid.RowSpan="5">
+        <ExperimentalAcrylicBorder.Material>
+            <ExperimentalAcrylicMaterial
+                BackgroundSource="Digger"
+                TintColor="Black"
+                TintOpacity="1"
+                MaterialOpacity="0.75" />
+        </ExperimentalAcrylicBorder.Material>
+    </ExperimentalAcrylicBorder>
+    <TextBox
+        Grid.Row="1"
+        Grid.Column="1"
+        Text="{Binding LoginName}"/>
+    <TextBox 
+        Name="PasswordTextBox"
+        Grid.Row="3"
+        Grid.Column="1"
+        Text="{Binding LoginPassowd}"/>
+    <Button Grid.Row="5"
+            Grid.ColumnSpan="3"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Margin="20"
+            Content="Akceptuj"
+            Command="{Binding AcceptLoginCommand}"
+            CommandParameter="{Binding $parent[Window]}"/>
+    </Grid>
+</Window>
