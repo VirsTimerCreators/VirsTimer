@@ -11,9 +11,35 @@
         public const string Address = "http://localhost:8080/";
 
         /// <summary>
-        /// Scramble endpoint.
+        /// Server endpoints.
         /// </summary>
-        public const string ScrambleEndpoint = "scramble/";
+        public static class Endpoints
+        {
+            /// <summary>
+            /// Uses endpoint.
+            /// </summary>
+            public const string Users = "users/";
+
+            /// <summary>
+            /// Events endpoint.
+            /// </summary>
+            public const string Events = "events/";
+
+            /// <summary>
+            /// Sessions endpoint.
+            /// </summary>
+            public const string Sessions = "sessions/";
+
+            /// <summary>
+            /// Solves endpoint.
+            /// </summary>
+            public const string Solves = "solves/";
+
+            /// <summary>
+            /// Scrambles endpoint.
+            /// </summary>
+            public const string Scrambles = "scramble/";
+        }
 
         /// <summary>
         /// Predefined events.
