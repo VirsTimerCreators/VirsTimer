@@ -29,13 +29,13 @@ namespace VirsTimer.Core.Services.Events
         /// <summary>
         /// Gets events from local directories. 
         /// </summary>
-        public async Task<IReadOnlyList<Event>> GetEventsAsync()
+        public async Task<RepositoryResponse<IReadOnlyList<Event>>> GetEventsAsync()
         {
             var eventsNames = _applicationCacheSaver.ApplicationCache.EventsNames;
             if (eventsNames.Count > 0)
-                return eventsNames.Select(x => new Event(x.Key, x.Value)).ToList();
+                return new RepositoryResponse<IReadOnlyList<Event>>(eventsNames.Select(x => new Event(x.Key, x.Value)).ToList());
 
-            var events = Server.Events.All.Select(x => new Event(Guid.NewGuid().ToString(), x)).ToList();
+            var events = Constants.Events.All.Select(x => new Event(Guid.NewGuid().ToString(), x)).ToList();
             foreach (var @event in events)
             {
                 _applicationCacheSaver.ApplicationCache.EventsNames.Add(@event.Id, @event.Name);
@@ -50,7 +50,7 @@ namespace VirsTimer.Core.Services.Events
 
             await Task.WhenAll(directoriesTasks).ConfigureAwait(false);
             await _applicationCacheSaver.UpdateCacheAsync().ConfigureAwait(false);
-            return events;
+            return new RepositoryResponse<IReadOnlyList<Event>>(events);
         }
     }
 }

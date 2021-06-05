@@ -51,8 +51,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
 
         private async void LoadSessionsAsync()
         {
-            var sessions = await _sessionRepository.GetSessionsAsync(_event).ConfigureAwait(false);
-            var sessionsVM = sessions.Select(session => new SessionViewModel(this, session)).OrderBy(x => x.Name);
+            var repositoryResponse = await _sessionRepository.GetSessionsAsync(_event).ConfigureAwait(false);
+            var sessionsVM = repositoryResponse.Value.Select(session => new SessionViewModel(this, session)).OrderBy(x => x.Name);
             Sessions = new ObservableCollection<SessionViewModel>(sessionsVM);
             foreach (var session in Sessions)
                 session.PropertyChanged += UpdateCanRename;

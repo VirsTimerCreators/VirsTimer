@@ -32,7 +32,7 @@ namespace VirsTimer.Core.Services.Sessions
         /// <summary>
         /// Gets sessions from local directory with <paramref name="event"/> id as name. 
         /// </summary>
-        public async Task<IReadOnlyList<Session>> GetSessionsAsync(Event @event)
+        public async Task<RepositoryResponse<IReadOnlyList<Session>>> GetSessionsAsync(Event @event)
         {
             var eventDirectory = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Id);
 
@@ -57,13 +57,13 @@ namespace VirsTimer.Core.Services.Sessions
             }
 
             await _applicationCacheSaver.UpdateCacheAsync().ConfigureAwait(false);
-            return sessions;
+            return new RepositoryResponse<IReadOnlyList<Session>>(sessions);
         }
 
         /// <summary>
         /// Adds session in local directory.
         /// </summary>
-        public async Task AddSessionAsync(Session session)
+        public async Task<RepositoryResponse> AddSessionAsync(Session session)
         {
             session.Id = Guid.NewGuid().ToString();
 
@@ -72,27 +72,33 @@ namespace VirsTimer.Core.Services.Sessions
 
             _applicationCacheSaver.ApplicationCache.SessionsByEvent[session.Event.Id].Add(session.Id, session.Name);
             await _applicationCacheSaver.UpdateCacheAsync().ConfigureAwait(false);
+
+            return RepositoryResponse.Ok;
         }
 
         /// <summary>
         /// Updates session in local directory.
         /// </summary>
-        public Task UpdateSessionAsync(Session session)
+        public async Task<RepositoryResponse> UpdateSessionAsync(Session session)
         {
             _applicationCacheSaver.ApplicationCache.SessionsByEvent[session.Event.Id][session.Id] = session.Name;
-            return _applicationCacheSaver.UpdateCacheAsync();
+            await _applicationCacheSaver.UpdateCacheAsync().ConfigureAwait(false);
+
+            return RepositoryResponse.Ok;
         }
 
         /// <summary>
         /// Deletes session from local directory.
         /// </summary>
-        public Task DeleteSessionAsync(Session session)
+        public async Task<RepositoryResponse> DeleteSessionAsync(Session session)
         {
             var sourceFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, session.Event.Id, $"{session.Id}{FileExtensions.Json}");
             _fileSystem.File.Delete(sourceFile);
 
             _applicationCacheSaver.ApplicationCache.SessionsByEvent[session.Event.Id].Remove(session.Id);
-            return _applicationCacheSaver.UpdateCacheAsync();
+            await _applicationCacheSaver.UpdateCacheAsync().ConfigureAwait(false);
+
+            return RepositoryResponse.Ok;
         }
     }
 }

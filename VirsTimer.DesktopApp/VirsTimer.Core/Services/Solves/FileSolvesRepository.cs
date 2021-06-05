@@ -27,13 +27,13 @@ namespace VirsTimer.Core.Services.Solves
         }
 
         /// <summary>
-        /// Gets solves from local file by given <paramref name="event"/> and <paramref name="session"/>. 
+        /// Gets solves from local file by given <paramref name="session"/> and <paramref name="session"/>. 
         /// </summary>
-        public async Task<IReadOnlyList<Solve>> GetSolvesAsync(Session session)
+        public async Task<RepositoryResponse<IReadOnlyList<Solve>>> GetSolvesAsync(Session session)
         {
             var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, session.Event.Id, $"{session.Id}{FileExtensions.Json}");
             if (!_fileSystem.File.Exists(targetFile))
-                return Array.Empty<Solve>();
+                return new RepositoryResponse<IReadOnlyList<Solve>>(Array.Empty<Solve>());
 
             using var stream = _fileSystem.File.OpenRead(targetFile);
             var solves = await JsonSerializer.DeserializeAsync<IReadOnlyList<Solve>>(stream).ConfigureAwait(false) ?? Array.Empty<Solve>();
@@ -44,49 +44,55 @@ namespace VirsTimer.Core.Services.Solves
                 })))
                 .ConfigureAwait(false);
 
-            return solves;
+            return new RepositoryResponse<IReadOnlyList<Solve>>(solves);
         }
 
         /// <summary>
         /// Saves solve in local file.
         /// </summary>
-        public async Task SaveSolveAsync(Solve solve)
+        public async Task<RepositoryResponse> AddSolveAsync(Solve solve)
         {
             var (solves, stream) = await LoadSolvesAsync(solve.Session).ConfigureAwait(false);
             solve.Id ??= Guid.NewGuid().ToString();
             solves.Add(solve);
             using (stream)
                 await JsonSerializer.SerializeAsync(stream, solves).ConfigureAwait(false);
+
+            return RepositoryResponse.Ok;
         }
 
         /// <summary>
         /// Updates solve in local file.
         /// </summary>
-        public async Task UpdateSolveAsync(Solve solve)
+        public async Task<RepositoryResponse> UpdateSolveAsync(Solve solve)
         {
             var (solves, stream) = await LoadSolvesAsync(solve.Session).ConfigureAwait(false);
             var foundSolve = solves.Find(x => x.Id == solve.Id);
             if (foundSolve == null)
-                return;
+                return RepositoryResponse.Ok;
 
             foundSolve.Flag = solve.Flag;
             using (stream)
                 await JsonSerializer.SerializeAsync(stream, solves).ConfigureAwait(false);
+
+            return RepositoryResponse.Ok;
         }
 
         /// <summary>
         /// Deletes solve from local file.
         /// </summary>
-        public async Task DeleteSolveAsync(Solve solve)
+        public async Task<RepositoryResponse> DeleteSolveAsync(Solve solve)
         {
             var (solves, stream) = await LoadSolvesAsync(solve.Session).ConfigureAwait(false);
             var foundSolve = solves.Find(x => x.Id == solve.Id);
             if (foundSolve == null)
-                return;
+                return RepositoryResponse.Ok;
 
             solves.Remove(foundSolve);
             using (stream)
                 await JsonSerializer.SerializeAsync(stream, solves).ConfigureAwait(false);
+
+            return RepositoryResponse.Ok;
         }
 
         /// <summary>

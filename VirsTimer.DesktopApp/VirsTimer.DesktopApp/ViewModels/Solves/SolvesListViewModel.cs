@@ -43,8 +43,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
 
         private async Task LoadAsync()
         {
-            var solves = await _solvesRepository.GetSolvesAsync(_session).ConfigureAwait(false);
-            var ordered = solves.OrderByDescending(solve => solve.Date).Select(solve => new SolveViewModel(solve, _solvesRepository));
+            var repositoryResponse = await _solvesRepository.GetSolvesAsync(_session).ConfigureAwait(false);
+            var ordered = repositoryResponse.Value.OrderByDescending(solve => solve.Date).Select(solve => new SolveViewModel(solve, _solvesRepository));
             Solves = new ObservableCollection<SolveViewModel>(ordered);
             Solves.CollectionChanged += UpdateIndexesAsync;
             UpdateIndexesAsync(this, EventArgs.Empty);

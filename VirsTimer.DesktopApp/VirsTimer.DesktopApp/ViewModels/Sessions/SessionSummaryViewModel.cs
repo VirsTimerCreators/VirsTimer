@@ -31,7 +31,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
         public async Task ChangeSessionAsync(Event @event)
         {
             _event = @event;
-            _sessions = await _sessionRepository.GetSessionsAsync(_event).ConfigureAwait(false);
+            var repositoryResponse = await _sessionRepository.GetSessionsAsync(_event).ConfigureAwait(false);
+            _sessions = repositoryResponse.Value;
             if (_sessions.IsNullOrEmpty())
             {
                 var session = new Session(@event, $"{Constants.Sessions.NewSessionNameBase}1");

@@ -12,7 +12,7 @@ using VirsTimer.Core.Models.Requests;
 
 namespace VirsTimer.Core.Services.Sessions
 {
-    class ServerSessionsRepository : AbstractServerRepository, ISessionRepository
+    public class ServerSessionsRepository : AbstractServerRepository, ISessionRepository
     {
         public ServerSessionsRepository(IHttpClientFactory httpClientFactory, IUserClient userClient)
             : base(httpClientFactory, userClient)

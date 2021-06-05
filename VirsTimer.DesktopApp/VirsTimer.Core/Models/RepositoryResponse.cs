@@ -9,6 +9,8 @@ namespace VirsTimer.Core.Models
         public RepositoryResponseStatus Status { get; }
         public string Message { get; }
 
+        public bool Succesfull => Status == RepositoryResponseStatus.Ok;
+
         public RepositoryResponse(RepositoryResponseStatus status, string message)
         {
             Status = status;
