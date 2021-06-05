@@ -26,14 +26,14 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
 
         public override async Task ConstructAsync()
         {
-            var events = await _eventsRepository.GetEventsAsync().ConfigureAwait(false);
-            CurrentEvent = events[0];
+            var repositoryResponse = await _eventsRepository.GetEventsAsync().ConfigureAwait(false);
+            CurrentEvent = repositoryResponse.Value[0];
         }
 
         private async Task ChangeEventAsync(Window window)
         {
             var eventChangeViewModel = new EventChangeViewModel(_eventsRepository);
-            await eventChangeViewModel.ConstructAsync().ConfigureAwait(false);
+            await eventChangeViewModel.ConstructAsync().ConfigureAwait(true);
             var dialog = new EventChangeView
             {
                 DataContext = eventChangeViewModel

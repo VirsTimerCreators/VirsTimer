@@ -1,4 +1,6 @@
-﻿namespace VirsTimer.Core.Models
+﻿using System.Text.Json.Serialization;
+
+namespace VirsTimer.Core.Models
 {
     /// <summary>
     /// Model representing cube event.
@@ -8,12 +10,13 @@
         /// <summary>
         /// Event id.
         /// </summary>
-        public string Id { get; }
+        public string Id { get; init; }
 
         /// <summary>
         /// Event name.
         /// </summary>
-        public string Name { get; }
+        [JsonPropertyName("puzzleType")]
+        public string Name { get; init; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Event"/> class.

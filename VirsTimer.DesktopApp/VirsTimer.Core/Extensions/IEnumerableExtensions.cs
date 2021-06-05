@@ -11,7 +11,7 @@ namespace VirsTimer.Core.Extensions
         /// <summary>
         /// Tells if enumeration is null or empty.
         /// </summary>
-        public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable)
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T>? enumerable)
         {
             return enumerable == null || !enumerable.Any();
         }

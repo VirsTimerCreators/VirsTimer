@@ -56,7 +56,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         public async Task SaveSolveAsync(Solve solve)
         {
             SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve, _solvesRepository));
-            await _solvesRepository.SaveSolveAsync(solve).ConfigureAwait(false);
+            await _solvesRepository.AddSolveAsync(solve).ConfigureAwait(false);
             await ScrambleViewModel.GetNextScrambleAsync().ConfigureAwait(false);
         }
 
@@ -75,7 +75,7 @@ namespace VirsTimer.DesktopApp.ViewModels
                 solveAddViewModel.SolveTime,
                 ScrambleViewModel.CurrentScramble.Value);
 
-            await _solvesRepository.SaveSolveAsync(solve).ConfigureAwait(false);
+            await _solvesRepository.AddSolveAsync(solve).ConfigureAwait(false);
         }
 
         private async void OnEventChangeAsync(object? sender, PropertyChangedEventArgs e)

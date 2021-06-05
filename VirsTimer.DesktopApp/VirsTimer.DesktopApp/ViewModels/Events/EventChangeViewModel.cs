@@ -30,8 +30,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
 
         public override async Task ConstructAsync()
         {
-            var events = await _eventsRepository.GetEventsAsync().ConfigureAwait(false);
-            Events = new ObservableCollection<Event>(events);
+            var repositoryResponse = await _eventsRepository.GetEventsAsync().ConfigureAwait(false);
+            Events = new ObservableCollection<Event>(repositoryResponse.Value);
         }
     }
 }
