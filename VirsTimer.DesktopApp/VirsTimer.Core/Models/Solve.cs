@@ -49,9 +49,9 @@ namespace VirsTimer.Core.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Solve"/> class.
         /// </summary>
-        [JsonConstructor]
-        public Solve(string id, long time, SolveFlag flag, DateTime date, string scramble)
+        public Solve(Session session, string id, long time, SolveFlag flag, DateTime date, string scramble)
         {
+            Session = session;
             Id = id;
             Time = time;
             Flag = flag;

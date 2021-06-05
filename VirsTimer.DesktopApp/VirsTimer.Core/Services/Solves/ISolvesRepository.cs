@@ -12,21 +12,21 @@ namespace VirsTimer.Core.Services.Solves
         /// <summary>
         /// Gets solves from repository by given <paramref name="session"/>. 
         /// </summary>
-        Task<IReadOnlyList<Solve>> GetSolvesAsync(Session session);
+        Task<RepositoryResponse<IReadOnlyList<Solve>>> GetSolvesAsync(Session session);
 
         /// <summary>
         /// Saves solve in repository.
         /// </summary>
-        Task SaveSolveAsync(Solve solve);
+        Task<RepositoryResponse> AddSolveAsync(Solve solve);
 
         /// <summary>
         /// Updates solve in repository.
         /// </summary>
-        Task UpdateSolveAsync(Solve solve);
+        Task<RepositoryResponse> UpdateSolveAsync(Solve solve);
 
         /// <summary>
         /// Deletes solve from repository.
         /// </summary>
-        Task DeleteSolveAsync(Solve solve);
+        Task<RepositoryResponse> DeleteSolveAsync(Solve solve);
     }
 }

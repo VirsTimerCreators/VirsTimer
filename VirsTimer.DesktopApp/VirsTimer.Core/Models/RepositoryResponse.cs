@@ -54,11 +54,9 @@ namespace VirsTimer.Core.Models
             Value = value;
         }
 
-        public RepositoryResponse(HttpStatusCode httpStatusCode, string message, T value)
+        public RepositoryResponse(HttpStatusCode httpStatusCode, string message)
             : base(httpStatusCode, message)
-        {
-            Value = value;
-        }
+        { }
     }
 
     public enum RepositoryResponseStatus

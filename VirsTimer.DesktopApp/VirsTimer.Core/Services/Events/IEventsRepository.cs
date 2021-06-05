@@ -12,6 +12,6 @@ namespace VirsTimer.Core.Services.Events
         /// <summary>
         /// Gets solves from repository. 
         /// </summary>
-        Task<IReadOnlyList<Event>> GetEventsAsync();
+        Task<RepositoryResponse<IReadOnlyList<Event>>> GetEventsAsync();
     }
 }
