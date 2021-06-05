@@ -1,54 +1,39 @@
 package pl.virstimer.api
 
-import org.bson.types.ObjectId
-import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Session
-import pl.virstimer.model.SessionChange
-import pl.virstimer.model.Solve
+import pl.virstimer.repository.SessionCustomRepository
 import pl.virstimer.repository.SessionRepository
-import pl.virstimer.repository.SolveCustomRepository
+import java.util.*
 
 @RestController
-@RequestMapping("/sessions")
+@RequestMapping("/session")
 class SessionController(
     val repository: SessionRepository,
-
+    val customRepository: SessionCustomRepository
 ) {
 
-    @GetMapping("/all")
-    fun findAllSessions(): List<Session> = repository.findAll()
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("hasRole('USER')")
+    fun findAllForUser(@PathVariable userId: String): List<Session> = repository.findAllByUserId(userId)
 
     @GetMapping("/{sessionId}")
-    fun getSession(@PathVariable sessionId: ObjectId): Session = repository.findOneById(sessionId)
-    @GetMapping("/hex/{sessionId}")
-    fun getSessionHex(@PathVariable sessionId: ObjectId): Session = repository.findOneById(ObjectId(sessionId.toHexString()))
+    @PreAuthorize("hasRole('USER')")
+    fun getSession(@PathVariable sessionId: String): Session = repository.findOneById(sessionId)
 
-    @GetMapping("/user/{userId}")
-    fun findAllUserId(@PathVariable userId: String): List<Session> = repository.findAllByUserId(userId)
+    @GetMapping("/event/{eventId}/user/{userId}")
+    @PreAuthorize("hasRole('USER')")
+    fun findAllForEventIdAndUserId(@PathVariable eventId: String, @PathVariable userId: String): List<Session> = repository.findByEventIdAndUserId(eventId, userId)
 
-    @GetMapping("/event/{eventId}")
-    fun findAllEventId(@PathVariable eventId: String): List<Session> = repository.findAllByEventId(eventId)
-
-
-    @PostMapping("/post")
+    @PostMapping
+    @PreAuthorize("hasRole('USER')")
     fun createSession(@RequestBody request: SessionRequest): ResponseEntity<Session> {
         val session = repository.save(
             Session(
-                userId = request.userId,
-                eventId = request.eventId,
-                name = request.name
-            )
-        )
-        return ResponseEntity(session, HttpStatus.CREATED)
-    }    @PostMapping("/hex/post")
-    fun createSessionHex(@RequestBody request: SessionRequest): ResponseEntity<Session> {
-        val session = repository.save(
-            Session(
-                //id = request.id,
-                id = ObjectId("60ce14080000000000000000"),
+                id = UUID.randomUUID().toString(),
                 userId = request.userId,
                 eventId = request.eventId,
                 name = request.name
@@ -57,29 +42,17 @@ class SessionController(
         return ResponseEntity(session, HttpStatus.CREATED)
     }
 
-    @PatchMapping("/patch/{sessionId}")
-    fun updateSession(@PathVariable sessionId: ObjectId, @RequestBody session: SessionChange): ResponseEntity<Session> {
 
-        val original = repository.findOneById(ObjectId(sessionId.toHexString()) )
+    @PatchMapping("/{sessionId}")
+    @PreAuthorize("hasRole('USER')")
+    fun updateSession(@PathVariable sessionId: String, @RequestBody sessionChange: SessionChange): ResponseEntity<Unit> {
+        customRepository.updateSession(sessionId, sessionChange)
 
-        val updatedSession = repository.save(
-            Session(
-                id = original.id,
-                userId = original.userId,
-                eventId = original.eventId,
-                name = session.name
-                )
-        )
-        return ResponseEntity.ok(updatedSession)
+        return ResponseEntity.ok(Unit)
     }
-    @DeleteMapping("delete/{sessionId}")
-    fun deleteSession(@PathVariable sessionId: ObjectId) = repository.deleteSessionById(sessionId)
 
-
-    @DeleteMapping("delete/all")
-    fun deleteSession(){
-       repository.deleteAll()
-    }
+    @DeleteMapping("/{sessionId}")
+    fun deleteSession(@PathVariable sessionId: String) = repository.deleteSessionById(sessionId)
 }
 
 data class SessionRequest(
@@ -87,3 +60,5 @@ data class SessionRequest(
     val eventId: String,
     val name: String
 )
+
+data class SessionChange(val name:String)
