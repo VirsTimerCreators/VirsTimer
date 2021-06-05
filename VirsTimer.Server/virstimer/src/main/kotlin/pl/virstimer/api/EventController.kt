@@ -3,9 +3,7 @@ package pl.virstimer.api
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Event
 import pl.virstimer.repository.EventRepository
 import java.util.*
@@ -13,6 +11,9 @@ import java.util.*
 @RestController()
 internal class EventController(val repository: EventRepository) {
 
+
+    @GetMapping("/event/user/{userId}")
+    fun findAllForUser(@PathVariable userId: String): List<Event> = repository.findByUserId(userId)
 
     @PostMapping("/event")
     @PreAuthorize("hasRole('USER')")
