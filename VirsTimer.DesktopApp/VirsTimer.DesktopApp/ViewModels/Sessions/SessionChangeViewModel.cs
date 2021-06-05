@@ -44,7 +44,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
 
             var acceptRenameSessionEnabled = this.WhenAnyValue(x => x.CanRename, x => x == true);
             AcceptRenameSessionCommand = ReactiveCommand.CreateFromTask<SessionViewModel>(AcceptRename, acceptRenameSessionEnabled);
-            DeleteSessionCommand = ReactiveCommand.CreateFromTask<SessionViewModel>(DeleteSessionAsync);
+
+            var canDelete = this.WhenAnyValue(x => x.Sessions, x => x.Count > 1);
+            DeleteSessionCommand = ReactiveCommand.CreateFromTask<SessionViewModel>(DeleteSessionAsync, canDelete);
 
             LoadSessionsAsync();
         }

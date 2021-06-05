@@ -27,7 +27,7 @@ namespace VirsTimer.Core.Services.Solves
 
                 var content = new SolvePostRequest(UserClient.Id, solve);
                 var httpResponse = await client.PostAsJsonAsync(endpoint, content).ConfigureAwait(false);
-                var response = await CreateRepositoryResponseAsync<SolvePostRequest>(httpResponse).ConfigureAwait(false);
+                var response = await CreateRepositoryResponseAsync<SolvePostResponse>(httpResponse).ConfigureAwait(false);
                 if (httpResponse.IsSuccessStatusCode)
                     solve.Id = response.Value.Id;
 

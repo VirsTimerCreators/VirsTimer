@@ -4,8 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
+using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Models.Requests;
@@ -23,11 +25,15 @@ namespace VirsTimer.Core.Services.Sessions
             try
             {
                 using var client = CreateHttpClientWithAuth();
-                var endpoint = CreateEndpoint(Server.Endpoints.Events);
+                var endpoint = CreateEndpoint(Server.Endpoints.Sessions);
 
                 var content = new SessionPostRequest(UserClient.Id, session);
-                var httpResponse = await client.PostAsJsonAsync(endpoint, content).ConfigureAwait(false);
-                var response = await CreateRepositoryResponseAsync<SessionPostRequest>(httpResponse).ConfigureAwait(false);
+                var options = new JsonSerializerOptions()
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+                var httpResponse = await client.PostAsJsonAsync(endpoint, content, options).ConfigureAwait(false);
+                var response = await CreateRepositoryResponseAsync<SessionPostResponse>(httpResponse).ConfigureAwait(false);
                 if (httpResponse.IsSuccessStatusCode)
                     session.Id = response.Value.Id;
 
@@ -68,8 +74,15 @@ namespace VirsTimer.Core.Services.Sessions
 
                 using var client = CreateHttpClientWithAuth();
                 var endpoint = CreateEndpoint(Server.Endpoints.Sessions, Server.Endpoints.Events, @event.Id, Server.Endpoints.Users, UserClient.Id);
-                var sessionsResponse = await client.GetFromJsonAsync<SessionGetRequest[]>(endpoint).ConfigureAwait(false) ?? Array.Empty<SessionGetRequest>();
-                var sessions = sessionsResponse.Select(x => x.ToSession(@event)).ToList();
+                var sessionsResponse = await client.GetFromJsonAsync<SessionGetRequest[]>(endpoint).ConfigureAwait(false);
+
+                if (sessionsResponse.IsNullOrEmpty())
+                {
+                    var session = new Session(@event, "Sesja1");
+                    var sessionResponse = await AddSessionAsync(session).ConfigureAwait(false);
+                    return new RepositoryResponse<IReadOnlyList<Session>>(new[] { session });
+                }
+                var sessions = sessionsResponse!.Select(x => x.ToSession(@event)).ToList();
 
                 return new RepositoryResponse<IReadOnlyList<Session>>(sessions);
             }
