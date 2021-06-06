@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using System.Collections.Specialized;
@@ -32,6 +33,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         public StatisticsViewModel StatisticsViewModel { get; } = null!;
 
         public ReactiveCommand<Window, Unit> AddSolveManualyCommand { get; }
+        public ReactiveCommand<Unit, Unit> ExitCommand { get; }
 
         public MainWindowViewModel(IEventsRepository eventsRepository, ISessionRepository sessionRepository, ISolvesRepository solvesRepository, IScrambleGenerator scrambleGenerator)
         {
@@ -45,6 +47,24 @@ namespace VirsTimer.DesktopApp.ViewModels
             StatisticsViewModel = new StatisticsViewModel();
 
             AddSolveManualyCommand = ReactiveCommand.CreateFromTask<Window>(AddSolveManually);
+            ExitCommand = ReactiveCommand.Create(() =>
+            {
+                (App.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
+            });
+
+            EventViewModel.PropertyChanged += OnBusyChange;
+            SessionSummaryViewModel.PropertyChanged += OnBusyChange;
+            SolvesListViewModel.PropertyChanged += OnBusyChange;
+            ScrambleViewModel.PropertyChanged += OnBusyChange;
+            StatisticsViewModel.PropertyChanged += OnBusyChange;
+        }
+
+        private void OnBusyChange(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(IsBusy))
+                return;
+
+            IsBusy = EventViewModel.IsBusy || SessionSummaryViewModel.IsBusy || SolvesListViewModel.IsBusy || ScrambleViewModel.IsBusy || StatisticsViewModel.IsBusy;
         }
 
         public override async Task ConstructAsync()
@@ -62,10 +82,12 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public async Task SaveSolveAsync(Solve solve)
         {
+            IsBusy = true;
             await _solvesRepository.AddSolveAsync(solve).ConfigureAwait(false);
             SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve, _solvesRepository));
 
             await ScrambleViewModel.GetNextScrambleAsync().ConfigureAwait(false);
+            IsBusy = false;
         }
 
         private async Task AddSolveManually(Window window)

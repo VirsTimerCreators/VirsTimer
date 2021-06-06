@@ -30,6 +30,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
 
         public async Task ChangeSessionAsync(Event @event)
         {
+            IsBusy = true;
             _event = @event;
             var repositoryResponse = await _sessionRepository.GetSessionsAsync(_event).ConfigureAwait(false);
             _sessions = repositoryResponse.Value;
@@ -37,10 +38,12 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
             {
                 var session = new Session(@event, $"{Constants.Sessions.NewSessionNameBase}1");
                 await _sessionRepository.AddSessionAsync(session).ConfigureAwait(false);
+                IsBusy = false;
                 return;
             }
 
             CurrentSession = _sessions[0];
+            IsBusy = false;
         }
 
         private async Task ChangeSessionAsync(Window window)

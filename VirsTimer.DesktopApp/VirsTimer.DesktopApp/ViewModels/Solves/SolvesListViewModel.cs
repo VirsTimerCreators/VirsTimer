@@ -43,11 +43,13 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
 
         private async Task LoadAsync()
         {
+            IsBusy = true;
             var repositoryResponse = await _solvesRepository.GetSolvesAsync(_session).ConfigureAwait(false);
             var ordered = repositoryResponse.Value.OrderByDescending(solve => solve.Date).Select(solve => new SolveViewModel(solve, _solvesRepository));
             Solves = new ObservableCollection<SolveViewModel>(ordered);
             Solves.CollectionChanged += UpdateIndexesAsync;
             UpdateIndexesAsync(this, EventArgs.Empty);
+            IsBusy = false;
         }
 
         private async void UpdateIndexesAsync(object? sender, EventArgs e)
@@ -58,8 +60,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
 
         private async Task DeleteSolveAsync(SolveViewModel solveViewModel)
         {
+            IsBusy = true;
             await _solvesRepository.DeleteSolveAsync(solveViewModel.Model).ConfigureAwait(false);
             Solves.Remove(solveViewModel);
+            IsBusy = false;
         }
     }
 }
