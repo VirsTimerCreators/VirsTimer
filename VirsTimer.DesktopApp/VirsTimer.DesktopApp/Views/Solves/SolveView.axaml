@@ -2,9 +2,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		Height="400" Width="800"
-		MinWidth="800"
-		MinHeight="400"
+		Height="500" Width="900"
+		MinHeight="500"
+		MinWidth="900"
+		MaxHeight="1000"
+		MaxWidth="1800"
 		CanResize="True"
 		xmlns:views="clr-namespace:VirsTimer.DesktopApp.Views;assembly=VirsTimer.DesktopApp"
 		xmlns:solveViews="clr-namespace:VirsTimer.DesktopApp.Views.Solves;assembly=VirsTimer.DesktopApp"
@@ -24,14 +26,14 @@
 					MaterialOpacity="0.75" />
 			</ExperimentalAcrylicBorder.Material>
 		</ExperimentalAcrylicBorder>
-		<Grid Margin="30 0 0 0" RowDefinitions="*,*,*,*,auto" ColumnDefinitions="Auto, 50, *">
+		<Grid Margin="30 0 0 0" RowDefinitions="*,auto,*,*,auto" ColumnDefinitions="Auto, 50, *">
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Czas" Grid.Row="0" Grid.Column="0"/>
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Scramble" Grid.Row="1" Grid.Column="0"/>
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Data" Grid.Row="2" Grid.Column="0"/>
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Flaga" Grid.Row="3" Grid.Column="0"/>
 
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="{Binding Time, Converter={converters:TimeSpanValueConverter}}}" Grid.Row="0" Grid.Column="2"/>
-			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="{Binding Scramble}" Grid.Row="1" Grid.Column="2"/>
+			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="{Binding Scramble}" TextWrapping="WrapWithOverflow" Grid.Row="1" Grid.Column="2"/>
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="{Binding Date}" Grid.Row="2" Grid.Column="2"/>
 			<solveViews:SolveFlagsView  DataContext="{Binding SolveFlagsViewModel}" VerticalAlignment="Center" Grid.Row="3" Grid.Column="2" Margin="0 0 20 0"/>
 			<Button Content="Akceptuj" Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Right" Background="#0959db" Margin="20 0 20 20" Command="{Binding AcceptCommand}" CommandParameter="{Binding $parent[Window]}"/>
