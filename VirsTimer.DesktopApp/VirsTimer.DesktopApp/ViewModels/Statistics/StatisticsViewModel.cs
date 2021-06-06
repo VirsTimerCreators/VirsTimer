@@ -65,8 +65,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Statistics
 
         public async Task DeleteSolve(Solve solve)
         {
+            IsBusy = true;
             Solves.Remove(solve);
             await Refresh().ConfigureAwait(false);
+            IsBusy = false;
         }
 
         private async void OnFlagChanged(object? sender, EventArgs e)

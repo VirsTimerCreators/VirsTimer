@@ -7,7 +7,7 @@
         xmlns:eventsViews="clr-namespace:VirsTimer.DesktopApp.Views.Events;assembly=VirsTimer.DesktopApp"
         xmlns:sessionsViews="clr-namespace:VirsTimer.DesktopApp.Views.Sessions;assembly=VirsTimer.DesktopApp"
         xmlns:scramblesViews="clr-namespace:VirsTimer.DesktopApp.Views.Scrambles;assembly=VirsTimer.DesktopApp"
-		xmlns:statisticsViews="clr-namespace:VirsTimer.DesktopApp.Views.Statistics;assembly=VirsTimer.DesktopApp"
+        xmlns:statisticsViews="clr-namespace:VirsTimer.DesktopApp.Views.Statistics;assembly=VirsTimer.DesktopApp"
         Height="1050" Width="1500"
         MinHeight="700" MinWidth="1000"
         x:Class="VirsTimer.DesktopApp.Views.MainWindow"
@@ -17,8 +17,7 @@
         xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
-        WindowState="FullScreen"
-        ExtendClientAreaToDecorationsHint="True">
+        WindowState="FullScreen">
     <Grid RowDefinitions="100,Auto,300,*">
         <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
             <ExperimentalAcrylicBorder.Material>
@@ -29,8 +28,8 @@
                     MaterialOpacity="0.75" />
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
-        <Grid Grid.Row="0" ColumnDefinitions="*,*,*">
-            <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="3">
+        <Grid Grid.Row="0" ColumnDefinitions="*,*,*,Auto">
+            <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="4">
                 <ExperimentalAcrylicBorder.Material>
                     <ExperimentalAcrylicMaterial
                         BackgroundSource="Digger"
@@ -39,8 +38,36 @@
                         MaterialOpacity="0.45" />
                 </ExperimentalAcrylicBorder.Material>
             </ExperimentalAcrylicBorder>
-            <eventsViews:EventView Grid.Column="0" Content="{Binding EventViewModel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <sessionsViews:SessionSummaryView Grid.Column="1" Content="{Binding SessionSummaryViewModel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <eventsViews:EventView 
+                Grid.Column="0"
+                Content="{Binding EventViewModel}"
+                Margin="30,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"/>
+            <sessionsViews:SessionSummaryView
+                Grid.Column="1"
+                Content="{Binding SessionSummaryViewModel}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+            <StackPanel
+                IsVisible="{Binding IsBusy}"
+                Width="200"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Right">
+                <ProgressBar Width="20" IsIndeterminate="True"/>
+                <TextBlock Margin="0,10,0,0" VerticalAlignment="Center" TextAlignment="Center" Text="Synchronizacja danych"></TextBlock>
+            </StackPanel>
+            <Button 
+                Margin="20,0,20,0"
+                Height="38"
+                Width="90"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Grid.Column="3"
+                Content="Wyjście"
+                Command="{Binding ExitCommand}"
+                Background="#cf8b0c"/>
         </Grid>
         <scramblesViews:ScrambleView
             MinHeight="100" 
@@ -69,14 +96,14 @@
                 Margin="20 12 26 12"/>
             <Grid 
                 Grid.Column="1"
-				Grid.RowSpan="2"
+                Grid.RowSpan="2"
                 RowDefinitions="*,*">
                 <Image
                     Name="ImageLayout"
                     Grid.Column="1"
                     Focusable="False" 
                     Source="{Binding ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
-				<statisticsViews:StatisticsView Margin="30"  Grid.Column="1" Grid.Row="1" Content="{Binding StatisticsViewModel}"/>
+                <statisticsViews:StatisticsView Margin="30"  Grid.Column="1" Grid.Row="1" Content="{Binding StatisticsViewModel}"/>
             </Grid>
         </Grid>
     </Grid>

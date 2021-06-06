@@ -26,8 +26,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
 
         public override async Task ConstructAsync()
         {
+            IsBusy = true;
             var repositoryResponse = await _eventsRepository.GetEventsAsync().ConfigureAwait(false);
             CurrentEvent = repositoryResponse.Value[0];
+            IsBusy = false;
         }
 
         private async Task ChangeEventAsync(Window window)

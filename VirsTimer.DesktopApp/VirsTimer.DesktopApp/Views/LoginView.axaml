@@ -11,9 +11,9 @@
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True">
     <Grid 
-        RowDefinitions="2*,Auto,*,Auto,3*"
+        RowDefinitions="Auto,2*,Auto,*,Auto,3*"
         ColumnDefinitions="*,2*,*">
-    <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="3" Grid.RowSpan="5">
+    <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="3" Grid.RowSpan="6">
         <ExperimentalAcrylicBorder.Material>
             <ExperimentalAcrylicMaterial
                 BackgroundSource="Digger"
@@ -22,8 +22,10 @@
                 MaterialOpacity="0.75" />
         </ExperimentalAcrylicBorder.Material>
     </ExperimentalAcrylicBorder>
+		<TextBlock Text="Logowanie" Grid.Row="0" Margin="10"
+				   FontSize="14"/>
     <TextBox
-        Grid.Row="1"
+        Grid.Row="2"
         Grid.Column="1"
 		MinHeight="40"
 		Watermark="Nazwa użytkownika"
@@ -32,12 +34,12 @@
     <TextBox
         Name="PasswordTextBox"
 		Watermark="Hasło"
-        Grid.Row="3"
+        Grid.Row="4"
 		MinHeight="40"
         Grid.Column="1"
 		VerticalContentAlignment="Center"
         Text="{Binding LoginPassowd}"/>
-    <Button Grid.Row="5"
+    <Button Grid.Row="6"
             Grid.ColumnSpan="3"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
