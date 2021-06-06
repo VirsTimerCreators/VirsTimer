@@ -15,5 +15,14 @@ namespace VirsTimer.Core.Extensions
         {
             return enumerable == null || !enumerable.Any();
         }
+
+        /// <summary>
+        /// Returns collection of stepped subcollections that contains <paramref name="step"/> elements each.
+        /// </summary>
+        public static IEnumerable<IEnumerable<T>> StepCollection<T>(this ICollection<T> source, int step)
+        {
+            for (var i = 0; i < source.Count - step; i++)
+                yield return source.Skip(i).Take(step);
+        }
     }
 }

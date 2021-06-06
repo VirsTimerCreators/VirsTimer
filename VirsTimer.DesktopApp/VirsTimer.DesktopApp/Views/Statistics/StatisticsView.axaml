@@ -1,0 +1,82 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
+             x:Class="VirsTimer.DesktopApp.Views.Statistics.StatisticsView">
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+    </UserControl.Styles>
+    <Grid RowDefinitions="*,*,*" ColumnDefinitions="*,*,*,*,*,*">
+        <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="10" Grid.RowSpan="10">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.75" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+        <Border Grid.Row="0" BorderBrush="#b1b536" BorderThickness="0,0,1,1"/>
+        <Border Grid.Row="1" BorderBrush="#b1b536" BorderThickness="0,0,1,1">
+            <TextBlock Text="Obecny" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Row="2" BorderBrush="#b1b536" BorderThickness="0,0,1,0">
+            <TextBlock Text="Najlepszy" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+
+        <Border Grid.Row="0" Grid.Column="1" BorderBrush="#b1b536" BorderThickness="0,0,1,1">
+            <TextBlock Text="Czas" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="1" BorderBrush="#b1b536" BorderThickness="0,0,1,1">
+            <TextBlock Text="{Binding CurrentTime, Converter={converters:TimeSpanStatisticsValueConverte}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="1" BorderBrush="#b1b536" BorderThickness="0,0,1,0">
+            <TextBlock Text="{Binding BestTime, Converter={converters:TimeSpanStatisticsValueConverte}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+
+        <Border Grid.Row="0" Grid.Column="2" BorderBrush="#b1b536" BorderThickness="0,0,1,1">
+            <TextBlock Text="Mo3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="2" BorderBrush="#b1b536" BorderThickness="0,0,1,1">
+            <TextBlock Text="{Binding CurrentMo3, Converter={converters:TimeSpanStatisticsValueConverte}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="2" BorderBrush="#b1b536" BorderThickness="0,0,1,0">
+            <TextBlock Text="{Binding BestMo3, Converter={converters:TimeSpanStatisticsValueConverte}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+
+        <Border Grid.Row="0" Grid.Column="3" BorderBrush="#b1b536" BorderThickness="0,0,1,1">
+            <TextBlock Text="Ao5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="3" BorderBrush="#b1b536" BorderThickness="0,0,1,1">
+            <TextBlock Text="{Binding CurrentAo5, Converter={converters:TimeSpanStatisticsValueConverte}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="3" BorderBrush="#b1b536" BorderThickness="0,0,1,0">
+            <TextBlock Text="{Binding BestAo5, Converter={converters:TimeSpanStatisticsValueConverte}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+
+        <Border Grid.Row="0" Grid.Column="4" BorderBrush="#b1b536" BorderThickness="0,0,1,1">
+            <TextBlock Text="Ao12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="4" BorderBrush="#b1b536" BorderThickness="0,0,1,1">
+            <TextBlock Text="{Binding CurrentAo12, Converter={converters:TimeSpanStatisticsValueConverte}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="4" BorderBrush="#b1b536" BorderThickness="0,0,1,0">
+            <TextBlock Text="{Binding BestAo12, Converter={converters:TimeSpanStatisticsValueConverte}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+
+		<Border Grid.Row="0" Grid.Column="5" BorderBrush="#b1b536" BorderThickness="0,0,0,1">
+			<TextBlock Text="Ao100" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+		</Border>
+		<Border Grid.Row="1" Grid.Column="5" BorderBrush="#b1b536" BorderThickness="0,0,0,1">
+			<TextBlock Text="{Binding CurrentAo100, Converter={converters:TimeSpanStatisticsValueConverte}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+		</Border>
+		<Border Grid.Row="2" Grid.Column="5" BorderBrush="#b1b536" BorderThickness="0,0,0,0">
+			<TextBlock Text="{Binding BestAo100, Converter={converters:TimeSpanStatisticsValueConverte}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+		</Border>
+    </Grid>
+</UserControl>

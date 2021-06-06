@@ -15,6 +15,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
     public class SolveViewModel : ViewModelBase
     {
         private readonly ISolvesRepository _solvesRepository;
+        public static event EventHandler FlagChanged;
 
         public bool Accepted { get; private set; }
         public Solve Model { get; }
@@ -66,6 +67,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
             Accepted = Flag != SolveFlagsViewModel.ChoosenFlag;
             Model.Flag = Flag = SolveFlagsViewModel.ChoosenFlag;
             await _solvesRepository.UpdateSolveAsync(Model).ConfigureAwait(true);
+            FlagChanged(this.Model, EventArgs.Empty);
             UpdateSummary();
             window.Close();
         }
