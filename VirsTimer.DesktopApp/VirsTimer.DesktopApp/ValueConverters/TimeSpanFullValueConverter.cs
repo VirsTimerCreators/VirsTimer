@@ -9,7 +9,7 @@ namespace VirsTimer.DesktopApp.ValueConverters
 {
     public class TimeSpanFullValueConverter : MarkupExtension, IValueConverter
     {
-        private static readonly Regex TimeFormat = new Regex(@"([0-9]{2}):([0-5][0-9]:[0-5][0-9]\.[0-9]{2})");
+        private static readonly Regex TimeFormat = new(@"([0-9]{2}):([0-5][0-9]:[0-5][0-9]\.[0-9]{2})");
 
         private static TimeSpanFullValueConverter? _converter = null;
 

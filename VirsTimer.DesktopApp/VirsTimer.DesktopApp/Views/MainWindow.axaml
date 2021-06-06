@@ -7,6 +7,7 @@
         xmlns:eventsViews="clr-namespace:VirsTimer.DesktopApp.Views.Events;assembly=VirsTimer.DesktopApp"
         xmlns:sessionsViews="clr-namespace:VirsTimer.DesktopApp.Views.Sessions;assembly=VirsTimer.DesktopApp"
         xmlns:scramblesViews="clr-namespace:VirsTimer.DesktopApp.Views.Scrambles;assembly=VirsTimer.DesktopApp"
+		xmlns:statisticsViews="clr-namespace:VirsTimer.DesktopApp.Views.Statistics;assembly=VirsTimer.DesktopApp"
         Height="1050" Width="1500"
         MinHeight="700" MinWidth="1000"
         x:Class="VirsTimer.DesktopApp.Views.MainWindow"
@@ -68,12 +69,14 @@
                 Margin="20 12 26 12"/>
             <Grid 
                 Grid.Column="1"
+				Grid.RowSpan="2"
                 RowDefinitions="*,*">
                 <Image
                     Name="ImageLayout"
                     Grid.Column="1"
                     Focusable="False" 
                     Source="{Binding ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
+				<statisticsViews:StatisticsView Margin="30"  Grid.Column="1" Grid.Row="1" Content="{Binding StatisticsViewModel}"/>
             </Grid>
         </Grid>
     </Grid>

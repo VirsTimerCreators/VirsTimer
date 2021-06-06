@@ -7,7 +7,7 @@ namespace VirsTimer.Core.Models.Requests
     {
         public const string Ok = "OK";
         public const string PlusTwo = "PLUS_TWO";
-        public const string Dnf = "DNF ";
+        public const string Dnf = "DNF";
 
         public static SolveFlag ToSolveFlag(string serverFlag)
         {
