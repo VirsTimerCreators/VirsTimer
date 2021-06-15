@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -75,7 +74,7 @@ namespace VirsTimer.Core.Services.Solves
             }
             catch (HttpRequestException ex)
             {
-                return new RepositoryResponse<IReadOnlyList<Solve>>((HttpStatusCode)ex.StatusCode!, ex.Message);
+                return new RepositoryResponse<IReadOnlyList<Solve>>(ex.StatusCode!, ex.Message);
             }
             catch (Exception ex)
             {

@@ -28,7 +28,7 @@ namespace VirsTimer.Core.Services.Events
             }
             catch (HttpRequestException ex)
             {
-                return new RepositoryResponse<IReadOnlyList<Event>>((HttpStatusCode)ex.StatusCode!, ex.Message);
+                return new RepositoryResponse<IReadOnlyList<Event>>(ex.StatusCode!, ex.Message);
             }
             catch (Exception ex)
             {

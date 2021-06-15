@@ -9,9 +9,10 @@
         Title="Logowanie"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
+		xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
         ExtendClientAreaToDecorationsHint="True">
     <Grid 
-        RowDefinitions="Auto,2*,Auto,*,Auto,3*"
+        RowDefinitions="60,2*,Auto,*,Auto,4*"
         ColumnDefinitions="*,2*,*">
     <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="3" Grid.RowSpan="6">
         <ExperimentalAcrylicBorder.Material>
@@ -24,6 +25,13 @@
     </ExperimentalAcrylicBorder>
 		<TextBlock Text="Logowanie" Grid.Row="0" Margin="10"
 				   FontSize="14"/>
+		<ProgressBar
+			IsIndeterminate="True"
+			Grid.ColumnSpan="5"
+			HorizontalAlignment="Right"
+			Margin="20,40,20,0"
+			VerticalAlignment="Top"
+			IsVisible="{Binding IsBusy}"/>
     <TextBox
         Grid.Row="2"
         Grid.Column="1"
@@ -53,17 +61,10 @@
         VerticalAlignment="Bottom"
         HorizontalAlignment="Center"
         Grid.Row="5" 
-        Text="Nie udało się zalogować. Błędny login lub hasło."
+        Text="{Binding LoginStaus, Converter={converters:LoginStatusConverter}}"
 		TextAlignment="Left"
 		TextWrapping="WrapWithOverflow"
 		IsVisible="{Binding IsResponseUnsccesfull}"
         Background="#ed924c"/>
-		<ProgressBar
-			IsIndeterminate="True"
-			Grid.ColumnSpan="5"
-			HorizontalAlignment="Right"
-			Margin="20"
-			VerticalAlignment="Top"
-			IsVisible="{Binding IsBusy}"/>
     </Grid>
 </Window>

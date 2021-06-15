@@ -17,18 +17,23 @@ namespace VirsTimer.Core.Models
             Message = message;
         }
 
-        public RepositoryResponse(HttpStatusCode httpStatusCode, string message)
+        public RepositoryResponse(HttpStatusCode? httpStatusCode, string message)
         {
             Status = ConvertHttpStatusCode(httpStatusCode);
             Message = message;
         }
 
-        private static RepositoryResponseStatus ConvertHttpStatusCode(HttpStatusCode httpStatusCode)
+        private static RepositoryResponseStatus ConvertHttpStatusCode(HttpStatusCode? httpStatusCode)
         {
             return httpStatusCode switch
             {
-                HttpStatusCode.OK | HttpStatusCode.Created => RepositoryResponseStatus.Ok,
-                HttpStatusCode.Unauthorized | HttpStatusCode.Forbidden | HttpStatusCode.NotFound | HttpStatusCode.BadRequest | HttpStatusCode.UnprocessableEntity => RepositoryResponseStatus.ClientError,
+                HttpStatusCode.OK => RepositoryResponseStatus.Ok,
+                HttpStatusCode.Created => RepositoryResponseStatus.Ok,
+                HttpStatusCode.Unauthorized => RepositoryResponseStatus.ClientError,
+                HttpStatusCode.Forbidden => RepositoryResponseStatus.ClientError,
+                HttpStatusCode.NotFound => RepositoryResponseStatus.ClientError,
+                HttpStatusCode.BadRequest => RepositoryResponseStatus.ClientError,
+                HttpStatusCode.UnprocessableEntity => RepositoryResponseStatus.ClientError,
                 HttpStatusCode.InternalServerError => RepositoryResponseStatus.RepositoryError,
                 HttpStatusCode.ServiceUnavailable => RepositoryResponseStatus.NetworkError,
                 _ => RepositoryResponseStatus.UnknownError
@@ -56,7 +61,7 @@ namespace VirsTimer.Core.Models
             Value = value;
         }
 
-        public RepositoryResponse(HttpStatusCode httpStatusCode, string message)
+        public RepositoryResponse(HttpStatusCode? httpStatusCode, string message)
             : base(httpStatusCode, message)
         { }
     }

@@ -14,16 +14,16 @@ namespace VirsTimer.DesktopApp.ViewModels
         private readonly ILoginRepository _loginRepository;
 
         [Reactive]
-        public bool IsBusy { get; set; } = false;
-
-        [Reactive]
-        public bool IsResponseUnsccesfull { get; set; } = false;
+         public bool IsResponseUnsccesfull { get; set; } = false;
 
         [Reactive]
         public string LoginName { get; set; } = string.Empty;
 
         [Reactive]
         public string LoginPassowd { get; set; } = string.Empty;
+
+        [Reactive]
+        public RepositoryResponseStatus? LoginStaus { get; set; }
 
         public ReactiveCommand<Window, Unit> AcceptLoginCommand { get; }
 
@@ -53,6 +53,7 @@ namespace VirsTimer.DesktopApp.ViewModels
                 parent.Close();
             }
 
+            LoginStaus = response.Status;
             ShowUnsuccesfullControlAsync();
             IsBusy = false;
         }
