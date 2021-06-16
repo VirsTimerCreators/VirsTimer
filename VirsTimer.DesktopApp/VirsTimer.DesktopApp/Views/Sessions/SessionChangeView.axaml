@@ -58,7 +58,7 @@
                             Grid.Column="2" 
                             HorizontalContentAlignment="Center" 
                             Content="Usuń"
-                            Command="{Binding ParentViewModel.DeleteSessionCommand}"
+                            Command="{Binding $parent[Window].DataContext.DeleteSessionCommand}"
                             CommandParameter="{Binding}"
                             Click="ClickWithUnselect"
                             IsVisible="{Binding EditingSession, Converter={converters:InverseBooleanConverter}}"/>
@@ -68,7 +68,7 @@
                             HorizontalContentAlignment="Center" 
                             Content="Akceptuj" 
                             IsVisible="{Binding EditingSession}"
-                            Command="{Binding ParentViewModel.AcceptRenameSessionCommand}"
+                            Command="{Binding $parent[Window].DataContext.AcceptRenameSessionCommand}"
                             CommandParameter="{Binding}"/>
                     </Grid>
                 </DataTemplate>

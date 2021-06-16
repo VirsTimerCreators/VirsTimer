@@ -1,7 +1,8 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Extensions;
@@ -14,8 +15,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
     public class SessionSummaryViewModel : ViewModelBase
     {
         private readonly ISessionRepository _sessionRepository;
-        private IReadOnlyList<Session>? _sessions;
         private Event _event = null!;
+
+        [Reactive]
+        public ObservableCollection<SessionViewModel> Sessions { get; set; } = null!;
 
         [Reactive]
         public Session CurrentSession { get; set; } = null!;
@@ -33,30 +36,37 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
             IsBusy = true;
             _event = @event;
             var repositoryResponse = await _sessionRepository.GetSessionsAsync(_event).ConfigureAwait(false);
-            _sessions = repositoryResponse.Value;
-            if (_sessions.IsNullOrEmpty())
+            var sessions = repositoryResponse.Value.Select(session => new SessionViewModel(session)).OrderBy(x => x.Name).ToList();
+            if (sessions.IsNullOrEmpty())
             {
                 var session = new Session(@event, $"{Constants.Sessions.NewSessionNameBase}1");
                 await _sessionRepository.AddSessionAsync(session).ConfigureAwait(false);
-                IsBusy = false;
-                return;
+                sessions.Add(new SessionViewModel(session));
             }
 
-            CurrentSession = _sessions[0];
+            Sessions = new(sessions);
+            CurrentSession = Sessions[0].Session;
             IsBusy = false;
         }
 
         private async Task ChangeSessionAsync(Window window)
         {
-            var sessionChangeViewModel = new SessionChangeViewModel(_event, _sessionRepository);
+            var sessionChangeViewModel = new SessionChangeViewModel(_event, _sessionRepository, Sessions);
             var dialog = new SessionChangeView
             {
                 DataContext = sessionChangeViewModel
             };
 
+            sessionChangeViewModel.DeleteSessionCommand.Subscribe(Observer.Create<Session>(session => ChangeSessionIfDeleted(session)));
             await dialog.ShowDialog(window);
             if (sessionChangeViewModel.Accepted)
                 CurrentSession = sessionChangeViewModel.SelectedSession!.Session;
+        }
+
+        void ChangeSessionIfDeleted(Session session)
+        {
+            if (session == CurrentSession)
+                CurrentSession = Sessions[0].Session;
         }
     }
 }
