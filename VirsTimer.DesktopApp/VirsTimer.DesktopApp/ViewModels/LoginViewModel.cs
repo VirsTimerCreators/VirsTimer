@@ -1,10 +1,11 @@
-using Avalonia.Controls;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using System.Diagnostics;
 using System.Reactive;
 using System.Threading.Tasks;
-using VirsTimer.Core.Models;
+using Avalonia.Controls;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using VirsTimer.Core.Models.Requests;
+using VirsTimer.Core.Models.Responses;
 using VirsTimer.Core.Services.Login;
 using VirsTimer.DesktopApp.Views;
 

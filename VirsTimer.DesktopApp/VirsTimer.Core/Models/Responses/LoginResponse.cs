@@ -1,4 +1,4 @@
-namespace VirsTimer.Core.Models
+namespace VirsTimer.Core.Models.Responses
 {
     public class LoginResponse
     {

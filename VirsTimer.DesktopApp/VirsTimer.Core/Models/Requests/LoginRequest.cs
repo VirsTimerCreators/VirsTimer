@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace VirsTimer.Core.Models
+namespace VirsTimer.Core.Models.Requests
 {
     public class LoginRequest
     {
