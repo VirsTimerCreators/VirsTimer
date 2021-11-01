@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Authorization;
+using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services.Events
 {

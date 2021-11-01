@@ -8,6 +8,7 @@ using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Models.Requests;
+using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services.Solves
 {

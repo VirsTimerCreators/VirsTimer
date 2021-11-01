@@ -1,0 +1,100 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Height="450" Width="500"
+        MinHeight="450" MinWidth="500"
+        MaxHeight="650" MaxWidth="750"
+        x:Class="VirsTimer.DesktopApp.Views.RegisterView"
+        Title="Rejestracja"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
+        ExtendClientAreaToDecorationsHint="True">
+    <Grid
+        RowDefinitions="60,2*,*,2*,*,2*,*,2*,*,10"
+        ColumnDefinitions="*,4*,*">
+        <ExperimentalAcrylicBorder
+            IsHitTestVisible="False"
+            Grid.ColumnSpan="3"
+            Grid.RowSpan="10">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.75" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+        <TextBlock Text="Rejestracja" Grid.Row="0" Margin="10"
+                   FontSize="14"/>
+		<ProgressBar
+            IsIndeterminate="True"
+            Grid.ColumnSpan="5"
+            HorizontalAlignment="Right"
+            Margin="20,40,20,0"
+            VerticalAlignment="Top"
+            IsVisible="True"/>
+		
+        <TextBox 
+            Grid.Row="1"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Stretch"
+			MinHeight="40"
+			Watermark="Login"
+			VerticalContentAlignment="Center"/>			
+
+        <TextBox
+            Grid.Row="3"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Stretch"
+			MinHeight="40"
+			Watermark="Email"
+			VerticalContentAlignment="Center"/>
+		<TextBlock
+            Grid.Row="4"
+			Foreground="Red"
+            Grid.Column="1"
+			Padding="2 0"
+			HorizontalAlignment="Left"
+			Text="Format email nie jest prawidłowy."/>
+			
+        <TextBox
+            Grid.Row="5"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Stretch"
+			MinHeight="40"
+			Watermark="Hasło"
+			VerticalContentAlignment="Center"
+			Name="PasswordTextBox"/>
+		<TextBlock
+            Grid.Row="6"
+			Foreground="Red"
+            Grid.Column="1"
+			Padding="2 -3"
+			HorizontalAlignment="Left"
+			Text="Hasła powinny składać się z co najmniej 5 znaków."
+			TextWrapping="WrapWithOverflow">
+			</TextBlock>
+		
+		<TextBox
+            Grid.Row="7"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Stretch"
+			MinHeight="40"
+			Watermark="Powtórz hasło"
+			VerticalContentAlignment="Center"
+			Name="RepeatPasswordTextBox"/>
+		<TextBlock
+            Grid.Row="8"
+			Foreground="Red"
+            Grid.Column="1"
+			Padding="2 0"
+			HorizontalAlignment="Left"
+			Text="Hasła nie są takie same."/>
+    </Grid>
+</Window>

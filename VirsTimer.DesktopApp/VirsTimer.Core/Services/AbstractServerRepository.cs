@@ -5,8 +5,8 @@ using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Authorization;
+using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services
 {

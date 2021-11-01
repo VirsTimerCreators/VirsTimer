@@ -33,7 +33,8 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public ReactiveCommand<Window, Unit> ContinueLocalCommand { get; }
 
-        public LoginViewModel(ILoginRepository loginRepository)
+        public LoginViewModel(
+            ILoginRepository loginRepository)
         {
             _loginRepository = loginRepository;
 
@@ -42,15 +43,15 @@ namespace VirsTimer.DesktopApp.ViewModels
                 x => x.LoginPassowd,
                 (name, password) => !string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(password));
 
-            RegisterCommand = ReactiveCommand.Create<Window>(Register);
+            RegisterCommand = ReactiveCommand.CreateFromTask<Window>(Register);
             AcceptLoginCommand = ReactiveCommand.CreateFromTask<Window>(AcceptLoginAsync, acceptLoginEnabled);
             ContinueLocalCommand = ReactiveCommand.Create<Window>(ContinueLocal);
         }
 
-        private void Register(Window parent)
+        private async Task Register(Window parent)
         {
-            //Todo fill
-            Trace.WriteLine("Register clicked");
+            var registerWindow = new RegisterView();
+            await registerWindow.ShowDialog(parent).ConfigureAwait(false);
         }
 
         private async Task AcceptLoginAsync(Window parent)
