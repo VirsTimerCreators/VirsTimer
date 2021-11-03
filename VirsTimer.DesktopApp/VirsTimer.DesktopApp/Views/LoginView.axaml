@@ -2,9 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Height="450" Width="500"
-        MinHeight="450" MinWidth="500"
-        MaxHeight="650" MaxWidth="750"
+        Height="450" Width="600"
+        MinHeight="450" MinWidth="600"
+        MaxHeight="450" MaxWidth="600"
         x:Class="VirsTimer.DesktopApp.Views.LoginView"
         Title="Logowanie"
         TransparencyLevelHint="AcrylicBlur"
@@ -115,6 +115,7 @@
             TextAlignment="Left"
             TextWrapping="WrapWithOverflow"
             IsVisible="{Binding IsResponseUnsccesfull}"
-            Background="#ed924c"/>
+            Background="#ed924c"
+			Foreground="Black"/>
     </Grid>
 </Window>

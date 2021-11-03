@@ -7,7 +7,7 @@ using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services.Register
 {
-    class ServerRegisterRepository : IRegisterRepository
+    public class ServerRegisterRepository : IRegisterRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpResponseHandler _httpResponseHandler;
@@ -18,10 +18,10 @@ namespace VirsTimer.Core.Services.Register
             _httpResponseHandler = httpResponseHandler;
         }
 
-        public async Task<RepositoryResponse> SingupAsync(SingupRequest request)
+        public async Task<RepositoryResponse> RegisterAsync(RegisterRequest request)
         {
             using var client = _httpClientFactory.CreateClient();
-            var enpoint = "/api/auth/singup/";
+            var enpoint = "/api/auth/signup/";
             var response = await _httpResponseHandler.HandleAsync(() => client.PostAsJsonAsync(enpoint, request));
             return response;
         }

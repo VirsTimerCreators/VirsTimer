@@ -5,12 +5,14 @@ using System;
 using System.IO;
 using System.IO.Abstractions;
 using VirsTimer.Core.Constants;
+using VirsTimer.Core.Handlers;
 using VirsTimer.Core.Helpers;
 using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Services;
 using VirsTimer.Core.Services.Cache;
 using VirsTimer.Core.Services.Events;
 using VirsTimer.Core.Services.Login;
+using VirsTimer.Core.Services.Register;
 using VirsTimer.Core.Services.Scrambles;
 using VirsTimer.Core.Services.Sessions;
 using VirsTimer.Core.Services.Solves;
@@ -60,11 +62,13 @@ namespace VirsTimer.DesktopApp
                 Server.Endpoints.Scrambles,
                 client => client.BaseAddress = new Uri(Path.Combine(Server.Address, Server.Endpoints.Scrambles)));
 
+            services.AddSingleton<IHttpResponseHandler, HttpResponseHandler>();
             services.AddSingleton<IFileSystem, FileSystem>();
             services.AddSingleton<FileHelper>();
             services.AddSingleton<IApplicationCacheSaver, ApplicationCacheSaver>();
             services.AddSingleton<IUserClient, UserClient>();
             services.AddSingleton<ILoginRepository, ServerLoginRepository>();
+            services.AddSingleton<IRegisterRepository, ServerRegisterRepository>();
             services.AddHttpClient();
         }
 

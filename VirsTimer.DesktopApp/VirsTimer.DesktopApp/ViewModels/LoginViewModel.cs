@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -14,9 +13,6 @@ namespace VirsTimer.DesktopApp.ViewModels
     public class LoginViewModel : ViewModelBase
     {
         private readonly ILoginRepository _loginRepository;
-
-        [Reactive]
-        public bool IsResponseUnsccesfull { get; set; } = false;
 
         [Reactive]
         public string LoginName { get; set; } = string.Empty;
@@ -51,7 +47,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         private async Task Register(Window parent)
         {
             var registerWindow = new RegisterView();
-            await registerWindow.ShowDialog(parent).ConfigureAwait(false);
+            await registerWindow.ShowDialog(parent).ConfigureAwait(true);
         }
 
         private async Task AcceptLoginAsync(Window parent)
@@ -80,16 +76,6 @@ namespace VirsTimer.DesktopApp.ViewModels
             var mainWinow = new MainWindow();
             mainWinow.Show();
             parent.Close();
-        }
-
-        private async void ShowUnsuccesfullControlAsync()
-        {
-            if (IsResponseUnsccesfull)
-                return;
-
-            IsResponseUnsccesfull = true;
-            await Task.Delay(3000).ConfigureAwait(false);
-            IsResponseUnsccesfull = false;
         }
     }
 }

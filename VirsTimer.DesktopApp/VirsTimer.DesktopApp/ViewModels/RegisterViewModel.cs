@@ -1,37 +1,115 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Avalonia.Controls;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using VirsTimer.Core.Models.Requests;
+using VirsTimer.Core.Models.Responses;
 using VirsTimer.Core.Services.Register;
+using VirsTimer.Core.Utils;
 
 namespace VirsTimer.DesktopApp.ViewModels
 {
     public class RegisterViewModel : ViewModelBase
     {
-        private readonly IRegisterRepository _registerRepository1;
-        //private static readonly Regex EmailRegex = new Regex("");
+        private readonly IRegisterRepository _registerRepository;
+        private static readonly Regex LoginRegex = new Regex(@"[\p{L}.-]{3,}");
 
         [Reactive]
-        public string Login { get; set; } = string.Empty;
+        public RepositoryResponseStatus? RegisterStatus { get; set; }
 
         [Reactive]
-        public string Email { get; set; } = string.Empty;
+        public string? RegisterMessage { get; set; }
 
         [Reactive]
-        public string Password { get; set; } = string.Empty;
+        public string Login { get; set; }
 
         [Reactive]
-        public string RepeatedPassword { get; set; } = string.Empty;
+        public string Email { get; set; }
+
+        [Reactive]
+        public string Password { get; set; }
+
+        [Reactive]
+        public string RepeatedPassword { get; set; }
+
+        [ObservableAsProperty]
+        public bool LoginOk { get; set; }
 
         [ObservableAsProperty]
         public bool EmailOk { get; set; }
 
+        [ObservableAsProperty]
+        public bool PasswordOk { get; set; }
+
+        [ObservableAsProperty]
+        public bool PasswordsAreSame { get; set; }
+
+        public ReactiveCommand<Window, Unit> AcceptRegisterCommand { get; }
+
         public RegisterViewModel(IRegisterRepository registerRepository)
         {
-            _registerRepository1 = registerRepository;
+            Login = string.Empty;
+            Email = string.Empty;
+            Password = string.Empty;
+            RepeatedPassword = string.Empty;
+
+            _registerRepository = registerRepository;
+
+            this.WhenAnyValue(x => x.Login)
+                .Skip(1)
+                .Select(x => LoginRegex.IsMatch(x))
+                .ToPropertyEx(this, x => x.LoginOk, scheduler: RxApp.MainThreadScheduler);
+
+            this.WhenAnyValue(x => x.Email)
+                .Skip(1)
+                .Select(x => x.IsValidEmail())
+                .ToPropertyEx(this, x => x.EmailOk, scheduler: RxApp.MainThreadScheduler);
+
+            this.WhenAnyValue(x => x.Password, x => x.Length > 4)
+                .Skip(1)
+                .ToPropertyEx(this, x => x.PasswordOk);
+
+            this.WhenAnyValue(x => x.Password, x => x.RepeatedPassword, (x, y) => x == y)
+                .ToPropertyEx(this, x => x.PasswordsAreSame);
+
+            var acceptRegisterEnabled = this.WhenAnyValue(
+                x => x.LoginOk,
+                x => x.EmailOk,
+                x => x.PasswordOk,
+                x => x.PasswordsAreSame,
+                (x, y, z, w) => x && y && z && w);
+
+            AcceptRegisterCommand = ReactiveCommand.CreateFromTask<Window>(AcceptRegisterAsync, acceptRegisterEnabled);
+        }
+
+        private async Task AcceptRegisterAsync(Window parent)
+        {
+            IsBusy = true;
+
+            var registerRequest = new RegisterRequest
+            {
+                Username = Login,
+                Email = Email,
+                Password = Password
+            };
+            var response = await _registerRepository.RegisterAsync(registerRequest).ConfigureAwait(false);
+            (RegisterStatus, RegisterMessage) = (response.Status, response.Message);
+            Debug.WriteLine(response.Succesfull);
+            Debug.WriteLine(response.Status);
+            Debug.WriteLine(response.Message);
+            if (response.Succesfull)
+            {
+
+            }
+
+            RegisterStatus = response.Status;
+            ShowUnsuccesfullControlAsync();
+            IsBusy = false;
         }
     }
 }

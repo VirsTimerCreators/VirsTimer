@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
+using VirsTimer.Core.Services.Register;
 using VirsTimer.DesktopApp.ViewModels;
 
 namespace VirsTimer.DesktopApp.Views
@@ -16,7 +18,8 @@ namespace VirsTimer.DesktopApp.Views
             this.AttachDevTools();
 #endif
 
-            ViewModel = new RegisterViewModel(null);
+            var registerRepository = Ioc.Services.GetRequiredService<IRegisterRepository>();
+            ViewModel = new RegisterViewModel(registerRepository);
             DataContext = ViewModel;
 
             var passwordTextBox = this.FindControl<TextBox>("PasswordTextBox");

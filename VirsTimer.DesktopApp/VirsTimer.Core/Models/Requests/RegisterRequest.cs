@@ -5,7 +5,7 @@ namespace VirsTimer.Core.Models.Requests
     /// <summary>
     /// Singup request model.
     /// </summary>
-    public class SingupRequest
+    public class RegisterRequest
     {
         private const string UserRole = "ROLE_USER";
 

@@ -12,6 +12,6 @@ namespace VirsTimer.Core.Services.Register
         /// <summary>
         /// Singsup to the application.
         /// </summary>
-        public Task<RepositoryResponse> SingupAsync(SingupRequest request);
+        public Task<RepositoryResponse> RegisterAsync(RegisterRequest request);
     }
 }

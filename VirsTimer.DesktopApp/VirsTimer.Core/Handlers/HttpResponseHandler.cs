@@ -7,8 +7,10 @@ using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Handlers
 {
-    class HttpResponseHandler : IHttpResponseHandler
+    public class HttpResponseHandler : IHttpResponseHandler
     {
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
         public async Task<RepositoryResponse> HandleAsync(Func<Task<HttpResponseMessage>> responseFunc)
         {
             try
@@ -16,10 +18,10 @@ namespace VirsTimer.Core.Handlers
                 var httpResponse = await responseFunc().ConfigureAwait(false);
                 var message = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (httpResponse.IsSuccessStatusCode)
-                {
                     return RepositoryResponse.Ok;
-                }
-                return new RepositoryResponse(httpResponse.StatusCode, message);
+
+                var error = JsonSerializer.Deserialize<ErrorResponse>(message, JsonSerializerOptions);
+                return new RepositoryResponse(httpResponse.StatusCode, error?.Message ?? message);
             }
             catch (HttpRequestException ex) when (ex.InnerException is SocketException)
             {
