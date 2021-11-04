@@ -99,6 +99,8 @@ namespace VirsTimer.DesktopApp.ViewModels
                 Password = Password
             };
             var response = await _registerRepository.RegisterAsync(registerRequest).ConfigureAwait(true);
+            IsBusy = false;
+
             RegisterStatus = response.Status;
             RegisterMessage = response.Message;
             if (response.Succesfull)
@@ -113,7 +115,6 @@ namespace VirsTimer.DesktopApp.ViewModels
 
             RegisterStatus = response.Status;
             ShowUnsuccesfullControlAsync();
-            IsBusy = false;
         }
     }
 }

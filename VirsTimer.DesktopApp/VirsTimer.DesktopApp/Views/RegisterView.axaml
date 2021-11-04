@@ -48,7 +48,7 @@
                     Watermark="Login"
                     VerticalContentAlignment="Center"
                     Text="{Binding Login}"/>
-                <Panel MinHeight="35">
+                <Panel MinHeight="40">
                     <TextBlock
                         Foreground="Red"
                         HorizontalAlignment="Left"
@@ -68,7 +68,7 @@
                     Watermark="Email"
                     VerticalContentAlignment="Center"
                     Text="{Binding Email}"/>
-                <Panel MinHeight="35">
+                <Panel MinHeight="40">
                     <TextBlock
                         Foreground="Red"
                         HorizontalAlignment="Left"
@@ -90,7 +90,7 @@
                     VerticalContentAlignment="Center"
                     Name="PasswordTextBox"
                     Text="{Binding Password}"/>
-                <Panel MinHeight="35">
+                <Panel MinHeight="40">
                     <TextBlock
                         Foreground="Red"
                         HorizontalAlignment="Left"
