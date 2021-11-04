@@ -1,0 +1,52 @@
+<reactiveui:ReactiveWindow
+	xmlns="https://github.com/avaloniaui"
+	xmlns:reactiveui="http://reactiveui.net"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	SizeToContent="WidthAndHeight"
+    Height="150" Width="200"
+    MinHeight="150" MinWidth="200"
+    MaxHeight="450" MaxWidth="600"
+	x:Class="VirsTimer.DesktopApp.Views.Common.InfoBox"
+	Title="InfoBox"
+	TransparencyLevelHint="AcrylicBlur"
+	Background="Transparent"
+	ExtendClientAreaToDecorationsHint="True">
+	<Panel>
+		<ExperimentalAcrylicBorder
+            IsHitTestVisible="False"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.75" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<DockPanel>
+			<TextBlock
+				DockPanel.Dock="Top"
+				Text="Info"
+				FontSize="14"
+				Margin="10"/>
+			<Button
+				x:Name="OkButton"
+				HorizontalAlignment="Center"
+				DockPanel.Dock="Bottom"
+				VerticalContentAlignment="Center"
+				HorizontalContentAlignment="Center"
+				Content="OK"
+				MinWidth="150"
+				MinHeight="40"
+				Margin="20"/>
+			<TextBlock x:Name="MessageTextBox"
+				TextWrapping="WrapWithOverflow"
+				Margin="20"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"/>
+		</DockPanel>
+	</Panel>
+</reactiveui:ReactiveWindow>

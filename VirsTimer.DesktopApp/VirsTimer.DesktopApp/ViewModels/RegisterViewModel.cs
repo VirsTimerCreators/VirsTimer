@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
@@ -11,6 +10,8 @@ using VirsTimer.Core.Models.Requests;
 using VirsTimer.Core.Models.Responses;
 using VirsTimer.Core.Services.Register;
 using VirsTimer.Core.Utils;
+using VirsTimer.DesktopApp.ViewModels.Common;
+using VirsTimer.DesktopApp.Views.Common;
 
 namespace VirsTimer.DesktopApp.ViewModels
 {
@@ -97,14 +98,17 @@ namespace VirsTimer.DesktopApp.ViewModels
                 Email = Email,
                 Password = Password
             };
-            var response = await _registerRepository.RegisterAsync(registerRequest).ConfigureAwait(false);
-            (RegisterStatus, RegisterMessage) = (response.Status, response.Message);
-            Debug.WriteLine(response.Succesfull);
-            Debug.WriteLine(response.Status);
-            Debug.WriteLine(response.Message);
+            var response = await _registerRepository.RegisterAsync(registerRequest).ConfigureAwait(true);
+            RegisterStatus = response.Status;
+            RegisterMessage = response.Message;
             if (response.Succesfull)
             {
-
+                var infoBox = new InfoBox
+                {
+                    ViewModel = new InfoBoxViewModel { Message = $"Rejestracja konta {Login} ukończyła się powodzeniem." }
+                };
+                await infoBox.ShowDialog(parent).ConfigureAwait(true);
+                parent.Close();
             }
 
             RegisterStatus = response.Status;
