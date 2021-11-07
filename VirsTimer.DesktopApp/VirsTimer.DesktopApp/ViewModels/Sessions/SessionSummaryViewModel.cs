@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -18,55 +18,60 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
         private Event _event = null!;
 
         [Reactive]
-        public ObservableCollection<SessionViewModel> Sessions { get; set; } = null!;
-
-        [Reactive]
         public Session CurrentSession { get; set; } = null!;
 
         public ReactiveCommand<Window, Unit> ChangeSessionCommand { get; }
 
-        public SessionSummaryViewModel(ISessionRepository sessionRepository)
+        public SessionSummaryViewModel(ISessionRepository? sessionRepository = null)
         {
-            _sessionRepository = sessionRepository;
+            _sessionRepository = sessionRepository ?? Ioc.GetService<ISessionRepository>();
             ChangeSessionCommand = ReactiveCommand.CreateFromTask<Window>(ChangeSessionAsync);
         }
 
-        public async Task ChangeSessionAsync(Event @event)
+        public async Task LoadSessionAsync(Event @event)
         {
             IsBusy = true;
             _event = @event;
             var repositoryResponse = await _sessionRepository.GetSessionsAsync(_event).ConfigureAwait(false);
-            var sessions = repositoryResponse.Value.Select(session => new SessionViewModel(session)).OrderBy(x => x.Name).ToList();
+            var sessions = repositoryResponse.Value.ToList();
             if (sessions.IsNullOrEmpty())
             {
                 var session = new Session(@event, $"{Constants.Sessions.NewSessionNameBase}1");
                 await _sessionRepository.AddSessionAsync(session).ConfigureAwait(false);
-                sessions.Add(new SessionViewModel(session));
+                sessions.Add(session);
             }
 
-            Sessions = new(sessions);
-            CurrentSession = Sessions[0].Session;
+            CurrentSession = sessions[0];
             IsBusy = false;
         }
 
         private async Task ChangeSessionAsync(Window window)
         {
-            var sessionChangeViewModel = new SessionChangeViewModel(_event, _sessionRepository, Sessions);
+            var sessionChangeViewModel = new SessionChangeViewModel(_event, _sessionRepository);
+            await sessionChangeViewModel.ConstructAsync().ConfigureAwait(true);
             var dialog = new SessionChangeView
             {
                 DataContext = sessionChangeViewModel
             };
 
-            sessionChangeViewModel.DeleteSessionCommand.Subscribe(Observer.Create<Session>(session => ChangeSessionIfDeleted(session)));
+            sessionChangeViewModel.Sessions.CollectionChanged += (_, o) => OnSessionDelete(o, sessionChangeViewModel);
             await dialog.ShowDialog(window);
             if (sessionChangeViewModel.Accepted)
                 CurrentSession = sessionChangeViewModel.SelectedSession!.Session;
         }
 
-        void ChangeSessionIfDeleted(Session session)
+        private void OnSessionDelete(NotifyCollectionChangedEventArgs e, SessionChangeViewModel sessionChangeViewModel)
         {
-            if (session == CurrentSession)
-                CurrentSession = Sessions[0].Session;
+            if (e.Action != NotifyCollectionChangedAction.Remove)
+                return;
+
+            foreach (SessionViewModel session in e.OldItems)
+            {
+                if (CurrentSession.Id != session.Session.Id)
+                    continue;
+                CurrentSession = sessionChangeViewModel.Sessions[0].Session;
+                break;
+            }
         }
     }
 }
