@@ -8,10 +8,12 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import pl.virstimer.api.SessionRequest
 import pl.virstimer.model.*
 import org.springframework.test.web.servlet.ResultActions
-import pl.virstimer.api.auth.AuthControllerIntTest
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import pl.virstimer.db.security.model.ERole
+import pl.virstimer.db.security.model.Role
+import pl.virstimer.db.security.model.User
 import pl.virstimer.security.LoginRequest
 import pl.virstimer.security.SignupRequest
 
@@ -29,6 +31,16 @@ open class TestCommons {
         mongoTemplate.dropCollection(Event::class.java)
         mongoTemplate.dropCollection(Session::class.java)
         mongoTemplate.dropCollection(Solve::class.java)
+        mongoTemplate.dropCollection(User::class.java)
+        mongoTemplate.dropCollection(Role::class.java)
+
+        mongoTemplate.insertAll(
+            listOf(
+                Role("ROLE_USER", ERole.ROLE_USER),
+                Role("ROLE_ADMIN", ERole.ROLE_ADMIN),
+                Role("ROLE_MODERATOR", ERole.ROLE_MODERATOR),
+            )
+        )
         mongoTemplate.insertAll(
             listOf(
                 Event(null, "1", "THREE_BY_THREE"),
@@ -43,37 +55,31 @@ open class TestCommons {
         )
     }
 
-    fun createEvent(userId: String, puzzleType: String) =
+    fun registerAndLogin(username: String, password: String, roles: Set<String> = setOf("USER")): LoginResponseData {
+        register(username, password, roles)
+
+        return login(username, password).bearerToken()
+    }
+
+    fun createEvent(userId: String, puzzleType: String, token: String) =
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/events/post")
+            MockMvcRequestBuilders.post("/events")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    Gson().toJson(
-                        Event(ObjectId(), userId, puzzleType)
+                .content(Gson().toJson(Event(ObjectId(), userId, puzzleType)))
+                .authorizedWith(token)
+        )
 
     fun register(username: String, password: String, roles: Set<String> = setOf("USER")) =
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                    Gson().toJson(SignupRequest(username, "email@email.com", roles, password)
-                    ).toString()
-                )
-
-        )
-
-    fun createSession(userId: String, eventId: String, name: String) =
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/sessions/post")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
                     Gson().toJson(
-                        SessionRequest(userId, eventId, name)
+                        SignupRequest(username, username + "@gmail.com", roles, password)
                     ).toString()
                 )
-
         )
-        
+
     fun createSessionHex(userId: String, eventId: String, name: String) =
         mockMvc.perform(
             MockMvcRequestBuilders.post("/sessions/hex/post")
@@ -81,6 +87,9 @@ open class TestCommons {
                 .content(
                     Gson().toJson(
                         Session(ObjectId("60ce14080000000000000000"), userId, eventId, name)
+                    )
+                )
+        )
 
     fun login(username: String, password: String): ResultActions =
         mockMvc.perform(
@@ -94,7 +103,7 @@ open class TestCommons {
 
         )
 
-    fun patchSession(updateName: String = "updateName", id : String = "60ce14080000000000000000") =
+    fun patchSession(updateName: String = "updateName", id: String = "60ce14080000000000000000") =
         mockMvc.perform(
             MockMvcRequestBuilders.patch("/sessions/patch/$id")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -106,12 +115,17 @@ open class TestCommons {
 
         )
 
-    fun ResultActions.bearerToken() : AuthControllerIntTest.LoginResponseData {
+    fun ResultActions.bearerToken(): LoginResponseData {
         val map = Gson().fromJson(this.andReturn().response.contentAsString, Map::class.java)
 
-        return AuthControllerIntTest.LoginResponseData(
+        return LoginResponseData(
             map["tokenType"] as String + " " + map["accessToken"] as String,
             map["roles"] as ArrayList<String>
         )
     }
+
+    fun MockHttpServletRequestBuilder.authorizedWith(token: String) =
+        this.header("Authorization", token)
 }
+
+data class LoginResponseData(val authHeader: String, val roles: ArrayList<String>)

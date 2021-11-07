@@ -4,6 +4,8 @@ import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.annotation.Secured
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Session
 import pl.virstimer.model.SessionChange
@@ -19,21 +21,24 @@ class SessionController(
 ) {
 
     @GetMapping("/all")
-    fun findAllSessions(): List<Session> = repository.findAll()
+    @Secured("ROLE_USER")
+    fun findAllSessions(authentication: Authentication): List<Session> = repository.findAllByUserId(authentication.name)
 
     @GetMapping("/{sessionId}")
-    fun getSession(@PathVariable sessionId: ObjectId): Session = repository.findOneById(sessionId)
-    @GetMapping("/hex/{sessionId}")
-    fun getSessionHex(@PathVariable sessionId: ObjectId): Session = repository.findOneById(ObjectId(sessionId.toHexString()))
+    @Secured("ROLE_USER")
+    fun getSession(@PathVariable sessionId: ObjectId, authentication: Authentication): Session = repository.findOneByIdAndUserId(sessionId, authentication.name)
 
-    @GetMapping("/user/{userId}")
-    fun findAllUserId(@PathVariable userId: String): List<Session> = repository.findAllByUserId(userId)
+    @GetMapping("/user")
+    @Secured("ROLE_USER")
+    fun findAllUserId(authentication: Authentication): List<Session> = repository.findAllByUserId(authentication.name)
 
     @GetMapping("/event/{eventId}")
-    fun findAllEventId(@PathVariable eventId: String): List<Session> = repository.findAllByEventId(eventId)
+    @Secured("ROLE_USER")
+    fun findAllEventId(@PathVariable eventId: String, authentication: Authentication): List<Session> = repository.findAllByEventIdAndUserId(eventId, authentication.name)
 
 
     @PostMapping("/post")
+    @Secured("ROLE_USER")
     fun createSession(@RequestBody request: SessionRequest): ResponseEntity<Session> {
         val session = repository.save(
             Session(
@@ -43,24 +48,13 @@ class SessionController(
             )
         )
         return ResponseEntity(session, HttpStatus.CREATED)
-    }    @PostMapping("/hex/post")
-    fun createSessionHex(@RequestBody request: SessionRequest): ResponseEntity<Session> {
-        val session = repository.save(
-            Session(
-                //id = request.id,
-                id = ObjectId("60ce14080000000000000000"),
-                userId = request.userId,
-                eventId = request.eventId,
-                name = request.name
-            )
-        )
-        return ResponseEntity(session, HttpStatus.CREATED)
     }
 
     @PatchMapping("/patch/{sessionId}")
-    fun updateSession(@PathVariable sessionId: ObjectId, @RequestBody session: SessionChange): ResponseEntity<Session> {
+    @Secured("ROLE_USER")
+    fun updateSession(@PathVariable sessionId: ObjectId, @RequestBody session: SessionChange, authentication: Authentication): ResponseEntity<Session> {
 
-        val original = repository.findOneById(ObjectId(sessionId.toHexString()) )
+        val original = repository.findOneByIdAndUserId(ObjectId(sessionId.toHexString()), authentication.name)
 
         val updatedSession = repository.save(
             Session(
@@ -72,13 +66,15 @@ class SessionController(
         )
         return ResponseEntity.ok(updatedSession)
     }
+
     @DeleteMapping("delete/{sessionId}")
+    @Secured("ROLE_USER")
     fun deleteSession(@PathVariable sessionId: ObjectId) = repository.deleteSessionById(sessionId)
 
-
     @DeleteMapping("delete/all")
-    fun deleteSession(){
-       repository.deleteAll()
+    @Secured("ROLE_USER")
+    fun deleteSession(authentication: Authentication){
+       repository.deleteAllByUserId(authentication.name)
     }
 }
 

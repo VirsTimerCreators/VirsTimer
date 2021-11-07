@@ -9,59 +9,66 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import pl.virstimer.TestCommons
+import pl.virstimer.model.Session
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
 class SessionControllerTest : TestCommons() {
 
-
     @BeforeEach
     fun injections() {
         before_each()
+        mongoTemplate.insert(Session(null, "user-1", "event-1","session_name1"))
+        mongoTemplate.insert(Session(null, "user-2", "event-2","session_name2"))
     }
-
 
     @Test
     fun should_return_sessions() {
-        //mongoTemplate.insert(Session(ObjectId(),"1", "1","session_name1"))
-        mockMvc.perform(MockMvcRequestBuilders.get("/sessions/all"))
+        val loginDetails = registerAndLogin("user-1", "user-1-pass")
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/sessions/all").authorizedWith(loginDetails.authHeader)
+        )
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].eventId").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").isNotEmpty)
             .andExpect(MockMvcResultMatchers.status().isOk)
-
     }
 
     @Test
     fun should_return_sessions_for_user() {
-        mockMvc.perform(MockMvcRequestBuilders.get("/sessions/user/1"))
+        val loginDetails = registerAndLogin("user-1", "user-1-pass")
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/sessions/user").authorizedWith(loginDetails.authHeader)
+        )
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].eventId").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").isNotEmpty)
             .andExpect(MockMvcResultMatchers.status().isOk)
-
     }
 
     @Test
     fun should_return_sessions_for_event() {
-        mockMvc.perform(MockMvcRequestBuilders.get("/sessions/event/1"))
+        val loginDetails = registerAndLogin("user-1", "user-1-pass")
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/sessions/event/event-1").authorizedWith(loginDetails.authHeader)
+        )
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].eventId").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").isNotEmpty)
             .andExpect(MockMvcResultMatchers.status().isOk)
 
-    }
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/sessions/event/event-2").authorizedWith(loginDetails.authHeader)
+        )
+            .andExpect(MockMvcResultMatchers.jsonPath("$").isEmpty)
 
-    @Test
-    fun patching_session_ok() {
-        createSessionHex("1", "1", "before").andExpect(MockMvcResultMatchers.status().isCreated)
-        patchSession("updatePls").andExpect(MockMvcResultMatchers.status().isOk)
-        //TODO it does work but how can check id $.name is equal to "updatePls"
     }
-
 
 }
