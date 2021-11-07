@@ -1,21 +1,22 @@
 package pl.virstimer.api
 
-import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.annotation.Secured
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Event
 import pl.virstimer.repository.EventRepository
 
-@RestController()
+@RestController
 internal class EventController(val repository: EventRepository) {
 
-
-    @PostMapping("/events/post")
-    fun createEvent(@RequestBody request: EventRequest): ResponseEntity<Event> {
+    @PostMapping("/events")
+    @Secured("ROLE_USER")
+    fun createEvent(@RequestBody request: EventRequest, authentication: Authentication): ResponseEntity<Event> {
         val event = repository.save(
             Event(
-                userId = request.userId,
+                userId = authentication.name,
                 puzzleType = request.puzzleType
             )
         )
@@ -24,6 +25,4 @@ internal class EventController(val repository: EventRepository) {
 
 }
 
-data class EventRequest (
-    val userId: String,
-    val puzzleType: String)
+data class EventRequest (val puzzleType: String)

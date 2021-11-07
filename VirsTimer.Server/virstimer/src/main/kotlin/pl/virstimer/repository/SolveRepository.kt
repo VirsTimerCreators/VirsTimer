@@ -13,24 +13,25 @@ import pl.virstimer.model.Solve
 import pl.virstimer.model.SolveChange
 
 interface SolveRepository : MongoRepository<Solve, ObjectId> {
-    fun findOneById(id: ObjectId): Solve
-    fun findAllByUserId(UserId: String): List<Solve>
-    fun findAllBySessionId(sessionId: String): List<Solve>
-    fun deleteSolveById(id:ObjectId)
-
-    override fun deleteAll()
+    fun findOneByIdAndUserId(id: ObjectId, userId: String): Solve
+    fun findAllByUserId(userId: String): List<Solve>
+    fun findAllBySessionIdAndUserId(sessionId: String, userId: String): List<Solve>
+    fun deleteSolveByIdAndUserId(id:ObjectId, userId: String)
+    fun deleteSolveByUserId(userId: String)
 }
 
 interface SolveCustomRepository{
-    fun updateSolve(id :ObjectId, solveUpdate: SolveChange)
+    fun updateSolve(id: ObjectId, solveUpdate: SolveChange, userId: String)
 }
+
 @Repository
 class SolveCustomRepositoryImpl(
     val mongoTemplate: MongoTemplate
 ):SolveCustomRepository{
-    override fun updateSolve(id: ObjectId, solveUpdate: SolveChange) {
+    override fun updateSolve(id: ObjectId, solveUpdate: SolveChange, userId: String) {
        mongoTemplate.updateFirst(
-           Query(Criteria("_id").`is`(id)),
+           Query(
+               Criteria("_id").`is`(id).and("userId").`is`(userId)),
            Update().set("solved", solveUpdate.solved),
            Solve::class.java
        )

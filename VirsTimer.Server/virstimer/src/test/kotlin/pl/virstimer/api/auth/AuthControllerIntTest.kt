@@ -35,15 +35,7 @@ class AuthControllerIntTest : TestCommons() {
 
     @BeforeEach
     fun before_all() {
-        mongoTemplate.dropCollection(User::class.java)
-        mongoTemplate.dropCollection(Role::class.java)
-        mongoTemplate.insertAll(
-            listOf(
-                Role("ROLE_USER", ERole.ROLE_USER),
-                Role("ROLE_ADMIN", ERole.ROLE_ADMIN),
-                Role("ROLE_MODERATOR", ERole.ROLE_MODERATOR),
-            )
-        )
+        before_each()
     }
 
     @Test
@@ -83,7 +75,4 @@ class AuthControllerIntTest : TestCommons() {
     private fun accessResource(resource: String, authHeader: String): ResultActions =
         mockMvc.perform(get("/api/test/$resource")
             .header("Authorization", authHeader))
-
-
-    data class LoginResponseData(val authHeader: String, val roles: ArrayList<String>)
 }
