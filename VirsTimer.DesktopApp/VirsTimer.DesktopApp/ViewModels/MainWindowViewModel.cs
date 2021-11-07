@@ -25,7 +25,7 @@ namespace VirsTimer.DesktopApp.ViewModels
     {
         private readonly ISolvesRepository _solvesRepository;
 
-        public EventViewModel EventViewModel { get; }
+        public EventSummaryViewModel EventViewModel { get; }
         public SessionSummaryViewModel SessionSummaryViewModel { get; }
         public TimerViewModel TimerViewModel { get; }
         public SolvesListViewModel SolvesListViewModel { get; }
@@ -39,7 +39,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         {
             _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
 
-            EventViewModel = new EventViewModel(eventsRepository);
+            EventViewModel = new EventSummaryViewModel(eventsRepository);
             SessionSummaryViewModel = new SessionSummaryViewModel(sessionRepository);
             TimerViewModel = new TimerViewModel();
             SolvesListViewModel = new SolvesListViewModel(solvesRepository);
@@ -70,7 +70,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         public override async Task ConstructAsync()
         {
             await EventViewModel.ConstructAsync().ConfigureAwait(false);
-            await SessionSummaryViewModel.ChangeSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(false);
+            await SessionSummaryViewModel.LoadSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(false);
             await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
             await ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent).ConfigureAwait(false);
             await StatisticsViewModel.Construct(SolvesListViewModel.Solves.Reverse().Select(x => x.Model)).ConfigureAwait(false);
@@ -122,7 +122,7 @@ namespace VirsTimer.DesktopApp.ViewModels
                 return;
 
             await ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
-            await SessionSummaryViewModel.ChangeSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
+            await SessionSummaryViewModel.LoadSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
         }
 
         private async void OnSessionChangeAsync(object? sender, PropertyChangedEventArgs e)
