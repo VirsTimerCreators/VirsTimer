@@ -25,7 +25,7 @@ namespace VirsTimer.DesktopApp.ViewModels
     {
         private readonly ISolvesRepository _solvesRepository;
 
-        public EventSummaryViewModel EventViewModel { get; }
+        public EventViewModel EventViewModel { get; }
         public SessionSummaryViewModel SessionSummaryViewModel { get; }
         public TimerViewModel TimerViewModel { get; }
         public SolvesListViewModel SolvesListViewModel { get; }
@@ -39,7 +39,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         {
             _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
 
-            EventViewModel = new EventSummaryViewModel(eventsRepository);
+            EventViewModel = new EventViewModel(eventsRepository);
             SessionSummaryViewModel = new SessionSummaryViewModel(sessionRepository);
             TimerViewModel = new TimerViewModel();
             SolvesListViewModel = new SolvesListViewModel(solvesRepository);
