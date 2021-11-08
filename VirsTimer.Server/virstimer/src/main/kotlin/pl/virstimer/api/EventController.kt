@@ -2,26 +2,28 @@ package pl.virstimer.api
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.access.annotation.Secured
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Event
 import pl.virstimer.repository.EventRepository
 import java.util.*
 
-@RestController()
+@RestController
 internal class EventController(val repository: EventRepository) {
 
 
-    @GetMapping("/event/user/{userId}")
-    fun findAllForUser(@PathVariable userId: String): List<Event> = repository.findByUserId(userId)
+    @GetMapping("/event")
+    @Secured("ROLE_USER")
+    fun findAllForUser(authentication: Authentication): List<Event> = repository.findByUserId(authentication.name)
 
     @PostMapping("/event")
-    @PreAuthorize("hasRole('USER')")
-    fun createEvent(@RequestBody request: EventRequest): ResponseEntity<Event> {
+    @Secured("ROLE_USER")
+    fun createEvent(@RequestBody request: EventRequest, authentication: Authentication): ResponseEntity<Event> {
         val event = repository.save(
             Event(
                 id = UUID.randomUUID().toString(),
-                userId = request.userId,
+                userId = authentication.name,
                 puzzleType = request.puzzleType
             )
         )
@@ -29,7 +31,4 @@ internal class EventController(val repository: EventRepository) {
     }
 }
 
-data class EventRequest(
-    val userId: String,
-    val puzzleType: String
-)
+data class EventRequest (val puzzleType: String)

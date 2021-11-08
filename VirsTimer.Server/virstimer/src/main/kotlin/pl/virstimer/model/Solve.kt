@@ -1,5 +1,6 @@
 package pl.virstimer.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
@@ -15,6 +16,7 @@ data class Solve(
     val solved: Solved
 )
 
+@JsonIgnoreProperties()
 data class SolveChange(val solved:Solved)
 
 enum class Solved {

@@ -2,6 +2,8 @@ package pl.virstimer.api
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.annotation.Secured
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Solve
 import pl.virstimer.model.SolveChange
@@ -18,21 +20,27 @@ class SolveController(
     val repository: SolveRepository,
     val customRepository: SolveCustomRepository) {
 
-    @GetMapping("/{id}")
-    fun getSolve(@PathVariable id: String): Solve = repository.findOneById(id)
+    @GetMapping
+    fun findAllSolves(authentication: Authentication): List<Solve> {
+        return repository.findAllByUserId(authentication.name)
+    }
 
-    @GetMapping("/user/{userId}")
-    fun findAllUser(@PathVariable userId: String): List<Solve> = repository.findAllByUserId(userId)
+    @GetMapping("/{id}")
+    @Secured("ROLE_USER")
+    fun getSolve(@PathVariable id: String, authentication: Authentication): Solve = repository.findOneByIdAndUserId(id, authentication.name)
 
     @GetMapping("/session/{sessionId}")
-    fun findBySessionId(@PathVariable sessionId: String): List<Solve> = repository.findAllBySessionId(sessionId)
+    @Secured("ROLE_USER")
+    fun findAllSession(@PathVariable sessionId: String, authentication: Authentication): List<Solve> = repository.findAllBySessionIdAndUserId(sessionId, authentication.name)
+
 
     @PostMapping
-    fun createSolve(@RequestBody request: SolveRequest): ResponseEntity<Solve> {
+    @Secured("ROLE_USER")
+    fun createSolve(@RequestBody request: SolveRequest, authentication: Authentication): ResponseEntity<Solve> {
         val solve = repository.save(
             Solve(
                 id = UUID.randomUUID().toString(),
-                userId = request.userId,
+                userId = authentication.name,
                 sessionId = request.sessionId,
                 scramble = request.scramble,
                 time = request.time,
@@ -45,17 +53,25 @@ class SolveController(
 
 
     @PatchMapping("/{solveId}")
-    fun updateSolve(@PathVariable solveId: String, @RequestBody solveChange: SolveChange): ResponseEntity<Unit> {
-        customRepository.updateSolve(solveId, solveChange)
+    @Secured("ROLE_USER")
+    fun updateSolve(@PathVariable solveId: String, @RequestBody solveChange: SolveChange, authentication: Authentication): ResponseEntity<Unit> {
+        customRepository.updateSolve(solveId, solveChange, authentication.name)
         return ResponseEntity.ok(Unit)
     }
 
-    @DeleteMapping("/{solveId}")
-    fun deleteSolve(@PathVariable solveId: String) = repository.deleteSolveById(solveId)
+    @DeleteMapping("{solveId}")
+    @Secured("ROLE_USER")
+    fun deleteSolve(@PathVariable solveId: String, authentication: Authentication) = repository.deleteSolveByIdAndUserId(solveId, authentication.name)
+
+    @DeleteMapping
+    @Secured("ROLE_USER")
+    fun deleteSolves(authentication: Authentication){
+        repository.deleteSolveByUserId(authentication.name)
+    }
+
 }
 
 data class SolveRequest(
-    val userId: String,
     val sessionId: String,
     val scramble: String,
     val time: Long,

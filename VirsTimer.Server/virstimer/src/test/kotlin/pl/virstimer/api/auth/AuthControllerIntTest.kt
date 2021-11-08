@@ -20,7 +20,7 @@ import pl.virstimer.TestCommons
 class AuthControllerIntTest : TestCommons() {
 
     @BeforeEach
-    fun commons() { beforeEach() }
+    fun commons() { before_each() }
 
     @Test
     fun should_allow_creating_account_and_logging_in() {
@@ -59,7 +59,4 @@ class AuthControllerIntTest : TestCommons() {
     private fun accessResource(resource: String, authHeader: String): ResultActions =
         mockMvc.perform(get("/api/test/$resource")
             .header("Authorization", authHeader))
-
-
-    data class LoginResponseData(val authHeader: String, val roles: ArrayList<String>)
 }

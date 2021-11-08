@@ -2,6 +2,7 @@ package pl.virstimer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
+import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.http.MediaType
@@ -10,14 +11,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import pl.virstimer.api.SessionRequest
 import pl.virstimer.model.*
 import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import pl.virstimer.api.SessionChange
 import pl.virstimer.api.SolveRequest
-import pl.virstimer.api.auth.AuthControllerIntTest
 import pl.virstimer.db.security.model.ERole
 import pl.virstimer.db.security.model.Role
 import pl.virstimer.db.security.model.User
 import pl.virstimer.security.LoginRequest
 import pl.virstimer.security.SignupRequest
+import java.util.*
+import kotlin.collections.ArrayList
 
 open class TestCommons {
     @Autowired
@@ -29,14 +32,13 @@ open class TestCommons {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
-    var token: String = ""
-
-    fun beforeEach() {
+    fun before_each() {
         mongoTemplate.dropCollection(Event::class.java)
         mongoTemplate.dropCollection(Session::class.java)
         mongoTemplate.dropCollection(Solve::class.java)
         mongoTemplate.dropCollection(User::class.java)
         mongoTemplate.dropCollection(Role::class.java)
+
         mongoTemplate.insertAll(
             listOf(
                 Role("ROLE_USER", ERole.ROLE_USER),
@@ -46,30 +48,35 @@ open class TestCommons {
         )
         mongoTemplate.insertAll(
             listOf(
-                Event("id-1-event", "1", "THREE_BY_THREE"),
-                Event("id-2-event", "2", "FOUR_BY_FOUR"),
-                Session("id-1-session", "1", "1", "session1"),
-                Session("id-2-session", "1", "2", "session2"),
-                Solve("id-1-solve", "1", "1", "11111", 5125215, 5315541, Solved.DNF),
-                Solve("id-2-solve", "1", "1", "22222", 51252315, 53515241, Solved.PLUS_TWO),
-                Solve("id-3-solve", "2", "2", "33333", 512522315, 53152441, Solved.DNF),
-                Solve("id-4-solve", "2", "2", "44444", 512523415, 53152341, Solved.DNF)
+                Event("id-1", "1", "THREE_BY_THREE"),
+                Event("id-2", "2", "FOUR_BY_FOUR")
             )
         )
     }
 
-    fun registerAndLogin(): String {
-        register("username", "password", setOf("USER"))
-        this.token = login("username", "password").bearerToken().authHeader
-        return token
+    fun registerAndLogin(username: String, password: String, roles: Set<String> = setOf("USER")): LoginResponseData {
+        register(username, password, roles)
+
+        return login(username, password).bearerToken()
     }
 
     fun createEvent(userId: String, puzzleType: String, token: String) =
         mockMvc.perform(
             MockMvcRequestBuilders.post("/event")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(Gson().toJson(Event("event-id", userId, puzzleType)))
-                .header("Authorization", token)
+                .content(Gson().toJson(Event(UUID.randomUUID().toString(), userId, puzzleType)))
+                .authorizedWith(token)
+        )
+
+    fun register(username: String, password: String, roles: Set<String> = setOf("USER")) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    Gson().toJson(
+                        SignupRequest(username, username + "@gmail.com", roles, password)
+                    ).toString()
+                )
         )
 
     fun createSession(userId: String, eventId: String, name: String, token: String) =
@@ -89,11 +96,11 @@ open class TestCommons {
 
         )
 
-    fun createSolve(userId: String, sessionId: String, solved: Solved, token: String) =
+    fun createSolve(sessionId: String, solved: Solved, token: String) =
         mockMvc.perform(
             MockMvcRequestBuilders.post("/solve")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(Gson().toJson(SolveRequest(userId, sessionId, "", 10, 10, solved)).toString())
+                .content(Gson().toJson(SolveRequest(sessionId, "", 10, 10, solved)).toString())
                 .header("Authorization", token)
         )
 
@@ -103,17 +110,6 @@ open class TestCommons {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Gson().toJson(SolveChange(newSolved)).toString())
                 .header("Authorization", token)
-        )
-
-    fun register(username: String, password: String, roles: Set<String>)  =
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    Gson().toJson(SignupRequest(username, "email@email.com", roles, password)
-                    ).toString()
-                )
-
         )
 
     fun login(username: String, password: String): ResultActions =
@@ -128,12 +124,29 @@ open class TestCommons {
 
         )
 
-    fun ResultActions.bearerToken() : AuthControllerIntTest.LoginResponseData {
+    fun patchSession(updateName: String = "updateName", id: String = "60ce14080000000000000000") =
+        mockMvc.perform(
+            MockMvcRequestBuilders.patch("/session/patch/$id")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    Gson().toJson(
+                        SessionChange(updateName)
+                    ).toString()
+                )
+
+        )
+
+    fun ResultActions.bearerToken(): LoginResponseData {
         val map = Gson().fromJson(this.andReturn().response.contentAsString, Map::class.java)
 
-        return AuthControllerIntTest.LoginResponseData(
+        return LoginResponseData(
             map["tokenType"] as String + " " + map["accessToken"] as String,
             map["roles"] as ArrayList<String>
         )
     }
+
+    fun MockHttpServletRequestBuilder.authorizedWith(token: String) =
+        this.header("Authorization", token)
 }
+
+data class LoginResponseData(val authHeader: String, val roles: ArrayList<String>)
