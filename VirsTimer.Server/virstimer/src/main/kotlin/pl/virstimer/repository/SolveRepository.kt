@@ -11,10 +11,10 @@ import pl.virstimer.model.Solve
 import pl.virstimer.model.SolveChange
 
 interface SolveRepository : MongoRepository<Solve, ObjectId> {
-    fun findOneByIdAndUserId(id: ObjectId, userId: String): Solve
+    fun findOneByIdAndUserId(id: String, userId: String): Solve
     fun findAllByUserId(userId: String): List<Solve>
     fun findAllBySessionIdAndUserId(sessionId: String, userId: String): List<Solve>
-    fun deleteSolveByIdAndUserId(id:ObjectId, userId: String)
+    fun deleteSolveByIdAndUserId(id: String, userId: String)
     fun deleteSolveByUserId(userId: String)
 }
 

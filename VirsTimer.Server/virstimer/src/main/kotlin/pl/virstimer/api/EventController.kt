@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Event
 import pl.virstimer.repository.EventRepository
+import java.util.*
 
 @RestController
 internal class EventController(val repository: EventRepository) {
@@ -20,6 +21,7 @@ internal class EventController(val repository: EventRepository) {
     fun createEvent(@RequestBody request: EventRequest, authentication: Authentication): ResponseEntity<Event> {
         val event = repository.save(
             Event(
+                id = UUID.randomUUID().toString(),
                 userId = authentication.name,
                 puzzleType = request.puzzleType
             )

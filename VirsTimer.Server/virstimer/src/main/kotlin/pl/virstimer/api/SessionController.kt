@@ -1,17 +1,15 @@
 package pl.virstimer.api
 
 import org.bson.types.ObjectId
-import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Session
-import pl.virstimer.model.SessionChange
-import pl.virstimer.model.Solve
+import pl.virstimer.repository.SessionCustomRepository
 import pl.virstimer.repository.SessionRepository
-import pl.virstimer.repository.SolveCustomRepository
+import java.util.*
 
 @RestController
 @RequestMapping("/sessions")
@@ -34,10 +32,10 @@ class SessionController(
 
     @GetMapping("/event/{eventId}")
     @Secured("ROLE_USER")
-    fun findAllEventId(@PathVariable eventId: String, authentication: Authentication): List<Session> = repository.findAllByEventIdAndUserId(eventId, authentication.name)
+    fun findAllEventId(@PathVariable eventId: String, authentication: Authentication): List<Session> = repository.findByEventIdAndUserId(eventId, authentication.name)
 
     @GetMapping("/event/{eventId}/user/{userId}")
-    @PreAuthorize("hasRole('USER')")
+    @Secured("ROLE_USER")
     fun findAllForEventIdAndUserId(@PathVariable eventId: String, @PathVariable userId: String): List<Session> = repository.findByEventIdAndUserId(eventId, userId)
 
     @PostMapping("/post")
@@ -47,7 +45,8 @@ class SessionController(
             Session(
                 userId = request.userId,
                 eventId = request.eventId,
-                name = request.name
+                name = request.name,
+                id = UUID.randomUUID().toString()
             )
         )
         return ResponseEntity(session, HttpStatus.CREATED)
@@ -55,9 +54,8 @@ class SessionController(
 
     @PatchMapping("/patch/{sessionId}")
     @Secured("ROLE_USER")
-    fun updateSession(@PathVariable sessionId: ObjectId, @RequestBody session: SessionChange, authentication: Authentication): ResponseEntity<Session> {
-
-        val original = repository.findOneByIdAndUserId(ObjectId(sessionId.toHexString()), authentication.name)
+    fun updateSession(@PathVariable sessionId: ObjectId, @RequestBody session: SessionChange, authentication: Authentication): ResponseEntity<Unit> {
+        customRepository.updateSession(sessionId, session, authentication.name)
 
         return ResponseEntity.ok(Unit)
     }

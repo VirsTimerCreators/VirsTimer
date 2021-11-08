@@ -22,8 +22,8 @@ class SessionControllerTest : TestCommons() {
     @BeforeEach
     fun injections() {
         before_each()
-        mongoTemplate.insert(Session(null, "user-1", "event-1","session_name1"))
-        mongoTemplate.insert(Session(null, "user-2", "event-2","session_name2"))
+        mongoTemplate.insert(Session("id-1", "user-1", "event-1","session_name1"))
+        mongoTemplate.insert(Session("id-2", "user-2", "event-2","session_name2"))
     }
 
     @Test
@@ -78,7 +78,7 @@ class SessionControllerTest : TestCommons() {
     @Test
     fun should_not_patch_session_if_user_is_not_logged_in() {
         createSession("1", "1", "before", "non-existing-token").andExpect(MockMvcResultMatchers.status().is4xxClientError)
-        patchSession("updatePls", "non-existing-token", "11").andExpect(MockMvcResultMatchers.status().is4xxClientError)
+        patchSession("updatePls", "non-existing-id").andExpect(MockMvcResultMatchers.status().is4xxClientError)
         //TODO it does work but how can check id $.name is equal to "updatePls"
     }
 }

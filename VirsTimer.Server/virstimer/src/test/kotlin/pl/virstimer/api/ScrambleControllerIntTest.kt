@@ -18,7 +18,7 @@ import pl.virstimer.TestCommons
 class ScrambleControllerIntTest : TestCommons(){
 
     @BeforeEach
-    fun injections(){ beforeEach() }
+    fun injections(){ before_each() }
 
     @Test
     fun should_return_scramble() {

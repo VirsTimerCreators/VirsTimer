@@ -20,7 +20,7 @@ import pl.virstimer.TestCommons
 class AuthControllerIntTest : TestCommons() {
 
     @BeforeEach
-    fun commons() { beforeEach() }
+    fun commons() { before_each() }
 
     @Test
     fun should_allow_creating_account_and_logging_in() {

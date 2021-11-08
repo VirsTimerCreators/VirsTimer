@@ -12,11 +12,15 @@ import pl.virstimer.api.SessionRequest
 import pl.virstimer.model.*
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import pl.virstimer.api.SessionChange
+import pl.virstimer.api.SolveRequest
 import pl.virstimer.db.security.model.ERole
 import pl.virstimer.db.security.model.Role
 import pl.virstimer.db.security.model.User
 import pl.virstimer.security.LoginRequest
 import pl.virstimer.security.SignupRequest
+import java.util.*
+import kotlin.collections.ArrayList
 
 open class TestCommons {
     @Autowired
@@ -44,14 +48,8 @@ open class TestCommons {
         )
         mongoTemplate.insertAll(
             listOf(
-                Event(null, "1", "THREE_BY_THREE"),
-                Event(null, "2", "FOUR_BY_FOUR"),
-                Session(null, "1", "1", "session1"),
-                Session(null, "1", "2", "session2"),
-                Solve(null, "1", "1", "11111", 5125215, 5315541, Solved.DNF),
-                Solve(null, "1", "1", "22222", 51252315, 53515241, Solved.PLUS_TWO),
-                Solve(null, "2", "2", "33333", 512522315, 53152441, Solved.DNF),
-                Solve(null, "2", "2", "44444", 512523415, 53152341, Solved.DNF)
+                Event("id-1", "1", "THREE_BY_THREE"),
+                Event("id-2", "2", "FOUR_BY_FOUR")
             )
         )
     }
@@ -66,7 +64,7 @@ open class TestCommons {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/events")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(Gson().toJson(Event(ObjectId(), userId, puzzleType)))
+                .content(Gson().toJson(Event(UUID.randomUUID().toString(), userId, puzzleType)))
                 .authorizedWith(token)
         )
 
@@ -81,15 +79,37 @@ open class TestCommons {
                 )
         )
 
-    fun createSessionHex(userId: String, eventId: String, name: String) =
+    fun createSession(userId: String, eventId: String, name: String, token: String) =
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/sessions/hex/post")
+            MockMvcRequestBuilders.post("/session")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    Gson().toJson(
-                        Session(ObjectId("60ce14080000000000000000"), userId, eventId, name)
-                    )
-                )
+                .content(Gson().toJson(SessionRequest(userId, eventId, name)).toString())
+                .header("Authorization", token)
+        )
+
+    fun patchSession(updateName: String = "updateName", token: String, sessionId: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.patch("/session/$sessionId")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Gson().toJson(SessionChange(updateName)).toString())
+                .header("Authorization", token)
+
+        )
+
+    fun createSolve(sessionId: String, solved: Solved, token: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/solve")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Gson().toJson(SolveRequest(sessionId, "", 10, 10, solved)).toString())
+                .header("Authorization", token)
+        )
+
+    fun patchSolve(solveId: String, newSolved: Solved, token: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.patch("/solve/$solveId")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Gson().toJson(SolveChange(newSolved)).toString())
+                .header("Authorization", token)
         )
 
     fun login(username: String, password: String): ResultActions =
