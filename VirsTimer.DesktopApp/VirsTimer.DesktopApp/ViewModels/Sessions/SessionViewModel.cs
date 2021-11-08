@@ -11,8 +11,6 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
 
         public Session Session { get; }
 
-        public SessionChangeViewModel ParentViewModel { get; }
-
         [Reactive]
         public string Name { get; set; }
 
@@ -22,17 +20,15 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
             set
             {
                 this.RaiseAndSetIfChanged(ref _editingSession, value);
-                if (value == true)
-                    Name = Session.Name;
+                Name = Session.Name;
             }
         }
 
         public ReactiveCommand<Unit, Unit> EditSessionCommand { get; }
 
-        public SessionViewModel(SessionChangeViewModel parentViewModel, Session session)
+        public SessionViewModel(Session session)
         {
             Session = session;
-            ParentViewModel = parentViewModel;
             Name = Session.Name;
             EditSessionCommand = ReactiveCommand.Create(() => { EditingSession = true; });
         }

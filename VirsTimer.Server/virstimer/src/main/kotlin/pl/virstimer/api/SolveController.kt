@@ -1,6 +1,5 @@
 package pl.virstimer.api
 
-import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
@@ -9,14 +8,17 @@ import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Solve
 import pl.virstimer.model.SolveChange
 import pl.virstimer.model.Solved
+import pl.virstimer.repository.SolveCustomRepository
 
 import pl.virstimer.repository.SolveRepository
+import java.util.*
 
 
 @RestController
-@RequestMapping("/solves")
-class SolveController(val repository: SolveRepository) {
-
+@RequestMapping("/solve")
+class SolveController(
+    val repository: SolveRepository,
+    val customRepository: SolveCustomRepository) {
 
     @GetMapping("/all")
     fun findAllSolves(authentication: Authentication): List<Solve> {
@@ -45,6 +47,7 @@ class SolveController(val repository: SolveRepository) {
     fun createSolve(@RequestBody request: SolveRequest): ResponseEntity<Solve> {
         val solve = repository.save(
             Solve(
+                id = UUID.randomUUID().toString(),
                 userId = request.userId,
                 sessionId = request.sessionId,
                 scramble = request.scramble,
@@ -59,7 +62,7 @@ class SolveController(val repository: SolveRepository) {
 
     @PatchMapping("/patch/{solvedId}")
     @Secured("ROLE_USER")
-    fun updateSolve(@PathVariable solvedId: ObjectId, @RequestBody solve: SolveChange, authentication: Authentication): ResponseEntity<Solve> {
+    fun updateSolve(@PathVariable solvedId: String, @RequestBody solve: SolveChange, authentication: Authentication): ResponseEntity<Solve> {
 
         val original = repository.findOneByIdAndUserId(solvedId, authentication.name)
 

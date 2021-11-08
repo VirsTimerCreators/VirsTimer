@@ -47,11 +47,22 @@ namespace VirsTimer.Core.Models
         public string Scramble { get; }
 
         /// <summary>
+        /// Calculated time with flag.
+        /// </summary>
+        public TimeSpan TimeWithFlag => Flag switch
+        {
+            SolveFlag.OK => TimeAsSpan,
+            SolveFlag.Plus2 => TimeAsSpan.Add(TimeSpan.FromSeconds(2)),
+            SolveFlag.DNF => TimeSpan.MaxValue,
+            _ => throw new ArgumentException(nameof(Flag))
+        };
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Solve"/> class.
         /// </summary>
-        [JsonConstructor]
-        public Solve(string id, long time, SolveFlag flag, DateTime date, string scramble)
+        public Solve(Session session, string id, long time, SolveFlag flag, DateTime date, string scramble)
         {
+            Session = session;
             Id = id;
             Time = time;
             Flag = flag;

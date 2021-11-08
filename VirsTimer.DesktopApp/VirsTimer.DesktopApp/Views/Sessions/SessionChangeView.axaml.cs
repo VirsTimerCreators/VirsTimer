@@ -1,11 +1,12 @@
+using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using System;
-using System.Linq;
+using VirsTimer.DesktopApp.Extensions;
 using VirsTimer.DesktopApp.ViewModels.Sessions;
 
 namespace VirsTimer.DesktopApp.Views.Sessions
@@ -42,6 +43,13 @@ namespace VirsTimer.DesktopApp.Views.Sessions
         {
             _sessionsListBox.UnselectAll();
             ResetEditing();
+
+            var button = sender as Button;
+            button?.FindRelatedControl<Button, Grid, TextBox>((tb) =>
+            {
+                tb.Focus();
+                tb.CaretIndex = tb.Text.Length;
+            });
         }
 
         private void ResetEditing()

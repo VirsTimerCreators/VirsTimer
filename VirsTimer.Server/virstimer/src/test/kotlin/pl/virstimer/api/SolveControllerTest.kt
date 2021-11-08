@@ -1,17 +1,19 @@
 package pl.virstimer.api
 
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import pl.virstimer.TestCommons
 import pl.virstimer.model.Solve
 import pl.virstimer.model.Solved
-
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
@@ -84,5 +86,15 @@ class SolveControllerTest : TestCommons() {
         )
             .andExpect(MockMvcResultMatchers.jsonPath("$").isEmpty)
 
+    }
+
+    @Test
+    fun should_patch_solve() {
+        createSolve("user-id", "1", Solved.PLUS_TWO, token).andExpect(MockMvcResultMatchers.status().isCreated)
+        val solve = mongoTemplate.find(Query(Criteria.where("userId").`is`("user-id")), Solve::class.java).first()
+        assert(solve.solved == Solved.PLUS_TWO)
+
+        patchSolve(solve.id, Solved.DNF, token).andExpect(MockMvcResultMatchers.status().isOk)
+        assert(mongoTemplate.find(Query(Criteria.where("userId").`is`("user-id")), Solve::class.java).first().solved == Solved.DNF)
     }
 }

@@ -1,0 +1,119 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Height="400" Width="500"
+        MinHeight="400" MinWidth="500"
+        MaxHeight="600" MaxWidth="750"
+        x:Class="VirsTimer.DesktopApp.Views.LoginView"
+        Title="Logowanie"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
+        ExtendClientAreaToDecorationsHint="True">
+	<Grid
+        RowDefinitions="Auto,*,0,2*,0,2*,2*,2*"
+        ColumnDefinitions="*,2*,*">
+		<ExperimentalAcrylicBorder
+			IsHitTestVisible="False"
+			Grid.ColumnSpan="3" 
+			Grid.RowSpan="8">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+					BackgroundSource="Digger"
+					TintColor="Black"
+					TintOpacity="1"
+					MaterialOpacity="0.75" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<TextBlock Text="Logowanie" Grid.Row="0" Margin="10"
+                   FontSize="14"/>
+		<ProgressBar
+            IsIndeterminate="True"
+            Grid.ColumnSpan="5"
+            HorizontalAlignment="Right"
+            Margin="20,40,20,0"
+            VerticalAlignment="Top"
+            IsVisible="{Binding IsBusy}"/>
+		<TextBlock
+			Text="VirsTimer"
+			FontSize="38"
+			FontWeight="UltraBold"
+			Grid.Row="1"
+			Grid.ColumnSpan="3"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center"
+			Margin="20"
+			/>
+		<TextBox
+			Grid.Row="3"
+			Grid.Column="1"
+			MinHeight="40"
+			Watermark="Nazwa użytkownika"
+			VerticalContentAlignment="Center"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Stretch"
+			Text="{Binding LoginName}"/>
+		<TextBox
+			Name="PasswordTextBox"
+			Watermark="Hasło"
+			Grid.Row="5"
+			MinHeight="40"
+			Grid.Column="1"
+			VerticalContentAlignment="Center"
+						VerticalAlignment="Center"
+			HorizontalAlignment="Stretch"
+			Text="{Binding LoginPassowd}"/>
+
+		<Button Grid.Row="6"
+				Grid.ColumnSpan="3"
+				MinWidth="150"
+				MinHeight="40"
+				VerticalContentAlignment="Center"
+				HorizontalContentAlignment="Center"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Content="Rejestracja"
+				Command="{Binding RegisterCommand}"
+				CommandParameter="{Binding $parent[Window]}"/>
+		
+		<Button Grid.Row="7"
+				Grid.ColumnSpan="3"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Bottom"
+				MinWidth="150"
+				MinHeight="40"
+				VerticalContentAlignment="Center"
+				HorizontalContentAlignment="Center"
+				Margin="20"
+				Background="#cf8b0c"
+				Content="Kontynuuj bez logowania"
+				Command="{Binding ContinueLocalCommand}"
+				CommandParameter="{Binding $parent[Window]}"/>
+
+		<Button Grid.Row="7"
+				Grid.ColumnSpan="3"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Bottom"
+				MinWidth="150"
+				MinHeight="40"
+				VerticalContentAlignment="Center"
+				HorizontalContentAlignment="Center"
+				Margin="20"
+				Background="#0959db"
+				Content="Akceptuj"
+				Command="{Binding AcceptLoginCommand}"
+				CommandParameter="{Binding $parent[Window]}"/>
+		<TextBlock
+			Grid.Column="1"
+			Padding="20"
+			VerticalAlignment="Bottom"
+			HorizontalAlignment="Center"
+			Grid.Row="6"
+			Text="{Binding LoginStaus, Converter={converters:LoginStatusConverter}}"
+			TextAlignment="Left"
+			TextWrapping="WrapWithOverflow"
+			IsVisible="{Binding IsResponseUnsccesfull}"
+			Background="#ed924c"/>
+	</Grid>
+</Window>

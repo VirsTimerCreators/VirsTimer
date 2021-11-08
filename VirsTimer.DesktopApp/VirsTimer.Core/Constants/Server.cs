@@ -11,9 +11,35 @@
         public const string Address = "http://localhost:8080/";
 
         /// <summary>
-        /// Scramble endpoint.
+        /// Server endpoints.
         /// </summary>
-        public const string ScrambleEndpoint = "scramble/";
+        public static class Endpoints
+        {
+            /// <summary>
+            /// Uses endpoint.
+            /// </summary>
+            public const string Users = "user/";
+
+            /// <summary>
+            /// Events endpoint.
+            /// </summary>
+            public const string Events = "event/";
+
+            /// <summary>
+            /// Sessions endpoint.
+            /// </summary>
+            public const string Sessions = "session/";
+
+            /// <summary>
+            /// Solves endpoint.
+            /// </summary>
+            public const string Solves = "solve/";
+
+            /// <summary>
+            /// Scrambles endpoint.
+            /// </summary>
+            public const string Scrambles = "scramble/";
+        }
 
         /// <summary>
         /// Predefined events.
@@ -94,28 +120,6 @@
             /// 5x5x5 blindfolded.
             /// </summary>
             public const string FiveByFiveBlindfold = "FIVE_BY_FIVE_BLINDFOLDED";
-
-            /// <summary>
-            /// All predefined events.
-            /// </summary>
-            public static readonly string[] All = new[]
-            {
-                ThreeByThree,
-                TwoByTwo,
-                FourByFour,
-                FiveByFive,
-                SixBySix,
-                SevenBySeven,
-                Megaminx,
-                Pyraminx,
-                Skewb,
-                Square_One,
-                Clock,
-                ThreeByThreeOneHand,
-                ThreeByThreeBlindfold,
-                FourByFourBlindfold,
-                FiveByFiveBlindfold,
-            };
         }
     }
 }

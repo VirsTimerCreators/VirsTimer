@@ -21,3 +21,23 @@ Content-Type: application/vnd.spring-boot.actuator.v3+json
 Content-Length: 2
 Date: Sat, 29 May 2021 14:56:54 GMT
 ```
+
+
+### Authentication
+For application to run and provide authorization role definitions in db are required. To set them up connect to MongoDB (for example using Robo3T gui)
+
+Then run following script in mongo shell:
+```
+db.roles.insertMany([
+   { name: "ROLE_USER" },
+   { name: "ROLE_MODERATOR" },
+   { name: "ROLE_ADMIN" },
+])
+```
+
+### Documentation
+
+To access configuration, run application and visit:
+```
+http://localhost:8080/swagger-ui.html
+```

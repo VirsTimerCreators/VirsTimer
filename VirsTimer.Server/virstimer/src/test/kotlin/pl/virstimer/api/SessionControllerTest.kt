@@ -1,10 +1,13 @@
 package pl.virstimer.api
 
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -35,6 +38,7 @@ class SessionControllerTest : TestCommons() {
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].eventId").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").isNotEmpty)
             .andExpect(MockMvcResultMatchers.status().isOk)
+
     }
 
     @Test
@@ -71,4 +75,10 @@ class SessionControllerTest : TestCommons() {
 
     }
 
+    @Test
+    fun should_not_patch_session_if_user_is_not_logged_in() {
+        createSession("1", "1", "before", "non-existing-token").andExpect(MockMvcResultMatchers.status().is4xxClientError)
+        patchSession("updatePls", "non-existing-token", "11").andExpect(MockMvcResultMatchers.status().is4xxClientError)
+        //TODO it does work but how can check id $.name is equal to "updatePls"
+    }
 }

@@ -16,7 +16,7 @@ import pl.virstimer.model.Event
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-class EventControllerTest :TestCommons() {
+class EventControllerTest : TestCommons() {
 
 
     @BeforeEach
@@ -41,6 +41,15 @@ class EventControllerTest :TestCommons() {
             this.userId == "user-1"
             this.puzzleType == "FIVE_BY_FIVE"
         }
+    }
+
+    @Test
+    fun should_not_allow_posting_event_if_not_logged_in() {
+        createEvent(
+            "1",
+            "FIVE_BY_FIVE ",
+            "not-existing-token"
+        ).andExpect(MockMvcResultMatchers.status().is4xxClientError)
     }
 
 }

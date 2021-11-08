@@ -1,11 +1,14 @@
-﻿using Avalonia.Controls;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia.Controls;
+using DynamicData;
+using DynamicData.Binding;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Sessions;
 
@@ -19,43 +22,46 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
         public bool Accepted { get; private set; } = false;
 
         [Reactive]
-        public ObservableCollection<SessionViewModel> Sessions { get; set; }
-
-        [Reactive]
-        public bool CanRename { get; set; } = true;
+        public ObservableCollection<SessionViewModel> Sessions { get; set; } = null!;
 
         [Reactive]
         public SessionViewModel? SelectedSession { get; set; }
 
         public ReactiveCommand<Window, Unit> AcceptCommand { get; }
         public ReactiveCommand<Unit, Unit> AddSessionCommand { get; }
-        public ReactiveCommand<SessionViewModel, Unit> AcceptRenameSessionCommand { get; }
+        public ReactiveCommand<SessionViewModel, Unit> AcceptRenameSessionCommand { get; private set; } = null!;
         public ReactiveCommand<SessionViewModel, Unit> DeleteSessionCommand { get; }
 
-        public SessionChangeViewModel(Event @event, ISessionRepository sessionRepository)
+        public SessionChangeViewModel(Event @event, ISessionRepository? sessionRepository = null)
         {
             _event = @event;
-            _sessionRepository = sessionRepository;
-            Sessions = new ObservableCollection<SessionViewModel>();
+            _sessionRepository = sessionRepository ?? Ioc.GetService<ISessionRepository>();
 
             var acceptEnabled = this.WhenAnyValue<SessionChangeViewModel, bool, SessionViewModel?>(x => x.SelectedSession, x => x != null);
             AcceptCommand = ReactiveCommand.Create<Window>(AcceptSession, acceptEnabled);
             AddSessionCommand = ReactiveCommand.CreateFromTask(AddSessionAsync);
 
-            var acceptRenameSessionEnabled = this.WhenAnyValue(x => x.CanRename, x => x == true);
-            AcceptRenameSessionCommand = ReactiveCommand.CreateFromTask<SessionViewModel>(AcceptRename, acceptRenameSessionEnabled);
-            DeleteSessionCommand = ReactiveCommand.CreateFromTask<SessionViewModel>(DeleteSessionAsync);
-
-            LoadSessionsAsync();
+            var canDelete = this.WhenAnyValue(x => x.Sessions.Count, x => x > 1);
+            DeleteSessionCommand = ReactiveCommand.CreateFromTask<SessionViewModel>(DeleteSessionAsync, canDelete);
         }
 
-        private async void LoadSessionsAsync()
+        public override async Task ConstructAsync()
         {
-            var sessions = await _sessionRepository.GetSessionsAsync(_event).ConfigureAwait(false);
-            var sessionsVM = sessions.Select(session => new SessionViewModel(this, session)).OrderBy(x => x.Name);
-            Sessions = new ObservableCollection<SessionViewModel>(sessionsVM);
-            foreach (var session in Sessions)
-                session.PropertyChanged += UpdateCanRename;
+            var repositoryResponse = await _sessionRepository.GetSessionsAsync(_event).ConfigureAwait(false);
+            var sessions = repositoryResponse.Value.Select(session => new SessionViewModel(session)).OrderBy(x => x.Name).ToList();
+            Sessions = new(sessions);
+
+            var canAcceptRenaming = Sessions
+                .ToObservableChangeSet()
+                .AutoRefresh(x => x.Name)
+                .ToCollection()
+                .Select(vms =>
+                {
+                    return vms.All(vm => !string.IsNullOrWhiteSpace(vm.Name))
+                    && vms.AllDistinctBy(vm => vm.Name);
+                });
+
+            AcceptRenameSessionCommand = ReactiveCommand.CreateFromTask<SessionViewModel>(AcceptRename, canAcceptRenaming);
         }
 
         private void AcceptSession(Window window)
@@ -74,30 +80,23 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
                 .Max();
             var nextAvailableNumber = maxSessionNumber + 1;
             var session = new Session(_event, $"{Constants.Sessions.NewSessionNameBase}{nextAvailableNumber}");
-            await _sessionRepository.AddSessionAsync(session).ConfigureAwait(false);
+            await _sessionRepository.AddSessionAsync(session).ConfigureAwait(true);
 
-            var sessionVM = new SessionViewModel(this, session);
-            sessionVM.PropertyChanged += UpdateCanRename;
+            var sessionVM = new SessionViewModel(session);
             Sessions.Add(sessionVM);
         }
 
         private async Task AcceptRename(SessionViewModel sessionViewModel)
         {
-            sessionViewModel.EditingSession = false;
             if (sessionViewModel.Name == sessionViewModel.Session.Name)
+            {
+                sessionViewModel.EditingSession = false;
                 return;
+            }
 
             sessionViewModel.Session.Name = sessionViewModel.Name;
             await _sessionRepository.UpdateSessionAsync(sessionViewModel.Session).ConfigureAwait(false);
-        }
-
-        private void UpdateCanRename(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName != nameof(SessionViewModel.Name))
-                return;
-
-            var names = Sessions.Select(x => x.Name).ToList();
-            CanRename = names.All(name => !string.IsNullOrWhiteSpace(name)) && names.Count == names.Distinct().Count();
+            sessionViewModel.EditingSession = false;
         }
 
         private async Task DeleteSessionAsync(SessionViewModel sessionViewModel)

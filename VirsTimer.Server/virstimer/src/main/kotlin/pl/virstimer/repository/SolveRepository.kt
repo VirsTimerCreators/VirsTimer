@@ -5,10 +5,8 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
-import org.springframework.data.mongodb.core.query.UpdateDefinition
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
-import pl.virstimer.model.Session
 import pl.virstimer.model.Solve
 import pl.virstimer.model.SolveChange
 
@@ -21,14 +19,13 @@ interface SolveRepository : MongoRepository<Solve, ObjectId> {
 }
 
 interface SolveCustomRepository{
-    fun updateSolve(id: ObjectId, solveUpdate: SolveChange, userId: String)
+    fun updateSolve(id: String, solveUpdate: SolveChange, userId: String)
 }
-
 @Repository
 class SolveCustomRepositoryImpl(
     val mongoTemplate: MongoTemplate
 ):SolveCustomRepository{
-    override fun updateSolve(id: ObjectId, solveUpdate: SolveChange, userId: String) {
+    override fun updateSolve(id: String, solveUpdate: SolveChange, userId: String) {
        mongoTemplate.updateFirst(
            Query(
                Criteria("_id").`is`(id).and("userId").`is`(userId)),

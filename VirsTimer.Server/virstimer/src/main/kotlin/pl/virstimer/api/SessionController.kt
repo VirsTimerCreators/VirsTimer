@@ -17,7 +17,7 @@ import pl.virstimer.repository.SolveCustomRepository
 @RequestMapping("/sessions")
 class SessionController(
     val repository: SessionRepository,
-
+    val customRepository: SessionCustomRepository
 ) {
 
     @GetMapping("/all")
@@ -36,6 +36,9 @@ class SessionController(
     @Secured("ROLE_USER")
     fun findAllEventId(@PathVariable eventId: String, authentication: Authentication): List<Session> = repository.findAllByEventIdAndUserId(eventId, authentication.name)
 
+    @GetMapping("/event/{eventId}/user/{userId}")
+    @PreAuthorize("hasRole('USER')")
+    fun findAllForEventIdAndUserId(@PathVariable eventId: String, @PathVariable userId: String): List<Session> = repository.findByEventIdAndUserId(eventId, userId)
 
     @PostMapping("/post")
     @Secured("ROLE_USER")
@@ -56,15 +59,7 @@ class SessionController(
 
         val original = repository.findOneByIdAndUserId(ObjectId(sessionId.toHexString()), authentication.name)
 
-        val updatedSession = repository.save(
-            Session(
-                id = original.id,
-                userId = original.userId,
-                eventId = original.eventId,
-                name = session.name
-                )
-        )
-        return ResponseEntity.ok(updatedSession)
+        return ResponseEntity.ok(Unit)
     }
 
     @DeleteMapping("delete/{sessionId}")
@@ -83,3 +78,5 @@ data class SessionRequest(
     val eventId: String,
     val name: String
 )
+
+data class SessionChange(val name:String)

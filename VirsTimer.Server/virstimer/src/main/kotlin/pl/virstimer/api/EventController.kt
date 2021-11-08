@@ -11,6 +11,10 @@ import pl.virstimer.repository.EventRepository
 @RestController
 internal class EventController(val repository: EventRepository) {
 
+
+    @GetMapping("/event/user/{userId}")
+    fun findAllForUser(@PathVariable userId: String): List<Event> = repository.findByUserId(userId)
+
     @PostMapping("/events")
     @Secured("ROLE_USER")
     fun createEvent(@RequestBody request: EventRequest, authentication: Authentication): ResponseEntity<Event> {
@@ -22,7 +26,6 @@ internal class EventController(val repository: EventRepository) {
         )
         return ResponseEntity(event, HttpStatus.CREATED)
     }
-
 }
 
 data class EventRequest (val puzzleType: String)
