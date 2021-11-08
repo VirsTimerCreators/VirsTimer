@@ -62,7 +62,7 @@ open class TestCommons {
 
     fun createEvent(userId: String, puzzleType: String, token: String) =
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/events")
+            MockMvcRequestBuilders.post("/event")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Gson().toJson(Event(UUID.randomUUID().toString(), userId, puzzleType)))
                 .authorizedWith(token)
@@ -126,7 +126,7 @@ open class TestCommons {
 
     fun patchSession(updateName: String = "updateName", id: String = "60ce14080000000000000000") =
         mockMvc.perform(
-            MockMvcRequestBuilders.patch("/sessions/patch/$id")
+            MockMvcRequestBuilders.patch("/session/patch/$id")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     Gson().toJson(

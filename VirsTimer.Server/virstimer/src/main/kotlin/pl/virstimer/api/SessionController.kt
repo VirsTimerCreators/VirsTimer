@@ -12,7 +12,7 @@ import pl.virstimer.repository.SessionRepository
 import java.util.*
 
 @RestController
-@RequestMapping("/sessions")
+@RequestMapping("/session")
 class SessionController(
     val repository: SessionRepository,
     val customRepository: SessionCustomRepository

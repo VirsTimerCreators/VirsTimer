@@ -28,29 +28,11 @@ class SolveControllerTest : TestCommons() {
     }
 
     @Test
-    fun should_return_solves() {
-        val loginDetails = registerAndLogin("user-1", "user-1-pass")
-
-        mockMvc.perform(
-            MockMvcRequestBuilders.get("/solve/all")
-                .authorizedWith(loginDetails.authHeader)
-        )
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").value("user-1"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].sessionId").value("session_name1"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].scramble").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].time").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].timestamp").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].solved").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.status().isOk)
-    }
-
-    @Test
     fun should_return_solve_for_user() {
         val loginDetails = registerAndLogin("user-1", "user-1-pass")
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/solve/user")
+            MockMvcRequestBuilders.get("/solve")
                 .authorizedWith(loginDetails.authHeader)
         )
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").isNotEmpty)

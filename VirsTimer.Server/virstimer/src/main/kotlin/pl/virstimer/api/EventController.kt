@@ -13,10 +13,11 @@ import java.util.*
 internal class EventController(val repository: EventRepository) {
 
 
-    @GetMapping("/event/user/{userId}")
-    fun findAllForUser(@PathVariable userId: String): List<Event> = repository.findByUserId(userId)
+    @GetMapping("/event")
+    @Secured("ROLE_USER")
+    fun findAllForUser(authentication: Authentication): List<Event> = repository.findByUserId(authentication.name)
 
-    @PostMapping("/events")
+    @PostMapping("/event")
     @Secured("ROLE_USER")
     fun createEvent(@RequestBody request: EventRequest, authentication: Authentication): ResponseEntity<Event> {
         val event = repository.save(

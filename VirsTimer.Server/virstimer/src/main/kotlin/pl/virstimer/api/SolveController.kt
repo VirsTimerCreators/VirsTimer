@@ -20,22 +20,14 @@ class SolveController(
     val repository: SolveRepository,
     val customRepository: SolveCustomRepository) {
 
-    @GetMapping("/all")
+    @GetMapping
     fun findAllSolves(authentication: Authentication): List<Solve> {
-
         return repository.findAllByUserId(authentication.name)
     }
 
-    @GetMapping("/{objectId}")
+    @GetMapping("/{id}")
     @Secured("ROLE_USER")
     fun getSolve(@PathVariable id: String, authentication: Authentication): Solve = repository.findOneByIdAndUserId(id, authentication.name)
-
-    @GetMapping("/user") // TODO: Change
-    @Secured("ROLE_USER")
-    fun findAllUser(authentication: Authentication): List<Solve> {
-
-        return repository.findAllByUserId(authentication.name)
-    }
 
     @GetMapping("/session/{sessionId}")
     @Secured("ROLE_USER")
@@ -67,11 +59,11 @@ class SolveController(
         return ResponseEntity.ok(Unit)
     }
 
-    @DeleteMapping("delete/{solveId}")
+    @DeleteMapping("{solveId}")
     @Secured("ROLE_USER")
     fun deleteSolve(@PathVariable solveId: String, authentication: Authentication) = repository.deleteSolveByIdAndUserId(solveId, authentication.name)
 
-    @DeleteMapping("delete/all")
+    @DeleteMapping
     @Secured("ROLE_USER")
     fun deleteSolves(authentication: Authentication){
         repository.deleteSolveByUserId(authentication.name)

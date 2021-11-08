@@ -1,13 +1,10 @@
 package pl.virstimer.api
 
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.mongodb.core.query.Criteria
-import org.springframework.data.mongodb.core.query.Query
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -31,7 +28,7 @@ class SessionControllerTest : TestCommons() {
         val loginDetails = registerAndLogin("user-1", "user-1-pass")
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/sessions/all").authorizedWith(loginDetails.authHeader)
+            MockMvcRequestBuilders.get("/session/all").authorizedWith(loginDetails.authHeader)
         )
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").isNotEmpty)
@@ -46,7 +43,7 @@ class SessionControllerTest : TestCommons() {
         val loginDetails = registerAndLogin("user-1", "user-1-pass")
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/sessions/user").authorizedWith(loginDetails.authHeader)
+            MockMvcRequestBuilders.get("/session/user").authorizedWith(loginDetails.authHeader)
         )
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").isNotEmpty)
@@ -60,7 +57,7 @@ class SessionControllerTest : TestCommons() {
         val loginDetails = registerAndLogin("user-1", "user-1-pass")
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/sessions/event/event-1").authorizedWith(loginDetails.authHeader)
+            MockMvcRequestBuilders.get("/session/event/event-1").authorizedWith(loginDetails.authHeader)
         )
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").isNotEmpty)
@@ -69,7 +66,7 @@ class SessionControllerTest : TestCommons() {
             .andExpect(MockMvcResultMatchers.status().isOk)
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/sessions/event/event-2").authorizedWith(loginDetails.authHeader)
+            MockMvcRequestBuilders.get("/session/event/event-2").authorizedWith(loginDetails.authHeader)
         )
             .andExpect(MockMvcResultMatchers.jsonPath("$").isEmpty)
 
