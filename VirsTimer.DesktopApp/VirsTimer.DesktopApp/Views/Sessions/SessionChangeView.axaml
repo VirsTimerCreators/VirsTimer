@@ -2,7 +2,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="VirsTimer.DesktopApp.Views.Sessions.SessionChangeView"
         Title="SessionChangeView"
@@ -39,7 +38,7 @@
                         <TextBlock 
                             Margin="7" 
                             Text="{Binding Name}" 
-                            IsVisible="{Binding EditingSession, Converter={converters:InverseBooleanConverter}}"/>
+                            IsVisible="{Binding !EditingSession}"/>
                         <TextBox
                             GotFocus="ListItemTextBoxGotFocus"
                             Margin="7" 
@@ -49,19 +48,19 @@
                         <Button 
                             Grid.Column="1"
                             HorizontalContentAlignment="Center" 
-                            Content="Edytuj"
+                            Content="Zmień nazwę"
                             Command="{Binding EditSessionCommand}"
                             Click="ClickWithUnselect"
-                            IsVisible="{Binding EditingSession, Converter={converters:InverseBooleanConverter}}"/>
+                            IsVisible="{Binding !EditingSession}"/>
                         <Button 
                             Margin="15 0 0 0"
-                            Grid.Column="2" 
+                            Grid.Column="2"
                             HorizontalContentAlignment="Center" 
                             Content="Usuń"
                             Command="{Binding $parent[Window].DataContext.DeleteSessionCommand}"
                             CommandParameter="{Binding}"
                             Click="ClickWithUnselect"
-                            IsVisible="{Binding EditingSession, Converter={converters:InverseBooleanConverter}}"/>
+                            IsVisible="{Binding !EditingSession}"/>
                         <Button 
                             Grid.Column="1"
                             Grid.ColumnSpan="2" 
