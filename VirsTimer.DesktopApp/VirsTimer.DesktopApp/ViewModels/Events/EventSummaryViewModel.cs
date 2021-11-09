@@ -9,7 +9,7 @@ using VirsTimer.DesktopApp.Views.Events;
 
 namespace VirsTimer.DesktopApp.ViewModels.Events
 {
-    public class EventViewModel : ViewModelBase
+    public class EventSummaryViewModel : ViewModelBase
     {
         private readonly IEventsRepository _eventsRepository;
 
@@ -18,7 +18,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
 
         public ReactiveCommand<Window, Unit> ChangeEventCommand { get; }
 
-        public EventViewModel(IEventsRepository eventsRepository)
+        public EventSummaryViewModel(IEventsRepository eventsRepository)
         {
             _eventsRepository = eventsRepository;
             ChangeEventCommand = ReactiveCommand.CreateFromTask<Window>(ChangeEventAsync);

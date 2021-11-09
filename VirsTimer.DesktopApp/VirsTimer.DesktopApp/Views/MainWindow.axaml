@@ -38,7 +38,7 @@
                         MaterialOpacity="0.45" />
                 </ExperimentalAcrylicBorder.Material>
             </ExperimentalAcrylicBorder>
-            <eventsViews:EventView 
+            <eventsViews:EventSummaryView 
                 Grid.Column="0"
                 Content="{Binding EventViewModel}"
                 Margin="30,0,0,0"
