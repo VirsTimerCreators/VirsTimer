@@ -1,10 +1,8 @@
-﻿using Avalonia.Controls;
+﻿using System.Collections.ObjectModel;
+using System.Reactive;
+using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System.Collections.ObjectModel;
-using System.Reactive;
-using System.Threading.Tasks;
-using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Events;
 
 namespace VirsTimer.DesktopApp.ViewModels.Events
@@ -13,25 +11,21 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
     {
         private readonly IEventsRepository _eventsRepository;
 
-        public ObservableCollection<Event> Events { get; private set; } = null!;
+        public bool Accepted { get; private set; }
+
+        public ObservableCollection<EventViewModel> Events { get; }
 
         [Reactive]
-        public Event? SelectedEvent { get; set; }
+        public EventViewModel? SelectedEvent { get; set; }
 
         public ReactiveCommand<Window, Unit> AcceptCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddEventCommand { get; }
+        public ReactiveCommand<EventViewModel, Unit> AcceptRenameEventCommand { get; }
+        public ReactiveCommand<EventViewModel, Unit> DeleteEventCommand { get; }
 
-        public EventChangeViewModel(IEventsRepository eventsRepository)
+        public EventChangeViewModel(IEventsRepository? eventsRepository = null)
         {
-            _eventsRepository = eventsRepository;
-
-            var canAccpet = this.WhenAnyValue<EventChangeViewModel, bool, Event?>(x => x.SelectedEvent, x => x != null);
-            AcceptCommand = ReactiveCommand.Create<Window>((window) => { window.Close(); }, canAccpet);
-        }
-
-        public override async Task ConstructAsync()
-        {
-            var repositoryResponse = await _eventsRepository.GetEventsAsync().ConfigureAwait(false);
-            Events = new ObservableCollection<Event>(repositoryResponse.Value);
+            _eventsRepository = eventsRepository ?? Ioc.GetService<IEventsRepository>();
         }
     }
 }
