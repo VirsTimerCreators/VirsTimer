@@ -1,10 +1,10 @@
+using System.Reactive;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System.Diagnostics;
-using System.Reactive;
-using System.Threading.Tasks;
-using VirsTimer.Core.Models;
+using VirsTimer.Core.Models.Requests;
+using VirsTimer.Core.Models.Responses;
 using VirsTimer.Core.Services.Login;
 using VirsTimer.DesktopApp.Views;
 
@@ -13,9 +13,6 @@ namespace VirsTimer.DesktopApp.ViewModels
     public class LoginViewModel : ViewModelBase
     {
         private readonly ILoginRepository _loginRepository;
-
-        [Reactive]
-        public bool IsResponseUnsccesfull { get; set; } = false;
 
         [Reactive]
         public string LoginName { get; set; } = string.Empty;
@@ -32,7 +29,8 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public ReactiveCommand<Window, Unit> ContinueLocalCommand { get; }
 
-        public LoginViewModel(ILoginRepository loginRepository)
+        public LoginViewModel(
+            ILoginRepository loginRepository)
         {
             _loginRepository = loginRepository;
 
@@ -41,15 +39,15 @@ namespace VirsTimer.DesktopApp.ViewModels
                 x => x.LoginPassowd,
                 (name, password) => !string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(password));
 
-            RegisterCommand = ReactiveCommand.Create<Window>(Register);
+            RegisterCommand = ReactiveCommand.CreateFromTask<Window>(Register);
             AcceptLoginCommand = ReactiveCommand.CreateFromTask<Window>(AcceptLoginAsync, acceptLoginEnabled);
             ContinueLocalCommand = ReactiveCommand.Create<Window>(ContinueLocal);
         }
 
-        private void Register(Window parent)
+        private async Task Register(Window parent)
         {
-            //Todo fill
-            Trace.WriteLine("Register clicked");
+            var registerWindow = new RegisterView();
+            await registerWindow.ShowDialog(parent).ConfigureAwait(true);
         }
 
         private async Task AcceptLoginAsync(Window parent)
@@ -78,16 +76,6 @@ namespace VirsTimer.DesktopApp.ViewModels
             var mainWinow = new MainWindow();
             mainWinow.Show();
             parent.Close();
-        }
-
-        private async void ShowUnsuccesfullControlAsync()
-        {
-            if (IsResponseUnsccesfull)
-                return;
-
-            IsResponseUnsccesfull = true;
-            await Task.Delay(3000).ConfigureAwait(false);
-            IsResponseUnsccesfull = false;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace VirsTimer.Core.Models
+namespace VirsTimer.Core.Models.Responses
 {
     public class RepositoryResponse
     {

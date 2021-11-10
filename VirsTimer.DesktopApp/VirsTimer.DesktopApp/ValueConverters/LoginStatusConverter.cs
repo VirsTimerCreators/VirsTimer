@@ -1,8 +1,8 @@
-﻿using Avalonia.Data.Converters;
-using Avalonia.Markup.Xaml;
-using System;
+﻿using System;
 using System.Globalization;
-using VirsTimer.Core.Models;
+using Avalonia.Data.Converters;
+using Avalonia.Markup.Xaml;
+using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.DesktopApp.ValueConverters
 {

@@ -1,0 +1,159 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Height="450" Width="600"
+        MinHeight="450" MinWidth="600"
+        MaxHeight="450" MaxWidth="600"
+        x:Class="VirsTimer.DesktopApp.Views.RegisterView"
+        Title="Rejestracja"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
+        ExtendClientAreaToDecorationsHint="True">
+    <Panel>
+        <ExperimentalAcrylicBorder
+            IsHitTestVisible="False"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.75" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+        <StackPanel HorizontalAlignment="Stretch">
+            <StackPanel>
+                <TextBlock
+                    Text="Rejestracja"
+                    FontSize="14"
+                    Margin="10"/>
+                <Panel
+                    MinHeight="10"
+                    Margin="20,0,20,10">
+                    <ProgressBar
+                        IsIndeterminate="True"
+                        HorizontalAlignment="Right"
+                        IsVisible="{Binding IsBusy}"/>
+                </Panel>
+            </StackPanel>
+            <StackPanel Margin="100 0">
+                <TextBox
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    MinHeight="40"
+                    Margin="0 20 0 0"
+                    Watermark="Login"
+                    VerticalContentAlignment="Center"
+                    Text="{Binding Login}"/>
+                <Panel MinHeight="40">
+                    <TextBlock
+                        Foreground="Red"
+                        HorizontalAlignment="Left"
+                        Text="Login powinien się składać z co najmniej 3 liter (może zawierać kropki i myślniki).">
+                        <TextBlock.IsVisible>
+                            <MultiBinding Converter="{converters:AlertFromBoolConverter}">
+                                <Binding Path="LoginOk"/>
+                                <Binding Path="Login"/>
+                            </MultiBinding>
+                        </TextBlock.IsVisible>
+                    </TextBlock>
+                </Panel>
+                <TextBox
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    MinHeight="40"
+                    Watermark="Email"
+                    VerticalContentAlignment="Center"
+                    Text="{Binding Email}"/>
+                <Panel MinHeight="40">
+                    <TextBlock
+                        Foreground="Red"
+                        HorizontalAlignment="Left"
+                        Text="Format email nie jest prawidłowy.">
+                        <TextBlock.IsVisible>
+                            <MultiBinding Converter="{converters:AlertFromBoolConverter}">
+                                <Binding Path="EmailOk"/>
+                                <Binding Path="Email"/>
+                            </MultiBinding>
+                        </TextBlock.IsVisible>
+                    </TextBlock>
+                </Panel>
+
+                <TextBox
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    MinHeight="40"
+                    Watermark="Hasło"
+                    VerticalContentAlignment="Center"
+                    Name="PasswordTextBox"
+                    Text="{Binding Password}"/>
+                <Panel MinHeight="40">
+                    <TextBlock
+                        Foreground="Red"
+                        HorizontalAlignment="Left"
+                        Text="Hasło powinno składać się z co najmniej 5 znaków."
+                        TextWrapping="WrapWithOverflow">
+                        <TextBlock.IsVisible>
+                            <MultiBinding Converter="{converters:AlertFromBoolConverter}">
+                                <Binding Path="PasswordOk"/>
+                                <Binding Path="Password"/>
+                            </MultiBinding>
+                        </TextBlock.IsVisible>
+                    </TextBlock>
+                </Panel>
+
+                <TextBox
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    MinHeight="40"
+                    Watermark="Powtórz hasło"
+                    VerticalContentAlignment="Center"
+                    Name="RepeatPasswordTextBox"
+                    Text="{Binding RepeatedPassword}"/>
+                <TextBlock
+                    Foreground="Red"
+                    HorizontalAlignment="Left"
+                    Text="Hasła nie są takie same."
+                    IsVisible="{Binding !PasswordsAreSame}">
+                    <TextBlock.IsVisible>
+                        <MultiBinding Converter="{converters:AlertFromBoolConverter}">
+                            <Binding Path="PasswordsAreSame"/>
+                            <Binding Path="Password"/>
+                        </MultiBinding>
+                    </TextBlock.IsVisible>
+                </TextBlock>
+            </StackPanel>
+        </StackPanel>
+        <Button
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            MinWidth="150"
+            MinHeight="40"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center"
+            Content="Akceptuj"
+            Margin="20"
+            Command="{Binding AcceptRegisterCommand}"
+            CommandParameter="{Binding $parent[Window]}"/>
+        <TextBlock
+            Padding="20"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+            MaxWidth="210"
+            TextAlignment="Left"
+            TextWrapping="WrapWithOverflow"
+            IsVisible="{Binding IsResponseUnsccesfull}"
+            Background="#ed924c"
+            Foreground="Black">
+            <TextBlock.Text>
+                <MultiBinding Converter="{converters:RegisterStatusConverter}">
+                    <Binding Path="RegisterStatus"/>
+                    <Binding Path="RegisterMessage"/>
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
+    </Panel>
+</Window>

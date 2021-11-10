@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services.Events
 {

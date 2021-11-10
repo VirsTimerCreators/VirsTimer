@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services.Solves
 {
