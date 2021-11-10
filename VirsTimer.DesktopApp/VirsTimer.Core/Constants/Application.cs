@@ -3,6 +3,9 @@ using System.IO;
 
 namespace VirsTimer.Core.Constants
 {
+    /// <summary>
+    /// Application constatnts.
+    /// </summary>
     public static class Application
     {
         /// <summary>
@@ -23,5 +26,4 @@ namespace VirsTimer.Core.Constants
                 Company,
                 Name);
     }
-
 }

@@ -1,4 +1,6 @@
-﻿namespace VirsTimer.Core.Constants
+﻿using System.Collections.Generic;
+
+namespace VirsTimer.Core.Constants
 {
     /// <summary>
     /// Known WCA events.
@@ -83,7 +85,7 @@
         /// <summary>
         /// All predefined events.
         /// </summary>
-        public static readonly string[] All = new[]
+        public static readonly IReadOnlyList<string> All = new[]
         {
                 ThreeByThree,
                 TwoByTwo,
