@@ -31,6 +31,9 @@ namespace VirsTimer.Core.Services.Scrambles
         /// <param name="scramblesAmount">Amount of scrambles.</param>
         public async Task<IReadOnlyList<Scramble>> GenerateScrambles(Event @event, int scramblesAmount)
         {
+            if (Constants.Events.All.All(e => e != @event.Name))
+                return Enumerable.Repeat(Scramble.Empty, scramblesAmount).ToList();
+
             using var httpClient = _httpClientFactory.CreateClient(Server.Endpoints.Scrambles);
             var tasks = Enumerable.Range(0, scramblesAmount).Select(i => httpClient.GetFromJsonAsync<Scramble>(GetServerEventName(@event.Name)));
             var scrambles = await Task.WhenAll(tasks).ConfigureAwait(false);
