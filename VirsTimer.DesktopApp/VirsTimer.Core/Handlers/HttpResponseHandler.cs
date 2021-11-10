@@ -7,10 +7,16 @@ using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Handlers
 {
+    /// <summary>
+    /// Standard <see cref="IHttpResponseHandler"/> implementation.
+    /// </summary>
     public class HttpResponseHandler : IHttpResponseHandler
     {
         private static readonly JsonSerializerOptions JsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse> HandleAsync(Func<Task<HttpResponseMessage>> responseFunc)
         {
             try
@@ -37,6 +43,9 @@ namespace VirsTimer.Core.Handlers
             }
         }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse<T>> HandleAsync<T>(Func<Task<HttpResponseMessage>> responseFunc)
         {
             try
