@@ -1,49 +1,48 @@
-﻿using Avalonia.Controls;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System.Reactive;
-using System.Threading.Tasks;
 using VirsTimer.Core.Models;
-using VirsTimer.Core.Services.Events;
-using VirsTimer.DesktopApp.Views.Events;
+using CoreEvents = VirsTimer.Core.Constants.Events;
 
 namespace VirsTimer.DesktopApp.ViewModels.Events
 {
     public class EventViewModel : ViewModelBase
     {
-        private readonly IEventsRepository _eventsRepository;
+        private bool _editingEvent = false;
+
+        public Event Event { get; }
 
         [Reactive]
-        public Event CurrentEvent { get; set; } = null!;
+        public string Name { get; set; }
 
-        public ReactiveCommand<Window, Unit> ChangeEventCommand { get; }
+        [ObservableAsProperty]
+        public bool IsPredefined { get; set; }
 
-        public EventViewModel(IEventsRepository eventsRepository)
+        public bool EditingEvent
         {
-            _eventsRepository = eventsRepository;
-            ChangeEventCommand = ReactiveCommand.CreateFromTask<Window>(ChangeEventAsync);
-        }
-
-        public override async Task ConstructAsync()
-        {
-            IsBusy = true;
-            var repositoryResponse = await _eventsRepository.GetEventsAsync().ConfigureAwait(false);
-            CurrentEvent = repositoryResponse.Value[0];
-            IsBusy = false;
-        }
-
-        private async Task ChangeEventAsync(Window window)
-        {
-            var eventChangeViewModel = new EventChangeViewModel(_eventsRepository);
-            await eventChangeViewModel.ConstructAsync().ConfigureAwait(true);
-            var dialog = new EventChangeView
+            get => _editingEvent;
+            set
             {
-                DataContext = eventChangeViewModel
-            };
+                this.RaiseAndSetIfChanged(ref _editingEvent, value);
+                Name = Event.Name;
+            }
+        }
 
-            await dialog.ShowDialog(window);
-            if (eventChangeViewModel.SelectedEvent != null)
-                CurrentEvent = eventChangeViewModel.SelectedEvent;
+        public ReactiveCommand<Unit, Unit> RenameCommand { get; }
+
+        public EventViewModel(Event @event)
+        {
+            Event = @event;
+            Name = Event.Name;
+
+            this.WhenAnyValue(x => x.Name)
+                .Select(n => CoreEvents.All.Any(e => e == n))
+                .ToPropertyEx(this, x => x.IsPredefined);
+
+            var canRename = this.WhenAnyValue(x => x.IsPredefined).Select(x => !x);
+            RenameCommand = ReactiveCommand.Create(() => { EditingEvent = true; }, canRename);
         }
     }
 }

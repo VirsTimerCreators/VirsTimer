@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -34,6 +33,23 @@ namespace VirsTimer.Core.Services.Events
             {
                 return new RepositoryResponse<IReadOnlyList<Event>>(RepositoryResponseStatus.UnknownError, ex.Message);
             }
+        }
+
+        // dodać poniżesze funkcje gdy backend będzie gotowy
+        public async Task<RepositoryResponse<Event>> AddEventAsync(Event @event)
+        {
+            @event.Id = Guid.NewGuid().ToString();
+            return new RepositoryResponse<Event>(@event);
+        }
+
+        public async Task<RepositoryResponse> DeleteEventAsync(Event @event)
+        {
+            return RepositoryResponse.Ok;
+        }
+
+        public async Task<RepositoryResponse> UpdateEventAsync(Event @event)
+        {
+            return RepositoryResponse.Ok;
         }
     }
 }

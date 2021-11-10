@@ -3,9 +3,9 @@ using Avalonia.Markup.Xaml;
 
 namespace VirsTimer.DesktopApp.Views.Events
 {
-    public class EventView : UserControl
+    public class EventSummaryView : UserControl
     {
-        public EventView()
+        public EventSummaryView()
         {
             InitializeComponent();
         }

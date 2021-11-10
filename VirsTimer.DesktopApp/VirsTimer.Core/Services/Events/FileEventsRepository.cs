@@ -52,5 +52,19 @@ namespace VirsTimer.Core.Services.Events
             await _applicationCacheSaver.UpdateCacheAsync().ConfigureAwait(false);
             return new RepositoryResponse<IReadOnlyList<Event>>(events);
         }
+        public Task<RepositoryResponse> UpdateEventAsync(Event @event)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RepositoryResponse<Event>> AddEventAsync(Event @event)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RepositoryResponse> DeleteEventAsync(Event @event)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
