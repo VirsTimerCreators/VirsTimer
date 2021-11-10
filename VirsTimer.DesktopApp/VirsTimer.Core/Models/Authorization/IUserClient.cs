@@ -13,6 +13,6 @@
         /// <summary>
         /// Logged user json web token.
         /// </summary>
-        public string Jwt { get; set; }
+        public string Jwt { get; }
     }
 }

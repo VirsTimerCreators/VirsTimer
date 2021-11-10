@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading.Tasks;
+using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Handlers
@@ -12,8 +13,6 @@ namespace VirsTimer.Core.Handlers
     /// </summary>
     public class HttpResponseHandler : IHttpResponseHandler
     {
-        private static readonly JsonSerializerOptions JsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
@@ -26,7 +25,7 @@ namespace VirsTimer.Core.Handlers
                 if (httpResponse.IsSuccessStatusCode)
                     return RepositoryResponse.Ok;
 
-                var error = JsonSerializer.Deserialize<ErrorResponse>(message, JsonSerializerOptions);
+                var error = JsonSerializer.Deserialize<ErrorResponse>(message, Json.ServerSerializerOptions);
                 return new RepositoryResponse(httpResponse.StatusCode, error?.Message ?? message);
             }
             catch (HttpRequestException ex) when (ex.InnerException is SocketException)
