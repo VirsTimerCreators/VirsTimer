@@ -1,7 +1,10 @@
+using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using VirsTimer.Core.Models;
+using CoreEvents = VirsTimer.Core.Constants.Events;
 
 namespace VirsTimer.DesktopApp.ViewModels.Events
 {
@@ -13,6 +16,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
 
         [Reactive]
         public string Name { get; set; }
+
+        [ObservableAsProperty]
+        public bool IsPredefined { get; set; }
 
         public bool EditingEvent
         {
@@ -31,7 +37,12 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
             Event = @event;
             Name = Event.Name;
 
-            RenameCommand = ReactiveCommand.Create(() => { EditingEvent = true; });
+            this.WhenAnyValue(x => x.Name)
+                .Select(n => CoreEvents.All.Any(e => e == n))
+                .ToPropertyEx(this, x => x.IsPredefined);
+
+            var canRename = this.WhenAnyValue(x => x.IsPredefined).Select(x => !x);
+            RenameCommand = ReactiveCommand.Create(() => { EditingEvent = true; }, canRename);
         }
     }
 }
