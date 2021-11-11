@@ -7,17 +7,28 @@ using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services.Register
 {
+    /// <summary>
+    /// Virs timer server api <see cref="IRegisterRepository"/> implementation. 
+    /// </summary>
     public class ServerRegisterRepository : IRegisterRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpResponseHandler _httpResponseHandler;
 
-        public ServerRegisterRepository(IHttpClientFactory httpClientFactory, IHttpResponseHandler httpResponseHandler)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IRegisterRepository"/> class.
+        /// </summary>
+        public ServerRegisterRepository(
+            IHttpClientFactory httpClientFactory,
+            IHttpResponseHandler httpResponseHandler)
         {
             _httpClientFactory = httpClientFactory;
             _httpResponseHandler = httpResponseHandler;
         }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse> RegisterAsync(RegisterRequest request)
         {
             using var client = _httpClientFactory.CreateClient();
