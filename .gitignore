@@ -362,3 +362,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 VirsTimer.Core.xml
+
+.vs/
