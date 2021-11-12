@@ -11,15 +11,24 @@ using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services.Login
 {
+    /// <summary>
+    /// Virs timer server api <see cref="ILoginRepository"/> implementation. 
+    /// </summary>
     public class ServerLoginRepository : ILoginRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServerLoginRepository"/> class.
+        /// </summary>
         public ServerLoginRepository(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
         }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse<IUserClient>> LoginAsync(LoginRequest loginRequest)
         {
             try

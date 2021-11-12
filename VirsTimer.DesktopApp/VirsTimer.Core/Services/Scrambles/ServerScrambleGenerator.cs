@@ -37,14 +37,14 @@ namespace VirsTimer.Core.Services.Scrambles
             using var httpClient = _httpClientFactory.CreateClient(Server.Endpoints.Scrambles);
             var tasks = Enumerable.Range(0, scramblesAmount).Select(i => httpClient.GetFromJsonAsync<Scramble>(GetServerEventName(@event.Name)));
             var scrambles = await Task.WhenAll(tasks).ConfigureAwait(false);
-            return scrambles == null
-                ? Array.Empty<Scramble>()
-                : scrambles.Where(scramble => scramble != null).ToList();
+            if (scrambles is null)
+                return Array.Empty<Scramble>();
+            return scrambles.Where(scramble => scramble != null).ToList()!;
         }
 
         private static string GetServerEventName(string eventName)
         {
-            return (eventName) switch
+            return eventName switch
             {
                 Constants.Events.TwoByTwo => Server.Events.TwoByTwo,
                 Constants.Events.ThreeByThree => Server.Events.ThreeByThree,
@@ -55,13 +55,13 @@ namespace VirsTimer.Core.Services.Scrambles
                 Constants.Events.Pyraminx => Server.Events.Pyraminx,
                 Constants.Events.Megaminx => Server.Events.Megaminx,
                 Constants.Events.Skewb => Server.Events.Skewb,
-                Constants.Events.Square_One => Server.Events.Square_One,
+                Constants.Events.SquareOne => Server.Events.SquareOne,
                 Constants.Events.Clock => Server.Events.Clock,
                 Constants.Events.ThreeByThreeBlindfold => Server.Events.ThreeByThreeBlindfold,
                 Constants.Events.ThreeByThreeOneHand => Server.Events.ThreeByThreeOneHand,
                 Constants.Events.FourByFourBlindfold => Server.Events.FourByFourBlindfold,
                 Constants.Events.FiveByFiveBlindfold => Server.Events.FiveByFiveBlindfold,
-                _ => throw new ArgumentException(null, nameof(eventName))
+                _ => throw new ArgumentException(nameof(eventName))
             };
         }
     }

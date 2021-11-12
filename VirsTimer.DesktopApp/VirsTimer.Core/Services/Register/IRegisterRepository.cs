@@ -5,12 +5,12 @@ using VirsTimer.Core.Models.Responses;
 namespace VirsTimer.Core.Services.Register
 {
     /// <summary>
-    /// Singups to the application.
+    /// Registers to the application.
     /// </summary>
     public interface IRegisterRepository
     {
         /// <summary>
-        /// Singsup to the application.
+        /// Registers to the application.
         /// </summary>
         public Task<RepositoryResponse> RegisterAsync(RegisterRequest request);
     }

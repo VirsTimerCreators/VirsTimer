@@ -109,7 +109,7 @@
             /// <summary>
             /// Square-1.
             /// </summary>
-            public const string Square_One = "SQUARE_ONE";
+            public const string SquareOne = "SQUARE_ONE";
 
             /// <summary>
             /// 4x4x4 blindfolded.

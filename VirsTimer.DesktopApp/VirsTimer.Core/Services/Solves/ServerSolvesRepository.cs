@@ -12,12 +12,23 @@ using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services.Solves
 {
+    /// <summary>
+    /// Virs timer server api <see cref="ServerSolvesRepository"/> implementation. 
+    /// </summary>
     public class ServerSolvesRepository : AbstractServerRepository, ISolvesRepository
     {
-        public ServerSolvesRepository(IHttpClientFactory httpClientFactory, IUserClient userClient)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServerSolvesRepository"/> class.
+        /// </summary>
+        public ServerSolvesRepository(
+            IHttpClientFactory httpClientFactory,
+            IUserClient userClient)
             : base(httpClientFactory, userClient)
         { }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse> AddSolveAsync(Solve solve)
         {
             try
@@ -39,6 +50,9 @@ namespace VirsTimer.Core.Services.Solves
             }
         }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse> DeleteSolveAsync(Solve solve)
         {
             try
@@ -59,6 +73,9 @@ namespace VirsTimer.Core.Services.Solves
             }
         }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse<IReadOnlyList<Solve>>> GetSolvesAsync(Session session)
         {
             try
@@ -83,6 +100,9 @@ namespace VirsTimer.Core.Services.Solves
             }
         }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse> UpdateSolveAsync(Solve solve)
         {
             try
