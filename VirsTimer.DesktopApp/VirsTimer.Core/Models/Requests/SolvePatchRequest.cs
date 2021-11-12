@@ -1,6 +1,6 @@
 ﻿namespace VirsTimer.Core.Models.Requests
 {
-    class SolvePatchRequest
+    internal class SolvePatchRequest
     {
         public string Solved { get; init; } = string.Empty;
 

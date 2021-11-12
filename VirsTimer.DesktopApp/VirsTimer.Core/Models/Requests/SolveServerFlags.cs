@@ -16,18 +16,18 @@ namespace VirsTimer.Core.Models.Requests
                 Ok => SolveFlag.OK,
                 PlusTwo => SolveFlag.Plus2,
                 Dnf => SolveFlag.DNF,
-                _ => throw new ArgumentException(null, nameof(serverFlag))
+                _ => throw new ArgumentException(nameof(serverFlag))
             };
         }
 
         public static string ConvertFromSolveFlag(SolveFlag flag)
         {
-            return (flag) switch
+            return flag switch
             {
                 SolveFlag.OK => Ok,
                 SolveFlag.Plus2 => PlusTwo,
                 SolveFlag.DNF => Dnf,
-                _ => throw new ArgumentException(null, nameof(flag))
+                _ => throw new ArgumentException(nameof(flag))
             };
         }
     }

@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace VirsTimer.Core.Models.Requests
+﻿namespace VirsTimer.Core.Models.Requests
 {
     internal class SessionPostRequest
     {

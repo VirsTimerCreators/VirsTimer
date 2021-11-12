@@ -3,7 +3,7 @@
 namespace VirsTimer.Core.Models.Requests
 {
     /// <summary>
-    /// Singup request model.
+    /// Server register request model.
     /// </summary>
     public class RegisterRequest
     {

@@ -1,8 +1,8 @@
 ﻿namespace VirsTimer.Core.Models.Requests
 {
-    class SessionPatchRequest
+    internal class SessionPatchRequest
     {
-        public string Name { get; init; } = string.Empty;
+        public string Name { get; init; }
 
         public SessionPatchRequest(Session session)
         {
