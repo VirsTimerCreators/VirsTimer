@@ -70,7 +70,7 @@ namespace VirsTimer.Core.Constants
         /// <summary>
         /// Square-1.
         /// </summary>
-        public const string Square_One = "Square One";
+        public const string SquareOne = "Square One";
 
         /// <summary>
         /// 4x4x4 blindfolded.
@@ -96,7 +96,7 @@ namespace VirsTimer.Core.Constants
                 Megaminx,
                 Pyraminx,
                 Skewb,
-                Square_One,
+                SquareOne,
                 Clock,
                 ThreeByThreeOneHand,
                 ThreeByThreeBlindfold,

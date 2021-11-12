@@ -14,12 +14,23 @@ using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services.Sessions
 {
+    /// <summary>
+    /// Virs timer server api <see cref="ServerSessionsRepository"/> implementation. 
+    /// </summary>
     public class ServerSessionsRepository : AbstractServerRepository, ISessionRepository
     {
-        public ServerSessionsRepository(IHttpClientFactory httpClientFactory, IUserClient userClient)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServerSessionsRepository"/> class.
+        /// </summary>
+        public ServerSessionsRepository(
+            IHttpClientFactory httpClientFactory,
+            IUserClient userClient)
             : base(httpClientFactory, userClient)
         { }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse> AddSessionAsync(Session session)
         {
             try
@@ -45,6 +56,9 @@ namespace VirsTimer.Core.Services.Sessions
             }
         }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse> DeleteSessionAsync(Session session)
         {
             try
@@ -65,6 +79,9 @@ namespace VirsTimer.Core.Services.Sessions
             }
         }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse<IReadOnlyList<Session>>> GetSessionsAsync(Event @event)
         {
             try
@@ -96,6 +113,9 @@ namespace VirsTimer.Core.Services.Sessions
             }
         }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public async Task<RepositoryResponse> UpdateSessionAsync(Session session)
         {
             try
