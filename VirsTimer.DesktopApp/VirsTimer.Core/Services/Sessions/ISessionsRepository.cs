@@ -8,7 +8,7 @@ namespace VirsTimer.Core.Services.Sessions
     /// <summary>
     /// Service providing repository operations for <see cref="Session"/> model.
     /// </summary>
-    public interface ISessionRepository
+    public interface ISessionsRepository
     {
         /// <summary>
         /// Gets sessions from repository by given <paramref name="event"/>. 

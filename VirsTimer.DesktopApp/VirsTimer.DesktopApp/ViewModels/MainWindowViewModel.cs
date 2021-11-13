@@ -35,7 +35,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         public ReactiveCommand<Window, Unit> AddSolveManualyCommand { get; }
         public ReactiveCommand<Unit, Unit> ExitCommand { get; }
 
-        public MainWindowViewModel(IEventsRepository eventsRepository, ISessionRepository sessionRepository, ISolvesRepository solvesRepository, IScrambleGenerator scrambleGenerator)
+        public MainWindowViewModel(IEventsRepository eventsRepository, ISessionsRepository sessionRepository, ISolvesRepository solvesRepository, IScrambleGenerator scrambleGenerator)
         {
             _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
 

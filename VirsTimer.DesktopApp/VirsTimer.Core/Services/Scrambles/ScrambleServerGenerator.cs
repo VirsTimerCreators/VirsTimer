@@ -12,14 +12,14 @@ namespace VirsTimer.Core.Services.Scrambles
     /// <summary>
     /// <see cref="IScrambleGenerator"/> implementation for getting scrambles from application server side.
     /// </summary>
-    public class ServerScrambleGenerator : IScrambleGenerator
+    public class ScrambleServerGenerator : IScrambleGenerator
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServerScrambleGenerator"/> class.
+        /// Initializes a new instance of the <see cref="ScrambleServerGenerator"/> class.
         /// </summary>
-        public ServerScrambleGenerator(IHttpClientFactory httpClientFactory)
+        public ScrambleServerGenerator(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
         }

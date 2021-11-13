@@ -14,7 +14,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
 {
     public class SessionSummaryViewModel : ViewModelBase
     {
-        private readonly ISessionRepository _sessionRepository;
+        private readonly ISessionsRepository _sessionRepository;
         private Event _event = null!;
 
         [Reactive]
@@ -22,9 +22,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
 
         public ReactiveCommand<Window, Unit> ChangeSessionCommand { get; }
 
-        public SessionSummaryViewModel(ISessionRepository? sessionRepository = null)
+        public SessionSummaryViewModel(ISessionsRepository? sessionRepository = null)
         {
-            _sessionRepository = sessionRepository ?? Ioc.GetService<ISessionRepository>();
+            _sessionRepository = sessionRepository ?? Ioc.GetService<ISessionsRepository>();
             ChangeSessionCommand = ReactiveCommand.CreateFromTask<Window>(ChangeSessionAsync);
         }
 

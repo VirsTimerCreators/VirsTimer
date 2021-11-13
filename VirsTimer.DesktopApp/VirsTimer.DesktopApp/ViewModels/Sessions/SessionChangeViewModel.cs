@@ -17,7 +17,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
     public class SessionChangeViewModel : ViewModelBase
     {
         private readonly Event _event;
-        private readonly ISessionRepository _sessionRepository;
+        private readonly ISessionsRepository _sessionRepository;
 
         public bool Accepted { get; private set; } = false;
 
@@ -32,10 +32,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
         public ReactiveCommand<SessionViewModel, Unit> AcceptRenameSessionCommand { get; private set; } = null!;
         public ReactiveCommand<SessionViewModel, Unit> DeleteSessionCommand { get; }
 
-        public SessionChangeViewModel(Event @event, ISessionRepository? sessionRepository = null)
+        public SessionChangeViewModel(Event @event, ISessionsRepository? sessionRepository = null)
         {
             _event = @event;
-            _sessionRepository = sessionRepository ?? Ioc.GetService<ISessionRepository>();
+            _sessionRepository = sessionRepository ?? Ioc.GetService<ISessionsRepository>();
 
             var acceptEnabled = this.WhenAnyValue<SessionChangeViewModel, bool, SessionViewModel?>(x => x.SelectedSession, x => x != null);
             AcceptCommand = ReactiveCommand.Create<Window>(AcceptSession, acceptEnabled);

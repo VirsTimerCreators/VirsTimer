@@ -14,15 +14,15 @@ namespace VirsTimer.Core.Services.Solves
     /// <summary>
     /// <see cref="ISolvesRepository"/> implementation that manages solves in local file.
     /// </summary>
-    public class FileSolvesRepository : ISolvesRepository
+    public class SolvesFileRepository : ISolvesRepository
     {
         private readonly IFileSystem _fileSystem;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileSolvesRepository"/> class.
+        /// Initializes a new instance of the <see cref="SolvesFileRepository"/> class.
         /// </summary>
         /// <param name="fileSystem">File system.</param>
-        public FileSolvesRepository(IFileSystem fileSystem)
+        public SolvesFileRepository(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
         }

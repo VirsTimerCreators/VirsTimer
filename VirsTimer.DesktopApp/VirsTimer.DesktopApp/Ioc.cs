@@ -64,8 +64,8 @@ namespace VirsTimer.DesktopApp
             services.AddSingleton<FileHelper>();
             services.AddSingleton<IApplicationCacheSaver, ApplicationCacheSaver>();
             services.AddSingleton<IUserClient, UserClient>();
-            services.AddSingleton<ILoginRepository, ServerLoginRepository>();
-            services.AddSingleton<IRegisterRepository, ServerRegisterRepository>();
+            services.AddSingleton<ILoginRepository, LoginServerRepository>();
+            services.AddSingleton<IRegisterRepository, RegisterServerRepository>();
             services.AddHttpClient();
         }
 
@@ -86,9 +86,9 @@ namespace VirsTimer.DesktopApp
                 });
 
             ServiceDescriptors.AddSingleton<IEventsRepository, EventsServerRepository>();
-            ServiceDescriptors.AddSingleton<ISessionRepository, ServerSessionsRepository>();
-            ServiceDescriptors.AddSingleton<ISolvesRepository, ServerSolvesRepository>();
-            ServiceDescriptors.AddSingleton<IScrambleGenerator, ServerScrambleGenerator>();
+            ServiceDescriptors.AddSingleton<ISessionsRepository, SessionsServerRepository>();
+            ServiceDescriptors.AddSingleton<ISolvesRepository, SolvesServerRepository>();
+            ServiceDescriptors.AddSingleton<IScrambleGenerator, ScrambleServerGenerator>();
             ServiceDescriptors.AddSingleton(userClient);
             Services = ServiceDescriptors.BuildServiceProvider();
         }

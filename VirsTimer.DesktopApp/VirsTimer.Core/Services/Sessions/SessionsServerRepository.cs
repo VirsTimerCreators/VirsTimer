@@ -15,18 +15,18 @@ using VirsTimer.Core.Models.Responses;
 namespace VirsTimer.Core.Services.Sessions
 {
     /// <summary>
-    /// Virs timer server api <see cref="ServerSessionsRepository"/> implementation. 
+    /// Virs timer server api <see cref="SessionsServerRepository"/> implementation. 
     /// </summary>
-    public class ServerSessionsRepository : ISessionRepository
+    public class SessionsServerRepository : ISessionsRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IUserClient _userClient;
         private readonly IHttpResponseHandler _httpResponseHandler;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServerSessionsRepository"/> class.
+        /// Initializes a new instance of the <see cref="SessionsServerRepository"/> class.
         /// </summary>
-        public ServerSessionsRepository(
+        public SessionsServerRepository(
             IHttpClientFactory httpClientFactory,
             IUserClient userClient,
             IHttpResponseHandler httpResponseHandler)

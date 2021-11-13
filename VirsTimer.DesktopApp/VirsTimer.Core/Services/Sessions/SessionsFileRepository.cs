@@ -12,18 +12,18 @@ using VirsTimer.Core.Services.Cache;
 namespace VirsTimer.Core.Services.Sessions
 {
     /// <summary>
-    /// <see cref="ISessionRepository"/> implementation that manages solves in local file.
+    /// <see cref="ISessionsRepository"/> implementation that manages solves in local file.
     /// </summary>
-    public class FileSessionRepository : ISessionRepository
+    public class SessionsFileRepository : ISessionsRepository
     {
         private readonly IFileSystem _fileSystem;
         private readonly FileHelper _fileHelper;
         private readonly IApplicationCacheSaver _applicationCacheSaver;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileSessionRepository"/> class.
+        /// Initializes a new instance of the <see cref="SessionsFileRepository"/> class.
         /// </summary>
-        public FileSessionRepository(IFileSystem fileSystem, FileHelper fileHelper, IApplicationCacheSaver applicationCacheSaver)
+        public SessionsFileRepository(IFileSystem fileSystem, FileHelper fileHelper, IApplicationCacheSaver applicationCacheSaver)
         {
             _fileSystem = fileSystem;
             _fileHelper = fileHelper;

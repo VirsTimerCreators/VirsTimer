@@ -14,14 +14,14 @@ namespace VirsTimer.Core.Services.Login
     /// <summary>
     /// Virs timer server api <see cref="ILoginRepository"/> implementation. 
     /// </summary>
-    public class ServerLoginRepository : ILoginRepository
+    public class LoginServerRepository : ILoginRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServerLoginRepository"/> class.
+        /// Initializes a new instance of the <see cref="LoginServerRepository"/> class.
         /// </summary>
-        public ServerLoginRepository(IHttpClientFactory httpClientFactory)
+        public LoginServerRepository(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
         }

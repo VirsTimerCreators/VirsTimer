@@ -11,7 +11,7 @@ namespace VirsTimer.Core.Services.Register
     /// <summary>
     /// Virs timer server api <see cref="IRegisterRepository"/> implementation. 
     /// </summary>
-    public class ServerRegisterRepository : IRegisterRepository
+    public class RegisterServerRepository : IRegisterRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpResponseHandler _httpResponseHandler;
@@ -19,7 +19,7 @@ namespace VirsTimer.Core.Services.Register
         /// <summary>
         /// Initializes a new instance of the <see cref="IRegisterRepository"/> class.
         /// </summary>
-        public ServerRegisterRepository(
+        public RegisterServerRepository(
             IHttpClientFactory httpClientFactory,
             IHttpResponseHandler httpResponseHandler)
         {
