@@ -45,7 +45,7 @@ namespace VirsTimer.Core.Services.Solves
             var request = new SolvePostRequest(_userClient.Id, solve);
             var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Solve.Post, request);
             var response = await _httpResponseHandler.HandleAsync<SolvePostResponse>(httpRequestFunc).ConfigureAwait(false);
-            if (response.Succesfull)
+            if (response.IsSuccesfull)
                 solve.Id = response.Value.Id;
 
             return response;

@@ -57,7 +57,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             var request = new LoginRequest(LoginName, LoginPassowd);
 
             var response = await _loginRepository.LoginAsync(request).ConfigureAwait(true);
-            if (response.Succesfull)
+            if (response.IsSuccesfull)
             {
                 Ioc.ConfigureServerServices(response.Value);
                 var mainWinow = new MainWindow();

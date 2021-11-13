@@ -46,7 +46,7 @@ namespace VirsTimer.Core.Services.Sessions
             var request = new SessionPostRequest(_userClient.Id, session);
             var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Session.Post, request, Json.ServerSerializerOptions);
             var response = await _httpResponseHandler.HandleAsync<SessionPostResponse>(httpRequestFunc).ConfigureAwait(false);
-            if (response.Succesfull)
+            if (response.IsSuccesfull)
                 session.Id = response.Value.Id;
 
             return response;
@@ -80,7 +80,7 @@ namespace VirsTimer.Core.Services.Sessions
             var endpoint = Server.Endpoints.Session.GetByEvent(@event.Id);
             var httpResponseFunc = () => client.GetAsync(endpoint);
             var response = await _httpResponseHandler.HandleAsync<SessionGetRequest[]>(httpResponseFunc).ConfigureAwait(false);
-            if (!response.Succesfull)
+            if (!response.IsSuccesfull)
                 return new RepositoryResponse<IReadOnlyList<Session>>(response, Array.Empty<Session>());
 
             if (response.Value.IsNullOrEmpty())

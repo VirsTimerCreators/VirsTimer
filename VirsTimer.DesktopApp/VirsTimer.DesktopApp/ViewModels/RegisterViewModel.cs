@@ -103,7 +103,7 @@ namespace VirsTimer.DesktopApp.ViewModels
 
             RegisterStatus = response.Status;
             RegisterMessage = response.Message;
-            if (response.Succesfull)
+            if (response.IsSuccesfull)
             {
                 var infoBox = new InfoBox
                 {

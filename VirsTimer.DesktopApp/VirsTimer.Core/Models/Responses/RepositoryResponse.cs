@@ -2,21 +2,43 @@
 
 namespace VirsTimer.Core.Models.Responses
 {
+    /// <summary>
+    /// Class representing repository response.
+    /// </summary>
     public class RepositoryResponse
     {
+        /// <summary>
+        /// Ok repository response.
+        /// </summary>
         public static RepositoryResponse Ok { get; } = new RepositoryResponse(RepositoryResponseStatus.Ok, string.Empty);
 
+        /// <summary>
+        /// Response status.
+        /// </summary>
         public RepositoryResponseStatus Status { get; }
+
+        /// <summary>
+        /// Response message.
+        /// </summary>
         public string Message { get; }
 
-        public bool Succesfull => Status == RepositoryResponseStatus.Ok;
+        /// <summary>
+        /// Is response succesfull.
+        /// </summary>
+        public bool IsSuccesfull => Status == RepositoryResponseStatus.Ok;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RepositoryResponse"/> class.
+        /// </summary>
         public RepositoryResponse(RepositoryResponseStatus status, string message)
         {
             Status = status;
             Message = message;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RepositoryResponse"/> class.
+        /// </summary>
         public RepositoryResponse(HttpStatusCode? httpStatusCode, string message)
         {
             Status = ConvertHttpStatusCode(httpStatusCode);
@@ -39,45 +61,5 @@ namespace VirsTimer.Core.Models.Responses
                 _ => RepositoryResponseStatus.UnknownError
             };
         }
-    }
-
-    public class RepositoryResponse<T> : RepositoryResponse
-    {
-        public T Value { get; }
-
-        public RepositoryResponse(T value)
-            : base(RepositoryResponseStatus.Ok, string.Empty)
-        {
-            Value = value;
-        }
-
-        public RepositoryResponse(RepositoryResponseStatus status, string message)
-            : base(status, message)
-        { }
-
-        public RepositoryResponse(RepositoryResponseStatus status, string message, T value)
-            : base(status, message)
-        {
-            Value = value;
-        }
-
-        public RepositoryResponse(HttpStatusCode? httpStatusCode, string message)
-            : base(httpStatusCode, message)
-        { }
-
-        public RepositoryResponse(RepositoryResponse other, T value)
-            : base(other.Status, other.Message)
-        {
-            Value = value;
-        }
-    }
-
-    public enum RepositoryResponseStatus
-    {
-        Ok,
-        ClientError,
-        RepositoryError,
-        NetworkError,
-        UnknownError
     }
 }
