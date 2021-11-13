@@ -36,14 +36,13 @@ namespace VirsTimer.Core.Services.Sessions
             try
             {
                 using var client = CreateHttpClientWithAuth();
-                var endpoint = CreateEndpoint(Server.Endpoints.Sessions);
 
                 var content = new SessionPostRequest(UserClient.Id, session);
                 var options = new JsonSerializerOptions()
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 };
-                var httpResponse = await client.PostAsJsonAsync(endpoint, content, options).ConfigureAwait(false);
+                var httpResponse = await client.PostAsJsonAsync(Server.Endpoints.Session.Post, content, options).ConfigureAwait(false);
                 var response = await CreateRepositoryResponseAsync<SessionPostResponse>(httpResponse).ConfigureAwait(false);
                 if (httpResponse.IsSuccessStatusCode)
                     session.Id = response.Value.Id;
@@ -67,7 +66,7 @@ namespace VirsTimer.Core.Services.Sessions
                     return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
 
                 using var client = CreateHttpClientWithAuth();
-                var endpoint = CreateEndpoint(Server.Endpoints.Sessions, session.Id);
+                var endpoint = Server.Endpoints.Session.Delete(session.Id);
                 var httpResponse = await client.DeleteAsync(endpoint).ConfigureAwait(false);
                 var response = await CreateRepositoryResponseAsync(httpResponse).ConfigureAwait(false);
 
@@ -90,7 +89,7 @@ namespace VirsTimer.Core.Services.Sessions
                     return new RepositoryResponse<IReadOnlyList<Session>>(RepositoryResponseStatus.ClientError, "Event Id cannot be null.");
 
                 using var client = CreateHttpClientWithAuth();
-                var endpoint = CreateEndpoint(Server.Endpoints.Sessions, Server.Endpoints.Events, @event.Id, Server.Endpoints.Users, UserClient.Id);
+                var endpoint = Server.Endpoints.Session.GetByEvent(@event.Id);
                 var sessionsResponse = await client.GetFromJsonAsync<SessionGetRequest[]>(endpoint).ConfigureAwait(false);
 
                 if (sessionsResponse.IsNullOrEmpty())
@@ -124,7 +123,7 @@ namespace VirsTimer.Core.Services.Sessions
                     return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
 
                 using var client = CreateHttpClientWithAuth();
-                var endpoint = CreateEndpoint(Server.Endpoints.Sessions, session.Id);
+                var endpoint = Server.Endpoints.Session.Patch(session.Id);
 
                 using var content = CreateJsonRequest(new SessionPatchRequest(session));
                 var httpResponse = await client.PatchAsync(endpoint, content).ConfigureAwait(false);

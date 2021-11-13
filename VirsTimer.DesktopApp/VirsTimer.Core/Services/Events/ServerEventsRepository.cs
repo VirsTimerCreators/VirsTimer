@@ -30,8 +30,7 @@ namespace VirsTimer.Core.Services.Events
             try
             {
                 using var client = CreateHttpClientWithAuth();
-                var endpoint = CreateEndpoint(Server.Endpoints.Events, Server.Endpoints.Users, UserClient.Id);
-                var events = await client.GetFromJsonAsync<IReadOnlyList<Event>>(endpoint).ConfigureAwait(false) ?? Array.Empty<Event>();
+                var events = await client.GetFromJsonAsync<IReadOnlyList<Event>>(Server.Endpoints.Event.Get).ConfigureAwait(false) ?? Array.Empty<Event>();
 
                 return new RepositoryResponse<IReadOnlyList<Event>>(events);
             }

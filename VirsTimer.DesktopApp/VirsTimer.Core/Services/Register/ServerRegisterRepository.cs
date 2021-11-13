@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using VirsTimer.Core.Constants;
 using VirsTimer.Core.Handlers;
 using VirsTimer.Core.Models.Requests;
 using VirsTimer.Core.Models.Responses;
@@ -32,7 +33,7 @@ namespace VirsTimer.Core.Services.Register
         public async Task<RepositoryResponse> RegisterAsync(RegisterRequest request)
         {
             using var client = _httpClientFactory.CreateClient();
-            var enpoint = "/api/auth/signup/";
+            var enpoint = Server.Endpoints.Auth.Register;
             var response = await _httpResponseHandler.HandleAsync(() => client.PostAsJsonAsync(enpoint, request));
             return response;
         }

@@ -58,9 +58,9 @@ namespace VirsTimer.DesktopApp
                 Options.DefaultName,
                 client => client.BaseAddress = new Uri(Path.Combine(Server.Address)));
 
-            services.AddHttpClient(
-                Server.Endpoints.Scrambles,
-                client => client.BaseAddress = new Uri(Path.Combine(Server.Address, Server.Endpoints.Scrambles)));
+            //services.AddHttpClient(
+            //    Server.Endpoints.Scrambles,
+            //    client => client.BaseAddress = new Uri(Path.Combine(Server.Address, Server.Endpoints.Scrambles)));
 
             services.AddSingleton<IHttpResponseHandler, HttpResponseHandler>();
             services.AddSingleton<IFileSystem, FileSystem>();

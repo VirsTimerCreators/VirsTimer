@@ -1,4 +1,6 @@
-﻿namespace VirsTimer.Core.Constants
+﻿using System.IO;
+
+namespace VirsTimer.Core.Constants
 {
     /// <summary>
     /// VirsTimer server side constants.
@@ -16,29 +18,138 @@
         public static class Endpoints
         {
             /// <summary>
-            /// Uses endpoint.
+            /// Events resource endpoints.
             /// </summary>
-            public const string Users = "user/";
+            public static class Event
+            {
+                /// <summary>
+                /// GET all events.
+                /// </summary>
+                public static string Get => EventsResource;
+
+                /// <summary>
+                /// POST event.
+                /// </summary>
+                public static string Post => EventsResource;
+            }
+
+
+            /// <summary>
+            /// Sessions resource endpoints.
+            /// </summary>
+            public static class Session
+            {
+                /// <summary>
+                /// GET session by id.
+                /// </summary>
+                public static string Get(string sessionId) => Path.Combine(SessionsResource, sessionId);
+
+                /// <summary>
+                /// GET all sessions.
+                /// </summary>
+                public static string GetAll => Path.Combine(SessionsResource, All);
+
+                /// <summary>
+                /// GET session by event id.
+                /// </summary>
+                public static string GetByEvent(string eventId) => Path.Combine(SessionsResource, EventsResource, eventId);
+
+                /// <summary>
+                /// POST session.
+                /// </summary>
+                public static string Post => Path.Combine(SessionsResource, "post");
+
+                /// <summary>
+                /// PATCH session by id.
+                /// </summary>
+                public static string Patch(string sessionId) => Path.Combine(SessionsResource, "patch", sessionId);
+
+                /// <summary>
+                /// DELETE session by id.
+                /// </summary>
+                public static string Delete(string sessionId) => Path.Combine(SessionsResource, "delete", sessionId);
+            }
+
+            /// <summary>
+            /// Solves resource endpoints.
+            /// </summary>
+            public static class Solve
+            {
+                /// <summary>
+                /// GET solve by session id.
+                /// </summary>
+                public static string GetBySession(string sessionId) => Path.Combine(SolvesResource, SessionsResource, sessionId);
+
+                /// <summary>
+                /// POST solve.
+                /// </summary>
+                public static string Post => SolvesResource;
+
+                /// <summary>
+                /// PATCH solve by id.
+                /// </summary>
+                public static string Patch(string solveId) => Path.Combine(SolvesResource, solveId);
+
+                /// <summary>
+                /// DELETE solve by id.
+                /// </summary>
+                public static string Delete(string solveId) => Path.Combine(SolvesResource, solveId);
+            }
+
+            /// <summary>
+            /// Scrambles resource endpoints.
+            /// </summary>
+            public static class Scramble
+            {
+                /// <summary>
+                /// GET scramble by event name.
+                /// </summary>
+                public static string Get(string eventName) => Path.Combine(ScramblesResource, eventName);
+            }
+
+            /// <summary>
+            /// Auth resource endpoints.
+            /// </summary>
+            public static class Auth
+            {
+                /// <summary>
+                /// POST login.
+                /// </summary>
+                public static string Login => Path.Combine(AuthResource, "signin");
+
+                /// <summary>
+                /// POST register.
+                /// </summary>
+                public static string Register => Path.Combine(AuthResource, "signup");
+            }
+
+            private const string All = "all";
 
             /// <summary>
             /// Events endpoint.
             /// </summary>
-            public const string Events = "event/";
+            private const string EventsResource = "event/";
 
             /// <summary>
             /// Sessions endpoint.
             /// </summary>
-            public const string Sessions = "session/";
+            private const string SessionsResource = "session/";
 
             /// <summary>
             /// Solves endpoint.
             /// </summary>
-            public const string Solves = "solve/";
+            private const string SolvesResource = "solve/";
 
             /// <summary>
             /// Scrambles endpoint.
             /// </summary>
-            public const string Scrambles = "scramble/";
+            private const string ScramblesResource = "scramble/";
+
+            /// <summary>
+            /// Auth endpoint.
+            /// </summary>
+
+            private const string AuthResource = "api/auth/";
         }
 
         /// <summary>

@@ -34,8 +34,9 @@ namespace VirsTimer.Core.Services.Scrambles
             if (Constants.Events.All.All(e => e != @event.Name))
                 return Enumerable.Repeat(Scramble.Empty, scramblesAmount).ToList();
 
-            using var httpClient = _httpClientFactory.CreateClient(Server.Endpoints.Scrambles);
-            var tasks = Enumerable.Range(0, scramblesAmount).Select(i => httpClient.GetFromJsonAsync<Scramble>(GetServerEventName(@event.Name)));
+            using var httpClient = _httpClientFactory.CreateClient();
+            var endpoint = Server.Endpoints.Scramble.Get(GetServerEventName(@event.Name));
+            var tasks = Enumerable.Range(0, scramblesAmount).Select(i => httpClient.GetFromJsonAsync<Scramble>(endpoint));
             var scrambles = await Task.WhenAll(tasks).ConfigureAwait(false);
             if (scrambles is null)
                 return Array.Empty<Scramble>();

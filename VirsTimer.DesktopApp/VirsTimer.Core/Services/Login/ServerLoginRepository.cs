@@ -34,7 +34,7 @@ namespace VirsTimer.Core.Services.Login
             try
             {
                 using var client = _httpClientFactory.CreateClient();
-                var enpoint = "/api/auth/signin/";
+                var enpoint = Server.Endpoints.Auth.Login;
                 var httpResponse = await client.PostAsJsonAsync(enpoint, loginRequest).ConfigureAwait(false);
                 var message = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (httpResponse.IsSuccessStatusCode)

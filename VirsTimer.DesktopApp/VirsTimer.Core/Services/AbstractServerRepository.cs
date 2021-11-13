@@ -53,15 +53,6 @@ namespace VirsTimer.Core.Services
             return new RepositoryResponse<T>(response.StatusCode, message);
         }
 
-
-        protected string CreateEndpoint(params string[] values)
-        {
-            //var endpointBase = new[] { Server.Endpoints.Users, UserClient.Id };
-            //var endpointValues = endpointBase.Concat(values).ToArray();
-            var endpoint = Path.Combine(values);
-            return endpoint;
-        }
-
         protected StringContent CreateJsonRequest<T>(T content)
         {
             var options = new JsonSerializerOptions
