@@ -90,7 +90,7 @@ namespace VirsTimer.Core.Services.Sessions
                 return new RepositoryResponse<IReadOnlyList<Session>>(addSessionResponse, new[] { session });
             }
 
-            var sessions = response.Value.Select(x => x.ToSession(@event)).ToList();
+            var sessions = response.Value!.Select(x => x.ToSession(@event)).ToList();
 
             return new RepositoryResponse<IReadOnlyList<Session>>(response, sessions);
         }
