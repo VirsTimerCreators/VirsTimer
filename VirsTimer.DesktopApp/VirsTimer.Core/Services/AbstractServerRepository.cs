@@ -21,14 +21,6 @@ namespace VirsTimer.Core.Services
             UserClient = userClient;
         }
 
-        protected HttpClient CreateHttpClientWithAuth()
-        {
-            var client = HttpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserClient.Jwt);
-
-            return client;
-        }
-
         protected async Task<RepositoryResponse> CreateRepositoryResponseAsync(HttpResponseMessage response)
         {
             if (response.IsSuccessStatusCode)

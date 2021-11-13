@@ -33,7 +33,7 @@ namespace VirsTimer.Core.Services.Solves
         {
             try
             {
-                using var client = CreateHttpClientWithAuth();
+                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
                 var endpoint = Server.Endpoints.Solve.Post;
 
                 var content = new SolvePostRequest(UserClient.Id, solve);
@@ -60,7 +60,7 @@ namespace VirsTimer.Core.Services.Solves
                 if (solve.Id == null)
                     return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Solve Id cannot be null.");
 
-                using var client = CreateHttpClientWithAuth();
+                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
                 var endpoint = Server.Endpoints.Solve.Delete(solve.Id);
                 var httpResponse = await client.DeleteAsync(endpoint).ConfigureAwait(false);
                 var response = await CreateRepositoryResponseAsync(httpResponse).ConfigureAwait(false);
@@ -83,7 +83,7 @@ namespace VirsTimer.Core.Services.Solves
                 if (session.Id == null)
                     return new RepositoryResponse<IReadOnlyList<Solve>>(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
 
-                using var client = CreateHttpClientWithAuth();
+                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
                 var endpoint = Server.Endpoints.Solve.GetBySession(session.Id);
                 var solveResponse = await client.GetFromJsonAsync<SolveGetRequest[]>(endpoint).ConfigureAwait(false) ?? Array.Empty<SolveGetRequest>();
                 var solves = solveResponse.Select(x => x.ToSolve(session)).ToList();
@@ -110,7 +110,7 @@ namespace VirsTimer.Core.Services.Solves
                 if (solve.Id == null)
                     return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Solve Id cannot be null.");
 
-                using var client = CreateHttpClientWithAuth();
+                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
                 var endpoint = Server.Endpoints.Solve.Patch(solve.Id);
 
                 using var content = CreateJsonRequest(new SolvePatchRequest(solve));

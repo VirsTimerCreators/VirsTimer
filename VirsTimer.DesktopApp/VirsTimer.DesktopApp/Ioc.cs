@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Net.Http.Headers;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Handlers;
 using VirsTimer.Core.Helpers;
@@ -55,12 +55,9 @@ namespace VirsTimer.DesktopApp
         private static void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient(
-                Options.DefaultName,
+                HttpClientNames.Blank,
                 client => client.BaseAddress = new Uri(Path.Combine(Server.Address)));
 
-            //services.AddHttpClient(
-            //    Server.Endpoints.Scrambles,
-            //    client => client.BaseAddress = new Uri(Path.Combine(Server.Address, Server.Endpoints.Scrambles)));
 
             services.AddSingleton<IHttpResponseHandler, HttpResponseHandler>();
             services.AddSingleton<IFileSystem, FileSystem>();
@@ -80,6 +77,14 @@ namespace VirsTimer.DesktopApp
 
         public static void ConfigureServerServices(IUserClient userClient)
         {
+            ServiceDescriptors.AddHttpClient(
+                HttpClientNames.UserAuthorized,
+                client =>
+                {
+                    client.BaseAddress = new Uri(Path.Combine(Server.Address));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userClient.Jwt);
+                });
+
             ServiceDescriptors.AddSingleton<IEventsRepository, ServerEventsRepository>();
             ServiceDescriptors.AddSingleton<ISessionRepository, ServerSessionsRepository>();
             ServiceDescriptors.AddSingleton<ISolvesRepository, ServerSolvesRepository>();

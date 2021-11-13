@@ -35,7 +35,7 @@ namespace VirsTimer.Core.Services.Sessions
         {
             try
             {
-                using var client = CreateHttpClientWithAuth();
+                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
 
                 var content = new SessionPostRequest(UserClient.Id, session);
                 var options = new JsonSerializerOptions()
@@ -65,7 +65,7 @@ namespace VirsTimer.Core.Services.Sessions
                 if (session.Id == null)
                     return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
 
-                using var client = CreateHttpClientWithAuth();
+                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
                 var endpoint = Server.Endpoints.Session.Delete(session.Id);
                 var httpResponse = await client.DeleteAsync(endpoint).ConfigureAwait(false);
                 var response = await CreateRepositoryResponseAsync(httpResponse).ConfigureAwait(false);
@@ -88,7 +88,7 @@ namespace VirsTimer.Core.Services.Sessions
                 if (@event.Id == null)
                     return new RepositoryResponse<IReadOnlyList<Session>>(RepositoryResponseStatus.ClientError, "Event Id cannot be null.");
 
-                using var client = CreateHttpClientWithAuth();
+                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
                 var endpoint = Server.Endpoints.Session.GetByEvent(@event.Id);
                 var sessionsResponse = await client.GetFromJsonAsync<SessionGetRequest[]>(endpoint).ConfigureAwait(false);
 
@@ -122,7 +122,7 @@ namespace VirsTimer.Core.Services.Sessions
                 if (session.Id == null)
                     return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
 
-                using var client = CreateHttpClientWithAuth();
+                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
                 var endpoint = Server.Endpoints.Session.Patch(session.Id);
 
                 using var content = CreateJsonRequest(new SessionPatchRequest(session));
