@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Handlers;
 using VirsTimer.Core.Models;
-using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services.Events
@@ -14,15 +12,15 @@ namespace VirsTimer.Core.Services.Events
     /// <summary>
     /// Virs timer server api <see cref="IEventsRepository"/> implementation. 
     /// </summary>
-    public class ServerEventsRepository : IEventsRepository
+    public class EventsServerRepository : IEventsRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpResponseHandler _httpResponseHandler;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServerEventsRepository"/> class.
+        /// Initializes a new instance of the <see cref="EventsServerRepository"/> class.
         /// </summary>
-        public ServerEventsRepository(
+        public EventsServerRepository(
             IHttpClientFactory httpClientFactory,
             IHttpResponseHandler httpResponseHandler)
         {

@@ -13,7 +13,7 @@ namespace VirsTimer.Core.Services.Events
     /// <summary>
     /// <see cref="IEventsRepository"/> implementation that manages events in local file.
     /// </summary>
-    public class FileEventsRepository : IEventsRepository
+    public class EventsFileRepository : IEventsRepository
     {
         private readonly IFileSystem _fileSystem;
         private readonly IApplicationCacheSaver _applicationCacheSaver;
@@ -21,7 +21,7 @@ namespace VirsTimer.Core.Services.Events
         /// <summary>
         /// Initializes a new instance of the <see cref="Solve"/> class.
         /// </summary>
-        public FileEventsRepository(IFileSystem fileSystem, IApplicationCacheSaver applicationCacheSaver)
+        public EventsFileRepository(IFileSystem fileSystem, IApplicationCacheSaver applicationCacheSaver)
         {
             _fileSystem = fileSystem;
             _applicationCacheSaver = applicationCacheSaver;

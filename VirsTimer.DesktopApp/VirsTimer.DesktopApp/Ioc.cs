@@ -85,7 +85,7 @@ namespace VirsTimer.DesktopApp
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userClient.Jwt);
                 });
 
-            ServiceDescriptors.AddSingleton<IEventsRepository, ServerEventsRepository>();
+            ServiceDescriptors.AddSingleton<IEventsRepository, EventsServerRepository>();
             ServiceDescriptors.AddSingleton<ISessionRepository, ServerSessionsRepository>();
             ServiceDescriptors.AddSingleton<ISolvesRepository, ServerSolvesRepository>();
             ServiceDescriptors.AddSingleton<IScrambleGenerator, ServerScrambleGenerator>();
