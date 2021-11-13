@@ -6,6 +6,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Extensions;
+using VirsTimer.Core.Handlers;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Models.Requests;
@@ -16,39 +17,38 @@ namespace VirsTimer.Core.Services.Solves
     /// <summary>
     /// Virs timer server api <see cref="ServerSolvesRepository"/> implementation. 
     /// </summary>
-    public class ServerSolvesRepository : AbstractServerRepository, ISolvesRepository
+    public class ServerSolvesRepository : ISolvesRepository
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IUserClient _userClient;
+        private readonly IHttpResponseHandler _httpResponseHandler;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ServerSolvesRepository"/> class.
         /// </summary>
         public ServerSolvesRepository(
             IHttpClientFactory httpClientFactory,
-            IUserClient userClient)
-            : base(httpClientFactory, userClient)
-        { }
+            IUserClient userClient,
+            IHttpResponseHandler httpResponseHandler)
+        {
+            _httpClientFactory = httpClientFactory;
+            _userClient = userClient;
+            _httpResponseHandler = httpResponseHandler;
+        }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         public async Task<RepositoryResponse> AddSolveAsync(Solve solve)
         {
-            try
-            {
-                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
-                var endpoint = Server.Endpoints.Solve.Post;
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var request = new SolvePostRequest(_userClient.Id, solve);
+            var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Solve.Post, request);
+            var response = await _httpResponseHandler.HandleAsync<SolvePostResponse>(httpRequestFunc).ConfigureAwait(false);
+            if (response.Succesfull)
+                solve.Id = response.Value.Id;
 
-                var content = new SolvePostRequest(UserClient.Id, solve);
-                var httpResponse = await client.PostAsJsonAsync(endpoint, content).ConfigureAwait(false);
-                var response = await CreateRepositoryResponseAsync<SolvePostResponse>(httpResponse).ConfigureAwait(false);
-                if (httpResponse.IsSuccessStatusCode)
-                    solve.Id = response.Value.Id;
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return new RepositoryResponse(RepositoryResponseStatus.UnknownError, ex.Message);
-            }
+            return response;
         }
 
         /// <summary>
@@ -56,22 +56,15 @@ namespace VirsTimer.Core.Services.Solves
         /// </summary>
         public async Task<RepositoryResponse> DeleteSolveAsync(Solve solve)
         {
-            try
-            {
-                if (solve.Id == null)
-                    return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Solve Id cannot be null.");
+            if (solve.Id == null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Solve Id cannot be null.");
 
-                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
-                var endpoint = Server.Endpoints.Solve.Delete(solve.Id);
-                var httpResponse = await client.DeleteAsync(endpoint).ConfigureAwait(false);
-                var response = await CreateRepositoryResponseAsync(httpResponse).ConfigureAwait(false);
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var endpoint = Server.Endpoints.Solve.Delete(solve.Id);
+            var httpRequestFunc = () => client.DeleteAsync(endpoint);
+            var response = await _httpResponseHandler.HandleAsync(httpRequestFunc).ConfigureAwait(false);
 
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return new RepositoryResponse(RepositoryResponseStatus.UnknownError, ex.Message);
-            }
+            return response;
         }
 
         /// <summary>
@@ -79,26 +72,18 @@ namespace VirsTimer.Core.Services.Solves
         /// </summary>
         public async Task<RepositoryResponse<IReadOnlyList<Solve>>> GetSolvesAsync(Session session)
         {
-            try
-            {
-                if (session.Id == null)
-                    return new RepositoryResponse<IReadOnlyList<Solve>>(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
+            if (session.Id == null)
+                return new RepositoryResponse<IReadOnlyList<Solve>>(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
 
-                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
-                var endpoint = Server.Endpoints.Solve.GetBySession(session.Id);
-                var solveResponse = await client.GetFromJsonAsync<SolveGetRequest[]>(endpoint).ConfigureAwait(false) ?? Array.Empty<SolveGetRequest>();
-                var solves = solveResponse.Select(x => x.ToSolve(session)).ToList();
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var endpoint = Server.Endpoints.Solve.GetBySession(session.Id);
+            var httpRequestFunc = () => client.GetAsync(endpoint);
+            var response = await _httpResponseHandler.HandleAsync<SolveGetRequest[]>(httpRequestFunc).ConfigureAwait(false);
+            var solves = response.Value is not null
+                ? response.Value.Select(x => x.ToSolve(session)).ToArray()
+                : Array.Empty<Solve>();
 
-                return new RepositoryResponse<IReadOnlyList<Solve>>(solves);
-            }
-            catch (HttpRequestException ex)
-            {
-                return new RepositoryResponse<IReadOnlyList<Solve>>(ex.StatusCode!, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return new RepositoryResponse<IReadOnlyList<Solve>>(RepositoryResponseStatus.UnknownError, ex.Message);
-            }
+            return new RepositoryResponse<IReadOnlyList<Solve>>(response, solves);
         }
 
         /// <summary>
@@ -106,24 +91,17 @@ namespace VirsTimer.Core.Services.Solves
         /// </summary>
         public async Task<RepositoryResponse> UpdateSolveAsync(Solve solve)
         {
-            try
-            {
-                if (solve.Id == null)
-                    return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Solve Id cannot be null.");
+            if (solve.Id == null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Solve Id cannot be null.");
 
-                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
-                var endpoint = Server.Endpoints.Solve.Patch(solve.Id);
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var endpoint = Server.Endpoints.Solve.Patch(solve.Id);
 
-                var request = new SolvePatchRequest(solve)
-                var httpResponse = await client.PatchAsJsonAsync(endpoint, request).ConfigureAwait(false);
-                var response = await CreateRepositoryResponseAsync(httpResponse).ConfigureAwait(false);
+            var request = new SolvePatchRequest(solve);
+            var httpRequestFunc = () => client.PatchAsJsonAsync(endpoint, request);
+            var response = await _httpResponseHandler.HandleAsync(httpRequestFunc).ConfigureAwait(false);
 
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return new RepositoryResponse(RepositoryResponseStatus.UnknownError, ex.Message);
-            }
+            return response;
         }
     }
 }

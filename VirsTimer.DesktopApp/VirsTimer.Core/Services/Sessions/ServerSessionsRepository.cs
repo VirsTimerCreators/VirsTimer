@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Extensions;
+using VirsTimer.Core.Handlers;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Models.Requests;
@@ -17,42 +17,39 @@ namespace VirsTimer.Core.Services.Sessions
     /// <summary>
     /// Virs timer server api <see cref="ServerSessionsRepository"/> implementation. 
     /// </summary>
-    public class ServerSessionsRepository : AbstractServerRepository, ISessionRepository
+    public class ServerSessionsRepository : ISessionRepository
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IUserClient _userClient;
+        private readonly IHttpResponseHandler _httpResponseHandler;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ServerSessionsRepository"/> class.
         /// </summary>
         public ServerSessionsRepository(
             IHttpClientFactory httpClientFactory,
-            IUserClient userClient)
-            : base(httpClientFactory, userClient)
-        { }
+            IUserClient userClient,
+            IHttpResponseHandler httpResponseHandler)
+        {
+            _httpClientFactory = httpClientFactory;
+            _userClient = userClient;
+            _httpResponseHandler = httpResponseHandler;
+        }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         public async Task<RepositoryResponse> AddSessionAsync(Session session)
         {
-            try
-            {
-                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
 
-                var content = new SessionPostRequest(UserClient.Id, session);
-                var options = new JsonSerializerOptions()
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                };
-                var httpResponse = await client.PostAsJsonAsync(Server.Endpoints.Session.Post, content, options).ConfigureAwait(false);
-                var response = await CreateRepositoryResponseAsync<SessionPostResponse>(httpResponse).ConfigureAwait(false);
-                if (httpResponse.IsSuccessStatusCode)
-                    session.Id = response.Value.Id;
+            var request = new SessionPostRequest(_userClient.Id, session);
+            var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Session.Post, request, Json.ServerSerializerOptions);
+            var response = await _httpResponseHandler.HandleAsync<SessionPostResponse>(httpRequestFunc).ConfigureAwait(false);
+            if (response.Succesfull)
+                session.Id = response.Value.Id;
 
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return new RepositoryResponse(RepositoryResponseStatus.UnknownError, ex.Message);
-            }
+            return response;
         }
 
         /// <summary>
@@ -60,22 +57,15 @@ namespace VirsTimer.Core.Services.Sessions
         /// </summary>
         public async Task<RepositoryResponse> DeleteSessionAsync(Session session)
         {
-            try
-            {
-                if (session.Id == null)
-                    return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
+            if (session.Id == null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
 
-                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
-                var endpoint = Server.Endpoints.Session.Delete(session.Id);
-                var httpResponse = await client.DeleteAsync(endpoint).ConfigureAwait(false);
-                var response = await CreateRepositoryResponseAsync(httpResponse).ConfigureAwait(false);
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var endpoint = Server.Endpoints.Session.Delete(session.Id);
+            var httpResponseFunc = () => client.DeleteAsync(endpoint);
+            var response = await _httpResponseHandler.HandleAsync(httpResponseFunc).ConfigureAwait(false);
 
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return new RepositoryResponse(RepositoryResponseStatus.UnknownError, ex.Message);
-            }
+            return response;
         }
 
         /// <summary>
@@ -83,33 +73,26 @@ namespace VirsTimer.Core.Services.Sessions
         /// </summary>
         public async Task<RepositoryResponse<IReadOnlyList<Session>>> GetSessionsAsync(Event @event)
         {
-            try
-            {
-                if (@event.Id == null)
-                    return new RepositoryResponse<IReadOnlyList<Session>>(RepositoryResponseStatus.ClientError, "Event Id cannot be null.");
+            if (@event.Id == null)
+                return new RepositoryResponse<IReadOnlyList<Session>>(RepositoryResponseStatus.ClientError, "Event Id cannot be null.");
 
-                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
-                var endpoint = Server.Endpoints.Session.GetByEvent(@event.Id);
-                var sessionsResponse = await client.GetFromJsonAsync<SessionGetRequest[]>(endpoint).ConfigureAwait(false);
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var endpoint = Server.Endpoints.Session.GetByEvent(@event.Id);
+            var httpResponseFunc = () => client.GetAsync(endpoint);
+            var response = await _httpResponseHandler.HandleAsync<SessionGetRequest[]>(httpResponseFunc).ConfigureAwait(false);
+            if (!response.Succesfull)
+                return new RepositoryResponse<IReadOnlyList<Session>>(response, Array.Empty<Session>());
 
-                if (sessionsResponse.IsNullOrEmpty())
-                {
-                    var session = new Session(@event, "Sesja1");
-                    var sessionResponse = await AddSessionAsync(session).ConfigureAwait(false);
-                    return new RepositoryResponse<IReadOnlyList<Session>>(new[] { session });
-                }
-                var sessions = sessionsResponse!.Select(x => x.ToSession(@event)).ToList();
+            if (response.Value.IsNullOrEmpty())
+            {
+                var session = new Session(@event, "Sesja1");
+                var addSessionResponse = await AddSessionAsync(session).ConfigureAwait(false);
+                return new RepositoryResponse<IReadOnlyList<Session>>(addSessionResponse, new[] { session });
+            }
 
-                return new RepositoryResponse<IReadOnlyList<Session>>(sessions);
-            }
-            catch (HttpRequestException ex)
-            {
-                return new RepositoryResponse<IReadOnlyList<Session>>(ex.StatusCode!, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return new RepositoryResponse<IReadOnlyList<Session>>(RepositoryResponseStatus.UnknownError, ex.Message);
-            }
+            var sessions = response.Value.Select(x => x.ToSession(@event)).ToList();
+
+            return new RepositoryResponse<IReadOnlyList<Session>>(response, sessions);
         }
 
         /// <summary>
@@ -117,24 +100,16 @@ namespace VirsTimer.Core.Services.Sessions
         /// </summary>
         public async Task<RepositoryResponse> UpdateSessionAsync(Session session)
         {
-            try
-            {
-                if (session.Id == null)
-                    return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
+            if (session.Id == null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
 
-                var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
-                var endpoint = Server.Endpoints.Session.Patch(session.Id);
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var endpoint = Server.Endpoints.Session.Patch(session.Id);
+            var request = new SessionPatchRequest(session);
+            var httpResponseFunc = () => client.PatchAsJsonAsync(endpoint, request);
+            var response = await _httpResponseHandler.HandleAsync(httpResponseFunc).ConfigureAwait(false);
 
-                var request = new SessionPatchRequest(session);
-                var httpResponse = await client.PatchAsJsonAsync(endpoint, request).ConfigureAwait(false);
-                var response = await CreateRepositoryResponseAsync(httpResponse).ConfigureAwait(false);
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return new RepositoryResponse(RepositoryResponseStatus.UnknownError, ex.Message);
-            }
+            return response;
         }
     }
 }

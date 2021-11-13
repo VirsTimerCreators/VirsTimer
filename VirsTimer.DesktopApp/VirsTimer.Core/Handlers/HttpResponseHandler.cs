@@ -53,7 +53,7 @@ namespace VirsTimer.Core.Handlers
                 var message = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (httpResponse.IsSuccessStatusCode)
                 {
-                    var value = JsonSerializer.Deserialize<T>(message);
+                    var value = JsonSerializer.Deserialize<T>(message, Json.ServerSerializerOptions);
                     return new RepositoryResponse<T>(value!);
                 }
                 return new RepositoryResponse<T>(httpResponse.StatusCode, message);

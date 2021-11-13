@@ -26,7 +26,7 @@ namespace VirsTimer.Core.Extensions
             if (client is null)
                 throw new ArgumentNullException(nameof(client));
 
-            using var content = JsonContent.Create(value, options: options);
+            var content = JsonContent.Create(value, options: options);
             return client.PatchAsync(requestUri, content, cancellationToken);
         }
     }
