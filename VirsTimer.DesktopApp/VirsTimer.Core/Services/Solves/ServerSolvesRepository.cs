@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
+using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Models.Requests;
@@ -113,8 +114,8 @@ namespace VirsTimer.Core.Services.Solves
                 var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
                 var endpoint = Server.Endpoints.Solve.Patch(solve.Id);
 
-                using var content = CreateJsonRequest(new SolvePatchRequest(solve));
-                var httpResponse = await client.PatchAsync(endpoint, content).ConfigureAwait(false);
+                var request = new SolvePatchRequest(solve)
+                var httpResponse = await client.PatchAsJsonAsync(endpoint, request).ConfigureAwait(false);
                 var response = await CreateRepositoryResponseAsync(httpResponse).ConfigureAwait(false);
 
                 return response;

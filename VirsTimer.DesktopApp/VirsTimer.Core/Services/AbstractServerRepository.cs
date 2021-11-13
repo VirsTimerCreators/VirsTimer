@@ -44,15 +44,5 @@ namespace VirsTimer.Core.Services
             }
             return new RepositoryResponse<T>(response.StatusCode, message);
         }
-
-        protected StringContent CreateJsonRequest<T>(T content)
-        {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-            var str = JsonSerializer.Serialize(content, options);
-            return new StringContent(str, Encoding.UTF8, MediaTypeNames.Application.Json);
-        }
     }
 }

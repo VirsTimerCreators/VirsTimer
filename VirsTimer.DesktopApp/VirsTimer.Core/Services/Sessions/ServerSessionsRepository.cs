@@ -125,8 +125,8 @@ namespace VirsTimer.Core.Services.Sessions
                 var client = HttpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
                 var endpoint = Server.Endpoints.Session.Patch(session.Id);
 
-                using var content = CreateJsonRequest(new SessionPatchRequest(session));
-                var httpResponse = await client.PatchAsync(endpoint, content).ConfigureAwait(false);
+                var request = new SessionPatchRequest(session);
+                var httpResponse = await client.PatchAsJsonAsync(endpoint, request).ConfigureAwait(false);
                 var response = await CreateRepositoryResponseAsync(httpResponse).ConfigureAwait(false);
 
                 return response;
