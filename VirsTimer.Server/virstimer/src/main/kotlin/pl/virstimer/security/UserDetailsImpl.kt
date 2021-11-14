@@ -8,10 +8,6 @@ import pl.virstimer.db.security.model.User
 import java.util.*
 import java.util.stream.Collectors
 
-
-
-
-
 class UserDetailsImpl(
     private val id: String,
     private val username: String,
