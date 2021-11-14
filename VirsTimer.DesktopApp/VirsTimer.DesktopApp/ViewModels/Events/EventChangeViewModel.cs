@@ -29,7 +29,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
 
         public ReactiveCommand<Window, Unit> AcceptCommand { get; }
         public ReactiveCommand<Unit, Unit> AddEventCommand { get; }
-        public ReactiveCommand<EventViewModel, Unit> AcceptRenameEventCommand { get; private set; } = null!;
+        public ReactiveCommand<EventViewModel, Event> AcceptRenameEventCommand { get; private set; } = null!;
         public AsyncRelayCommand<EventViewModel> DeleteEventCommand { get; }
 
         public EventChangeViewModel(IEventsRepository? eventsRepository = null)
@@ -60,7 +60,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
                     && vms.AllDistinctBy(vm => vm.Name);
                 });
 
-            AcceptRenameEventCommand = ReactiveCommand.CreateFromTask<EventViewModel>(AcceptRename, canAcceptRenaming);
+            AcceptRenameEventCommand = ReactiveCommand.CreateFromTask<EventViewModel, Event>(AcceptRename, canAcceptRenaming);
         }
 
         private void AcceptEvent(Window window)
@@ -85,17 +85,18 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
             Events.Add(eventVm);
         }
 
-        private async Task AcceptRename(EventViewModel eventViewModel)
+        private async Task<Event> AcceptRename(EventViewModel eventViewModel)
         {
             if (eventViewModel.Name == eventViewModel.Event.Name)
             {
                 eventViewModel.EditingEvent = false;
-                return;
+                return eventViewModel.Event;
             }
 
             eventViewModel.Event.Name = eventViewModel.Name;
             await _eventsRepository.UpdateEventAsync(eventViewModel.Event).ConfigureAwait(false);
             eventViewModel.EditingEvent = false;
+            return eventViewModel.Event;
         }
 
         private async Task DeleteEventAsync(EventViewModel eventViewModel)

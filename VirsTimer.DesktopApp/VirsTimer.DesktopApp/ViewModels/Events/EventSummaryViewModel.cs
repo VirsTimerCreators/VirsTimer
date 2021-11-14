@@ -50,7 +50,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
             {
                 DataContext = eventChangeViewModel
             };
- 
+
+            var observer = Observer.Create<Event>(UpdateEventIfNameChanged);
+            eventChangeViewModel.AcceptRenameEventCommand.Subscribe(observer);
+
             eventChangeViewModel.Events.CollectionChanged += (_, e) => OnEventDelete(e, eventChangeViewModel.Events[0].Event);
             await dialog.ShowDialog(window);
             if (eventChangeViewModel.Accepted)
@@ -60,7 +63,13 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
                 await _applicationCacheSaver.SaveCacheAsync(_applicationCache).ConfigureAwait(true);
             }
         }
- 
+
+        private void UpdateEventIfNameChanged(Event @event)
+        {
+            if (CurrentEvent.Id == @event.Id && CurrentEvent.Name != @event.Name)
+                CurrentEvent = new Event(CurrentEvent.Id!, @event.Name);
+        }
+
         private void OnEventDelete(NotifyCollectionChangedEventArgs e, Event newEvent)
         {
             if (e.Action != NotifyCollectionChangedAction.Remove)
