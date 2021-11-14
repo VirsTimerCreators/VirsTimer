@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
-using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Responses;
 
@@ -14,9 +10,9 @@ namespace VirsTimer.Core.Services.Solves
     /// <summary>
     /// <see cref="ISolvesRepository"/> implementation that manages solves in local file.
     /// </summary>
-    public class SolvesFileRepository : ISolvesRepository
+    public partial class SolvesFileRepository : ISolvesRepository
     {
-        private readonly IFileSystem _fileSystem;
+        private readonly Cache _cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SolvesFileRepository"/> class.
@@ -24,7 +20,7 @@ namespace VirsTimer.Core.Services.Solves
         /// <param name="fileSystem">File system.</param>
         public SolvesFileRepository(IFileSystem fileSystem)
         {
-            _fileSystem = fileSystem;
+            _cache = new Cache(string.Empty, fileSystem);
         }
 
         /// <summary>
@@ -32,20 +28,11 @@ namespace VirsTimer.Core.Services.Solves
         /// </summary>
         public async Task<RepositoryResponse<IReadOnlyList<Solve>>> GetSolvesAsync(Session session)
         {
-            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, session.Event.Id, $"{session.Id}{FileExtensions.Json}");
-            if (!_fileSystem.File.Exists(targetFile))
-                return new RepositoryResponse<IReadOnlyList<Solve>>(Array.Empty<Solve>());
+            if (session.Id is null)
+                return new RepositoryResponse<IReadOnlyList<Solve>>(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
 
-            using var stream = _fileSystem.File.OpenRead(targetFile);
-            var solves = await JsonSerializer.DeserializeAsync<IReadOnlyList<Solve>>(stream).ConfigureAwait(false) ?? Array.Empty<Solve>();
-            await Task.WhenAll(
-                solves.Select(solve => Task.Run(() =>
-                {
-                    solve.Session = session;
-                })))
-                .ConfigureAwait(false);
-
-            return new RepositoryResponse<IReadOnlyList<Solve>>(solves);
+            await _cache.RefreshCacheAsync(session).ConfigureAwait(false);
+            return new RepositoryResponse<IReadOnlyList<Solve>>(_cache.LoadedSolves);
         }
 
         /// <summary>
@@ -53,11 +40,14 @@ namespace VirsTimer.Core.Services.Solves
         /// </summary>
         public async Task<RepositoryResponse> AddSolveAsync(Solve solve)
         {
-            var (solves, stream) = await LoadSolvesAsync(solve.Session).ConfigureAwait(false);
+            if (solve.Session?.Id is null)
+                return new RepositoryResponse<IReadOnlyList<Solve>>(RepositoryResponseStatus.ClientError, "Solve session Id cannot be null.");
+
             solve.Id ??= Guid.NewGuid().ToString();
-            solves.Add(solve);
-            using (stream)
-                await JsonSerializer.SerializeAsync(stream, solves).ConfigureAwait(false);
+
+            await _cache.RefreshCacheAsync(solve.Session).ConfigureAwait(false);
+            _cache.LoadedSolves.Add(solve);
+            await _cache.UpdateCacheTargetAsync().ConfigureAwait(false);
 
             return RepositoryResponse.Ok;
         }
@@ -67,14 +57,13 @@ namespace VirsTimer.Core.Services.Solves
         /// </summary>
         public async Task<RepositoryResponse> UpdateSolveAsync(Solve solve)
         {
-            var (solves, stream) = await LoadSolvesAsync(solve.Session).ConfigureAwait(false);
-            var foundSolve = solves.Find(x => x.Id == solve.Id);
+            await _cache.RefreshCacheAsync(solve.Session).ConfigureAwait(false);
+            var foundSolve = _cache.LoadedSolves.Find(x => x.Id == solve.Id);
             if (foundSolve == null)
-                return RepositoryResponse.Ok;
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Couldn't update solve, cause it wasn't in FileSoveRepository.");
 
             foundSolve.Flag = solve.Flag;
-            using (stream)
-                await JsonSerializer.SerializeAsync(stream, solves).ConfigureAwait(false);
+            await _cache.UpdateCacheTargetAsync().ConfigureAwait(false);
 
             return RepositoryResponse.Ok;
         }
@@ -84,32 +73,15 @@ namespace VirsTimer.Core.Services.Solves
         /// </summary>
         public async Task<RepositoryResponse> DeleteSolveAsync(Solve solve)
         {
-            var (solves, stream) = await LoadSolvesAsync(solve.Session).ConfigureAwait(false);
-            var foundSolve = solves.Find(x => x.Id == solve.Id);
+            await _cache.RefreshCacheAsync(solve.Session).ConfigureAwait(false);
+            var foundSolve = _cache.LoadedSolves.Find(x => x.Id == solve.Id);
             if (foundSolve == null)
-                return RepositoryResponse.Ok;
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Couldn't update solve, cause it wasn't in FileSoveRepository.");
 
-            solves.Remove(foundSolve);
-            using (stream)
-                await JsonSerializer.SerializeAsync(stream, solves).ConfigureAwait(false);
+            _cache.LoadedSolves.Remove(foundSolve);
+            await _cache.UpdateCacheTargetAsync().ConfigureAwait(false);
 
             return RepositoryResponse.Ok;
-        }
-
-        /// <summary>
-        /// Loads solves from file to List.
-        /// </summary>
-        /// <returns>List of solves and file reseted Stream.</returns>
-        private async Task<(List<Solve>, Stream)> LoadSolvesAsync(Session session)
-        {
-            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, session.Event.Id, $"{session.Id}{FileExtensions.Json}");
-            _fileSystem.Directory.CreateDirectory(_fileSystem.Path.GetDirectoryName(targetFile));
-
-            var stream = _fileSystem.File.Open(targetFile, FileMode.OpenOrCreate);
-            var solves = await JsonSerializer.DeserializeAsync<List<Solve>>(stream).ConfigureAwait(false) ?? new List<Solve>();
-            stream.SetLength(0);
-
-            return (solves, stream);
         }
     }
 }

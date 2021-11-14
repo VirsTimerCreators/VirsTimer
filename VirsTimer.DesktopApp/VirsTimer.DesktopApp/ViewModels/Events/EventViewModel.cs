@@ -38,7 +38,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
             Name = Event.Name;
 
             this.WhenAnyValue(x => x.Name)
-                .Select(n => CoreEvents.All.Any(e => e == n))
+                .Select(n => CoreEvents.Predefined.Any(e => e == n))
                 .ToPropertyEx(this, x => x.IsPredefined);
 
             var canRename = this.WhenAnyValue(x => x.IsPredefined).Select(x => !x);

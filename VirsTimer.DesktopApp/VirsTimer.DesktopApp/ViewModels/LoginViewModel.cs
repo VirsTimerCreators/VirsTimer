@@ -41,7 +41,7 @@ namespace VirsTimer.DesktopApp.ViewModels
 
             RegisterCommand = ReactiveCommand.CreateFromTask<Window>(Register);
             AcceptLoginCommand = ReactiveCommand.CreateFromTask<Window>(AcceptLoginAsync, acceptLoginEnabled);
-            ContinueLocalCommand = ReactiveCommand.Create<Window>(ContinueLocal);
+            ContinueLocalCommand = ReactiveCommand.CreateFromTask<Window>(ContinueLocal);
         }
 
         private async Task Register(Window parent)
@@ -70,8 +70,9 @@ namespace VirsTimer.DesktopApp.ViewModels
             IsBusy = false;
         }
 
-        private void ContinueLocal(Window parent)
+        private async Task ContinueLocal(Window parent)
         {
+            await Ioc.AddApplicationCacheAsync();
             Ioc.ConfigureLocalServices();
             var mainWinow = new MainWindow();
             mainWinow.Show();

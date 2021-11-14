@@ -4,7 +4,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
-using VirsTimer.Core.Helpers;
+using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Responses;
 using VirsTimer.Core.Services.Cache;
@@ -17,16 +17,19 @@ namespace VirsTimer.Core.Services.Sessions
     public class SessionsFileRepository : ISessionsRepository
     {
         private readonly IFileSystem _fileSystem;
-        private readonly FileHelper _fileHelper;
+        private readonly IApplicationCache _applicationCache;
         private readonly IApplicationCacheSaver _applicationCacheSaver;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SessionsFileRepository"/> class.
         /// </summary>
-        public SessionsFileRepository(IFileSystem fileSystem, FileHelper fileHelper, IApplicationCacheSaver applicationCacheSaver)
+        public SessionsFileRepository(
+            IFileSystem fileSystem,
+            IApplicationCache applicationCache,
+            IApplicationCacheSaver applicationCacheSaver)
         {
             _fileSystem = fileSystem;
-            _fileHelper = fileHelper;
+            _applicationCache = applicationCache;
             _applicationCacheSaver = applicationCacheSaver;
         }
 
@@ -35,29 +38,25 @@ namespace VirsTimer.Core.Services.Sessions
         /// </summary>
         public async Task<RepositoryResponse<IReadOnlyList<Session>>> GetSessionsAsync(Event @event)
         {
-            var eventDirectory = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, @event.Id);
+            if (@event.Id is null)
+                return new RepositoryResponse<IReadOnlyList<Session>>(RepositoryResponseStatus.ClientError, "Event Id cannot be null.");
 
-            var sessionsIds = _fileSystem.Directory.EnumerateFiles(eventDirectory)
-                .Select(path => Regexes.JsonFile.Match(_fileSystem.Path.GetFileName(path)))
-                .Where(match => match.Success)
-                .Select(match => match.Groups[1].Value)
-                .ToList();
+            var eventDirectory = _fileSystem.Path.Combine(Application.ApplicationDirectoryPath, @event.Id);
 
-            var sessions = sessionsIds
-                .Select(id => new Session(
+            var sessions = _applicationCache.SessionsByEventId[@event.Id]
+                .Select(sessionById => new Session(
                     @event,
-                    id,
-                    _applicationCacheSaver.ApplicationCache.SessionsByEvent[@event.Id][id]))
+                    sessionById.Key,
+                    sessionById.Value))
                 .ToList();
 
-            if (sessions.Count == 0)
-            {
-                var session = new Session(@event, "Sesja1");
-                await AddSessionAsync(session).ConfigureAwait(false);
-                sessions.Add(session);
-            }
+            if (sessions.Count > 0)
+                return new RepositoryResponse<IReadOnlyList<Session>>(sessions);
 
-            await _applicationCacheSaver.UpdateCacheAsync().ConfigureAwait(false);
+            var newSession = new Session(@event, "Sesja1");
+            await AddSessionAsync(newSession).ConfigureAwait(false);
+            sessions.Add(newSession);
+
             return new RepositoryResponse<IReadOnlyList<Session>>(sessions);
         }
 
@@ -66,13 +65,16 @@ namespace VirsTimer.Core.Services.Sessions
         /// </summary>
         public async Task<RepositoryResponse> AddSessionAsync(Session session)
         {
-            session.Id = Guid.NewGuid().ToString();
+            if (session.Event?.Id is null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session event Id cannot be null.");
 
-            var targetFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, session.Event.Id, $"{session.Id}{FileExtensions.Json}");
-            await _fileHelper.WriteToFileIfNoExistsAsync(targetFile, Json.EmptyArray).ConfigureAwait(false);
+            session.Id ??= Guid.NewGuid().ToString();
 
-            _applicationCacheSaver.ApplicationCache.SessionsByEvent[session.Event.Id].Add(session.Id, session.Name);
-            await _applicationCacheSaver.UpdateCacheAsync().ConfigureAwait(false);
+            var targetFile = GetSessionFile(session);
+            await _fileSystem.CreateNonexistentFileAsync(targetFile, Json.EmptyArray).ConfigureAwait(false);
+
+            _applicationCache.SessionsByEventId[session.Event.Id].Add(session.Id, session.Name);
+            await _applicationCacheSaver.SaveCacheAsync(_applicationCache).ConfigureAwait(false);
 
             return RepositoryResponse.Ok;
         }
@@ -82,8 +84,14 @@ namespace VirsTimer.Core.Services.Sessions
         /// </summary>
         public async Task<RepositoryResponse> UpdateSessionAsync(Session session)
         {
-            _applicationCacheSaver.ApplicationCache.SessionsByEvent[session.Event.Id][session.Id] = session.Name;
-            await _applicationCacheSaver.UpdateCacheAsync().ConfigureAwait(false);
+            if (session.Event.Id is null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session event Id cannot be null.");
+
+            if (session.Id is null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
+
+            _applicationCache.SessionsByEventId[session.Event.Id][session.Id] = session.Name;
+            await _applicationCacheSaver.SaveCacheAsync(_applicationCache).ConfigureAwait(false);
 
             return RepositoryResponse.Ok;
         }
@@ -93,13 +101,24 @@ namespace VirsTimer.Core.Services.Sessions
         /// </summary>
         public async Task<RepositoryResponse> DeleteSessionAsync(Session session)
         {
-            var sourceFile = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, session.Event.Id, $"{session.Id}{FileExtensions.Json}");
+            if (session.Event.Id is null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session event Id cannot be null.");
+
+            if (session.Id is null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Session Id cannot be null.");
+
+            var sourceFile = GetSessionFile(session);
             _fileSystem.File.Delete(sourceFile);
 
-            _applicationCacheSaver.ApplicationCache.SessionsByEvent[session.Event.Id].Remove(session.Id);
-            await _applicationCacheSaver.UpdateCacheAsync().ConfigureAwait(false);
+            _applicationCache.SessionsByEventId[session.Event.Id].Remove(session.Id);
+            await _applicationCacheSaver.SaveCacheAsync(_applicationCache).ConfigureAwait(false);
 
             return RepositoryResponse.Ok;
+        }
+
+        private string GetSessionFile(Session session)
+        {
+            return _fileSystem.Path.Combine(Application.ApplicationDirectoryPath, session.Event.Id, $"{session.Id}{FileExtensions.Json}");
         }
     }
 }

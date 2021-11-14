@@ -21,7 +21,7 @@ namespace VirsTimer.Core.Constants
         /// <summary>
         /// Full path to application data directory path.
         /// </summary>
-        public static string ApplicationDataDirectoryPath => Path.Combine(
+        public static string ApplicationDirectoryPath => Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 Company,
                 Name);

@@ -85,7 +85,7 @@ namespace VirsTimer.Core.Constants
         /// <summary>
         /// All predefined events.
         /// </summary>
-        public static readonly IReadOnlyList<string> All = new[]
+        public static readonly IReadOnlyList<string> Predefined = new[]
         {
                 ThreeByThree,
                 TwoByTwo,

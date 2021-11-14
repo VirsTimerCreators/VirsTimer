@@ -11,19 +11,24 @@ using VirsTimer.Core.Services.Cache;
 namespace VirsTimer.Core.Services.Events
 {
     /// <summary>
-    /// <see cref="IEventsRepository"/> implementation that manages events in local file.
+    /// <see cref="IEventsRepository"/> implementation that manages events in local files.
     /// </summary>
     public class EventsFileRepository : IEventsRepository
     {
         private readonly IFileSystem _fileSystem;
+        private readonly IApplicationCache _applicationCache;
         private readonly IApplicationCacheSaver _applicationCacheSaver;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Solve"/> class.
         /// </summary>
-        public EventsFileRepository(IFileSystem fileSystem, IApplicationCacheSaver applicationCacheSaver)
+        public EventsFileRepository(
+            IFileSystem fileSystem,
+            IApplicationCache applicationCache,
+            IApplicationCacheSaver applicationCacheSaver)
         {
             _fileSystem = fileSystem;
+            _applicationCache = applicationCache;
             _applicationCacheSaver = applicationCacheSaver;
         }
 
@@ -32,40 +37,77 @@ namespace VirsTimer.Core.Services.Events
         /// </summary>
         public async Task<RepositoryResponse<IReadOnlyList<Event>>> GetEventsAsync()
         {
-            var eventsNames = _applicationCacheSaver.ApplicationCache.EventsNames;
-            if (eventsNames.Count > 0)
-                return new RepositoryResponse<IReadOnlyList<Event>>(eventsNames.Select(x => new Event(x.Key, x.Value)).ToList());
-
-            var events = Constants.Events.All.Select(x => new Event(Guid.NewGuid().ToString(), x)).ToList();
-            foreach (var @event in events)
+            if (_applicationCache.EventsById.Count > 0)
             {
-                _applicationCacheSaver.ApplicationCache.EventsNames.Add(@event.Id, @event.Name);
-                _applicationCacheSaver.ApplicationCache.SessionsByEvent.Add(@event.Id, new Dictionary<string, string>());
+                var eventsFromCache = _applicationCache.EventsById.Select(x => new Event(x.Key, x.Value));
+                return new RepositoryResponse<IReadOnlyList<Event>>(eventsFromCache.ToList());
             }
 
-            var directoriesTasks = events.Select(x =>
+            var predefinedEventsTasks = Constants.Events.Predefined.Select(x =>
             {
-                var targerDirectory = _fileSystem.Path.Combine(Application.ApplicationDataDirectoryPath, x.Id);
-                return Task.Run(() => _fileSystem.Directory.CreateDirectory(targerDirectory));
+                var @event = new Event(x);
+                return AddEventAsync(@event, saveCache: false);
             });
 
-            await Task.WhenAll(directoriesTasks).ConfigureAwait(false);
-            await _applicationCacheSaver.UpdateCacheAsync().ConfigureAwait(false);
-            return new RepositoryResponse<IReadOnlyList<Event>>(events);
-        }
-        public Task<RepositoryResponse> UpdateEventAsync(Event @event)
-        {
-            throw new NotImplementedException();
+            var predefinedEvents = await Task.WhenAll(predefinedEventsTasks).ConfigureAwait(false);
+
+            await _applicationCacheSaver.SaveCacheAsync(_applicationCache).ConfigureAwait(false);
+            return new RepositoryResponse<IReadOnlyList<Event>>(predefinedEvents);
         }
 
-        public Task<RepositoryResponse<Event>> AddEventAsync(Event @event)
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public async Task<RepositoryResponse<Event>> AddEventAsync(Event @event)
         {
-            throw new NotImplementedException();
+            await AddEventAsync(@event, saveCache: false);
+            return new RepositoryResponse<Event>(@event);
         }
 
-        public Task<RepositoryResponse> DeleteEventAsync(Event @event)
+        private async Task<Event> AddEventAsync(Event @event, bool saveCache)
         {
-            throw new NotImplementedException();
+            @event.Id ??= Guid.NewGuid().ToString();
+            _applicationCache.EventsById.Add(@event.Id, @event.Name);
+            _applicationCache.SessionsByEventId.Add(@event.Id, new Dictionary<string, string>());
+
+            var targerDirectory = _fileSystem.Path.Combine(Application.ApplicationDirectoryPath, @event.Id);
+            _fileSystem.Directory.CreateDirectory(targerDirectory);
+
+            if (!saveCache)
+                return @event;
+            
+            await _applicationCacheSaver.SaveCacheAsync(_applicationCache).ConfigureAwait(false);
+            return @event;
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public async Task<RepositoryResponse> UpdateEventAsync(Event @event)
+        {
+            if (@event.Id is null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Event Id cannot be null.");
+
+            _applicationCache.EventsById[@event.Id] = @event.Name;
+            await _applicationCacheSaver.SaveCacheAsync(_applicationCache).ConfigureAwait(false);
+
+            return RepositoryResponse.Ok;
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public async Task<RepositoryResponse> DeleteEventAsync(Event @event)
+        {
+            if (@event.Id is null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Event Id cannot be null.");
+
+            _applicationCache.EventsById.Remove(@event.Id);
+            _applicationCache.SessionsByEventId.Remove(@event.Id);
+
+            await _applicationCacheSaver.SaveCacheAsync(_applicationCache).ConfigureAwait(false);
+
+            return RepositoryResponse.Ok;
         }
     }
 }
