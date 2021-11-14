@@ -24,7 +24,7 @@ namespace VirsTimer.DesktopApp.Views
             var sessionRepository = Ioc.Services.GetRequiredService<ISessionsRepository>();
             var solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
             var scrambleGenerator = Ioc.Services.GetRequiredService<IScrambleGenerator>();
-            ViewModel = new MainWindowViewModel(eventsRepository, sessionRepository, solvesRepository, scrambleGenerator);
+            ViewModel = new MainWindowViewModel(solvesRepository, scrambleGenerator);
             Construct();
         }
 

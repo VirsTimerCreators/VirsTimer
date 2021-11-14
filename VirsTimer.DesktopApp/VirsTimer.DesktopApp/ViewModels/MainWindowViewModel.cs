@@ -9,8 +9,6 @@ using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services;
-using VirsTimer.Core.Services.Events;
-using VirsTimer.Core.Services.Sessions;
 using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.ViewModels.Events;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
@@ -35,12 +33,14 @@ namespace VirsTimer.DesktopApp.ViewModels
         public ReactiveCommand<Window, Unit> AddSolveManualyCommand { get; }
         public ReactiveCommand<Unit, Unit> ExitCommand { get; }
 
-        public MainWindowViewModel(IEventsRepository eventsRepository, ISessionsRepository sessionRepository, ISolvesRepository solvesRepository, IScrambleGenerator scrambleGenerator)
+        public MainWindowViewModel(
+            ISolvesRepository solvesRepository,
+            IScrambleGenerator scrambleGenerator)
         {
             _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
 
-            EventViewModel = new EventSummaryViewModel(eventsRepository);
-            SessionSummaryViewModel = new SessionSummaryViewModel(sessionRepository);
+            EventViewModel = new EventSummaryViewModel();
+            SessionSummaryViewModel = new SessionSummaryViewModel();
             TimerViewModel = new TimerViewModel();
             SolvesListViewModel = new SolvesListViewModel(solvesRepository);
             ScrambleViewModel = new ScrambleViewModel(scrambleGenerator);

@@ -69,10 +69,11 @@ namespace VirsTimer.DesktopApp
             Services = ServiceDescriptors.BuildServiceProvider();
         }
 
-        public static async Task AddApplicationCacheAsync()
+        public static async Task AddApplicationCacheAsync(bool serverSide = true)
         {
             var fileSystem = Services.GetService<IFileSystem>()!;
-            var applicationCacheFileIO = new ApplicationCacheFileIO(fileSystem);
+            var fileName = serverSide ? "ServerCache.json" : null;
+            var applicationCacheFileIO = new ApplicationCacheFileIO(fileSystem, fileName);
             var cache = await applicationCacheFileIO.LoadCacheAsync().ConfigureAwait(false);
 
             ServiceDescriptors.AddSingleton<IApplicationCacheSaver>(applicationCacheFileIO);

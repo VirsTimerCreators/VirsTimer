@@ -7,6 +7,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Services.Cache;
 using VirsTimer.Core.Services.Sessions;
 using VirsTimer.DesktopApp.Views.Sessions;
 
@@ -15,6 +16,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
     public class SessionSummaryViewModel : ViewModelBase
     {
         private readonly ISessionsRepository _sessionRepository;
+        private readonly IApplicationCache _applicationCache;
+        private readonly IApplicationCacheSaver _applicationCacheSaver;
+
         private Event _event = null!;
 
         [Reactive]
@@ -22,9 +26,14 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
 
         public ReactiveCommand<Window, Unit> ChangeSessionCommand { get; }
 
-        public SessionSummaryViewModel(ISessionsRepository? sessionRepository = null)
+        public SessionSummaryViewModel(
+            ISessionsRepository? sessionRepository = null,
+            IApplicationCache? applicationCache = null,
+            IApplicationCacheSaver? applicationCacheSaver = null)
         {
             _sessionRepository = sessionRepository ?? Ioc.GetService<ISessionsRepository>();
+            _applicationCache = applicationCache ?? Ioc.GetService<IApplicationCache>();
+            _applicationCacheSaver = applicationCacheSaver ?? Ioc.GetService<IApplicationCacheSaver>();
             ChangeSessionCommand = ReactiveCommand.CreateFromTask<Window>(ChangeSessionAsync);
         }
 
@@ -41,7 +50,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
                 sessions.Add(session);
             }
 
-            CurrentSession = sessions[0];
+            CurrentSession = sessions.Find(x => x.Id == _applicationCache.LastChoosenSession) ?? sessions[0];
             IsBusy = false;
         }
 
@@ -57,7 +66,11 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
             sessionChangeViewModel.Sessions.CollectionChanged += (_, o) => OnSessionDelete(o, sessionChangeViewModel);
             await dialog.ShowDialog(window);
             if (sessionChangeViewModel.Accepted)
+            {
                 CurrentSession = sessionChangeViewModel.SelectedSession!.Session;
+                _applicationCache.LastChoosenSession = CurrentSession.Id!;
+                await _applicationCacheSaver.SaveCacheAsync(_applicationCache).ConfigureAwait(true);
+            }
         }
 
         private void OnSessionDelete(NotifyCollectionChangedEventArgs e, SessionChangeViewModel sessionChangeViewModel)

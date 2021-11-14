@@ -21,11 +21,11 @@ namespace VirsTimer.Core.Services.Cache
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationCacheFileIO"/> class.
         /// </summary>
-        public ApplicationCacheFileIO(IFileSystem fileSystem, string? path = null)
+        public ApplicationCacheFileIO(IFileSystem fileSystem, string? fileName = null)
         {
             _muetx = new AsyncLock();
             _fileSystem = fileSystem;
-            _filePath = path ?? _fileSystem.Path.Combine(Application.ApplicationDirectoryPath, DefaultFileName);
+            _filePath = _fileSystem.Path.Combine(Application.ApplicationDirectoryPath, fileName ?? DefaultFileName);
         }
 
         /// <summary>

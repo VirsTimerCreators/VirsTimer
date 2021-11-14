@@ -59,6 +59,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             var response = await _loginRepository.LoginAsync(request).ConfigureAwait(true);
             if (response.IsSuccesfull)
             {
+                await Ioc.AddApplicationCacheAsync(serverSide: true);
                 Ioc.ConfigureServerServices(response.Value);
                 var mainWinow = new MainWindow();
                 mainWinow.Show();
