@@ -4,9 +4,9 @@ using System;
 using System.IO;
 using System.IO.Abstractions;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Handlers;
-using VirsTimer.Core.Helpers;
 using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Services;
 using VirsTimer.Core.Services.Cache;
@@ -35,7 +35,6 @@ namespace VirsTimer.DesktopApp
 
             ServiceDescriptors = new ServiceCollection();
             ConfigureServices(ServiceDescriptors);
-            Services = ServiceDescriptors.BuildServiceProvider();
         }
 
         public static TService GetService<TService>() where TService : class
@@ -61,17 +60,31 @@ namespace VirsTimer.DesktopApp
 
             services.AddSingleton<IHttpResponseHandler, HttpResponseHandler>();
             services.AddSingleton<IFileSystem, FileSystem>();
-            services.AddSingleton<FileHelper>();
-            services.AddSingleton<IApplicationCacheSaver, ApplicationCacheSaver>();
+            services.AddSingleton<IApplicationCacheSaver, ApplicationCacheFileIO>();
             services.AddSingleton<IUserClient, UserClient>();
             services.AddSingleton<ILoginRepository, LoginServerRepository>();
             services.AddSingleton<IRegisterRepository, RegisterServerRepository>();
             services.AddHttpClient();
+
+            Services = ServiceDescriptors.BuildServiceProvider();
+        }
+
+        public static async Task AddApplicationCacheAsync()
+        {
+            var fileSystem = Services.GetService<IFileSystem>()!;
+            var applicationCacheFileIO = new ApplicationCacheFileIO(fileSystem);
+            var cache = await applicationCacheFileIO.LoadCacheAsync().ConfigureAwait(false);
+
+            ServiceDescriptors.AddSingleton<IApplicationCacheSaver>(applicationCacheFileIO);
+            ServiceDescriptors.AddSingleton(cache);
         }
 
         public static void ConfigureLocalServices()
         {
-            // todo ...
+            ServiceDescriptors.AddSingleton<IEventsRepository, EventsFileRepository>();
+            ServiceDescriptors.AddSingleton<ISessionsRepository, SessionsFileRepository>();
+            ServiceDescriptors.AddSingleton<ISolvesRepository, SolvesFileRepository>();
+            ServiceDescriptors.AddSingleton<IScrambleGenerator, ScrambleServerGenerator>();
             Services = ServiceDescriptors.BuildServiceProvider();
         }
 

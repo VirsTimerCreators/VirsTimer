@@ -31,7 +31,7 @@ namespace VirsTimer.Core.Services.Scrambles
         /// <param name="scramblesAmount">Amount of scrambles.</param>
         public async Task<IReadOnlyList<Scramble>> GenerateScrambles(Event @event, int scramblesAmount)
         {
-            if (Constants.Events.All.All(e => e != @event.Name))
+            if (Constants.Events.Predefined.All(e => e != @event.Name))
                 return Enumerable.Repeat(Scramble.Empty, scramblesAmount).ToList();
 
             using var httpClient = _httpClientFactory.CreateClient();

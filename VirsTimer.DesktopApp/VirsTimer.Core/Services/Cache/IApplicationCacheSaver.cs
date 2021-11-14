@@ -2,9 +2,14 @@
 
 namespace VirsTimer.Core.Services.Cache
 {
+    /// <summary>
+    /// Saves <see cref="IApplicationCache"/>.
+    /// </summary>
     public interface IApplicationCacheSaver
     {
-        IApplicationCache ApplicationCache { get; }
-        public Task UpdateCacheAsync();
+        /// <summary>
+        /// Saves <see cref="IApplicationCache"/>.
+        /// </summary>
+        public Task SaveCacheAsync(IApplicationCache applicationCache);
     }
 }

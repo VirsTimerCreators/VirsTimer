@@ -49,6 +49,7 @@ namespace VirsTimer.Core.Models
         /// <summary>
         /// Calculated time with flag.
         /// </summary>
+        [JsonIgnore]
         public TimeSpan TimeWithFlag => Flag switch
         {
             SolveFlag.OK => TimeAsSpan,
@@ -56,6 +57,19 @@ namespace VirsTimer.Core.Models
             SolveFlag.DNF => TimeSpan.MaxValue,
             _ => throw new ArgumentException(nameof(Flag))
         };
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Solve"/> class.
+        /// </summary>
+        [JsonConstructor]
+        public Solve(string id, long time, SolveFlag flag, DateTime date, string scramble)
+        {
+            Id = id;
+            Time = time;
+            Flag = flag;
+            Date = date;
+            Scramble = scramble;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Solve"/> class.
