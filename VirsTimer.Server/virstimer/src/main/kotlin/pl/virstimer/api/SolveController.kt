@@ -21,18 +21,17 @@ class SolveController(
     val customRepository: SolveCustomRepository) {
 
     @GetMapping
-    fun findAllSolves(authentication: Authentication): List<Solve> {
+    fun findUserSolves(authentication: Authentication): List<Solve> {
         return repository.findAllByUserId(authentication.name)
     }
 
     @GetMapping("/{id}")
     @Secured("ROLE_USER")
-    fun getSolve(@PathVariable id: String, authentication: Authentication): Solve = repository.findOneByIdAndUserId(id, authentication.name)
+    fun getSessionById(@PathVariable id: String, authentication: Authentication): Solve = repository.findOneByIdAndUserId(id, authentication.name)
 
     @GetMapping("/session/{sessionId}")
     @Secured("ROLE_USER")
-    fun findAllSession(@PathVariable sessionId: String, authentication: Authentication): List<Solve> = repository.findAllBySessionIdAndUserId(sessionId, authentication.name)
-
+    fun findAllSolvesForSession(@PathVariable sessionId: String, authentication: Authentication): List<Solve> = repository.findAllBySessionIdAndUserId(sessionId, authentication.name)
 
     @PostMapping
     @Secured("ROLE_USER")
@@ -51,7 +50,6 @@ class SolveController(
         return ResponseEntity(solve, HttpStatus.CREATED)
     }
 
-
     @PatchMapping("/{solveId}")
     @Secured("ROLE_USER")
     fun updateSolve(@PathVariable solveId: String, @RequestBody solveChange: SolveChange, authentication: Authentication): ResponseEntity<Unit> {
@@ -65,10 +63,7 @@ class SolveController(
 
     @DeleteMapping
     @Secured("ROLE_USER")
-    fun deleteSolves(authentication: Authentication){
-        repository.deleteSolveByUserId(authentication.name)
-    }
-
+    fun deleteSolves(authentication: Authentication) = repository.deleteSolveByUserId(authentication.name)
 }
 
 data class SolveRequest(

@@ -18,27 +18,19 @@ class SessionController(
     val customRepository: SessionCustomRepository
 ) {
 
-    @GetMapping("/all")
+    @GetMapping
     @Secured("ROLE_USER")
-    fun findAllSessions(authentication: Authentication): List<Session> = repository.findAllByUserId(authentication.name)
+    fun findUserSessions(authentication: Authentication): List<Session> = repository.findAllByUserId(authentication.name)
 
     @GetMapping("/{sessionId}")
     @Secured("ROLE_USER")
     fun getSession(@PathVariable sessionId: ObjectId, authentication: Authentication): Session = repository.findOneByIdAndUserId(sessionId, authentication.name)
 
-    @GetMapping("/user")
-    @Secured("ROLE_USER")
-    fun findAllUserId(authentication: Authentication): List<Session> = repository.findAllByUserId(authentication.name)
-
     @GetMapping("/event/{eventId}")
     @Secured("ROLE_USER")
-    fun findAllEventId(@PathVariable eventId: String, authentication: Authentication): List<Session> = repository.findByEventIdAndUserId(eventId, authentication.name)
+    fun findSessionsForEvent(@PathVariable eventId: String, authentication: Authentication): List<Session> = repository.findByEventIdAndUserId(eventId, authentication.name)
 
-    @GetMapping("/event/{eventId}/user/{userId}")
-    @Secured("ROLE_USER")
-    fun findAllForEventIdAndUserId(@PathVariable eventId: String, @PathVariable userId: String): List<Session> = repository.findByEventIdAndUserId(eventId, userId)
-
-    @PostMapping("/post")
+    @PostMapping
     @Secured("ROLE_USER")
     fun createSession(@RequestBody request: SessionRequest): ResponseEntity<Session> {
         val session = repository.save(
@@ -52,21 +44,21 @@ class SessionController(
         return ResponseEntity(session, HttpStatus.CREATED)
     }
 
-    @PatchMapping("/patch/{sessionId}")
+    @PatchMapping("/{sessionId}")
     @Secured("ROLE_USER")
-    fun updateSession(@PathVariable sessionId: ObjectId, @RequestBody session: SessionChange, authentication: Authentication): ResponseEntity<Unit> {
+    fun updateSession(@PathVariable sessionId: String, @RequestBody session: SessionChange, authentication: Authentication): ResponseEntity<Unit> {
         customRepository.updateSession(sessionId, session, authentication.name)
 
         return ResponseEntity.ok(Unit)
     }
 
-    @DeleteMapping("delete/{sessionId}")
+    @DeleteMapping("/{sessionId}")
     @Secured("ROLE_USER")
-    fun deleteSession(@PathVariable sessionId: ObjectId) = repository.deleteSessionById(sessionId)
+    fun deleteSessionById(@PathVariable sessionId: ObjectId) = repository.deleteSessionById(sessionId)
 
-    @DeleteMapping("delete/all")
+    @DeleteMapping
     @Secured("ROLE_USER")
-    fun deleteSession(authentication: Authentication){
+    fun deleteAllUserSessions(authentication: Authentication){
        repository.deleteAllByUserId(authentication.name)
     }
 }
