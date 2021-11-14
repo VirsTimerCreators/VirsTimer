@@ -29,7 +29,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
 
         public ReactiveCommand<Window, Unit> AcceptCommand { get; }
         public ReactiveCommand<Unit, Unit> AddSessionCommand { get; }
-        public ReactiveCommand<SessionViewModel, Unit> AcceptRenameSessionCommand { get; private set; } = null!;
+        public ReactiveCommand<SessionViewModel, Session> AcceptRenameSessionCommand { get; private set; } = null!;
         public ReactiveCommand<SessionViewModel, Unit> DeleteSessionCommand { get; }
 
         public SessionChangeViewModel(Event @event, ISessionsRepository? sessionRepository = null)
@@ -61,7 +61,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
                     && vms.AllDistinctBy(vm => vm.Name);
                 });
 
-            AcceptRenameSessionCommand = ReactiveCommand.CreateFromTask<SessionViewModel>(AcceptRename, canAcceptRenaming);
+            AcceptRenameSessionCommand = ReactiveCommand.CreateFromTask<SessionViewModel, Session>(AcceptRename, canAcceptRenaming);
         }
 
         private void AcceptSession(Window window)
@@ -86,17 +86,18 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
             Sessions.Add(sessionVM);
         }
 
-        private async Task AcceptRename(SessionViewModel sessionViewModel)
+        private async Task<Session> AcceptRename(SessionViewModel sessionViewModel)
         {
             if (sessionViewModel.Name == sessionViewModel.Session.Name)
             {
                 sessionViewModel.EditingSession = false;
-                return;
+                return sessionViewModel.Session;
             }
 
             sessionViewModel.Session.Name = sessionViewModel.Name;
             await _sessionRepository.UpdateSessionAsync(sessionViewModel.Session).ConfigureAwait(false);
             sessionViewModel.EditingSession = false;
+            return sessionViewModel.Session;
         }
 
         private async Task DeleteSessionAsync(SessionViewModel sessionViewModel)

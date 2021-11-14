@@ -63,6 +63,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
                 DataContext = sessionChangeViewModel
             };
 
+            var observer = Observer.Create<Session>(UpdateSessionIfNameChanged);
+            sessionChangeViewModel.AcceptRenameSessionCommand.Subscribe(observer);
+
             sessionChangeViewModel.Sessions.CollectionChanged += (_, o) => OnSessionDelete(o, sessionChangeViewModel);
             await dialog.ShowDialog(window);
             if (sessionChangeViewModel.Accepted)
@@ -71,6 +74,12 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
                 _applicationCache.LastChoosenSession = CurrentSession.Id!;
                 await _applicationCacheSaver.SaveCacheAsync(_applicationCache).ConfigureAwait(true);
             }
+        }
+
+        private void UpdateSessionIfNameChanged(Session session)
+        {
+            if (CurrentSession.Id == session.Id && CurrentSession.Name != session.Name)
+                CurrentSession = new Session(CurrentSession.Event, CurrentSession.Id!, session.Name);
         }
 
         private void OnSessionDelete(NotifyCollectionChangedEventArgs e, SessionChangeViewModel sessionChangeViewModel)
