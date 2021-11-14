@@ -15,9 +15,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
         [Reactive]
         public Scramble CurrentScramble { get; set; } = new Scramble();
 
-        public ScrambleViewModel(IScrambleGenerator scrambleGenerator)
+        public ScrambleViewModel(IScrambleGenerator? scrambleGenerator = null)
         {
-            _scrambleGenerator = scrambleGenerator;
+            _scrambleGenerator = scrambleGenerator ?? = Ioc.GetService<IScrambleGenerator>();
         }
 
         public override Task ConstructAsync()

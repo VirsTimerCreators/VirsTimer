@@ -2,12 +2,7 @@ using Avalonia;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using Microsoft.Extensions.DependencyInjection;
 using VirsTimer.Core.Models;
-using VirsTimer.Core.Services;
-using VirsTimer.Core.Services.Events;
-using VirsTimer.Core.Services.Sessions;
-using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.ViewModels;
 
 namespace VirsTimer.DesktopApp.Views
@@ -20,11 +15,7 @@ namespace VirsTimer.DesktopApp.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
-            var eventsRepository = Ioc.Services.GetRequiredService<IEventsRepository>();
-            var sessionRepository = Ioc.Services.GetRequiredService<ISessionsRepository>();
-            var solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
-            var scrambleGenerator = Ioc.Services.GetRequiredService<IScrambleGenerator>();
-            ViewModel = new MainWindowViewModel(solvesRepository, scrambleGenerator);
+            ViewModel = new MainWindowViewModel();
             Construct();
         }
 

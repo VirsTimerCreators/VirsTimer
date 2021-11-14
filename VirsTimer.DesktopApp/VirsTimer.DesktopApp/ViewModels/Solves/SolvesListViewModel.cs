@@ -20,9 +20,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
 
         public ReactiveCommand<SolveViewModel, Unit> DeleteItemCommand { get; }
 
-        public SolvesListViewModel(ISolvesRepository solvesRepository)
+        public SolvesListViewModel(ISolvesRepository? solvesRepository = null)
         {
-            _solvesRepository = solvesRepository;
+            _solvesRepository = solvesRepository ?? Ioc.GetService<ISolvesRepository>();
 
             Solves = new ObservableCollection<SolveViewModel>();
             Solves.CollectionChanged += UpdateIndexesAsync;
