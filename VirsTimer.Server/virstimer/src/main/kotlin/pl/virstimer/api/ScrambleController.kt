@@ -11,14 +11,11 @@ import pl.virstimer.service.ScrambleService
 class ScrambleController(
         val scrambleService: ScrambleService
 ) {
-
     @GetMapping("/scramble/{puzzleType}")
     fun getScramble(
             @PathVariable puzzleType: PuzzleType
     ): ScrambleResponse =
             scrambleService.generateScrambleAndSvg(puzzleType).toScrambleResponse()
-
-
 }
 
 data class ScrambleResponse(

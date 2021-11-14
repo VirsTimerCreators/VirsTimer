@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -28,7 +30,7 @@ class SessionControllerTest : TestCommons() {
         val loginDetails = registerAndLogin("user-1", "user-1-pass")
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/session/all").authorizedWith(loginDetails.authHeader)
+            MockMvcRequestBuilders.get("/session").authorizedWith(loginDetails.authHeader)
         )
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").isNotEmpty)
@@ -43,7 +45,7 @@ class SessionControllerTest : TestCommons() {
         val loginDetails = registerAndLogin("user-1", "user-1-pass")
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/session/user").authorizedWith(loginDetails.authHeader)
+            MockMvcRequestBuilders.get("/session").authorizedWith(loginDetails.authHeader)
         )
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").isNotEmpty)
@@ -70,6 +72,18 @@ class SessionControllerTest : TestCommons() {
         )
             .andExpect(MockMvcResultMatchers.jsonPath("$").isEmpty)
 
+    }
+
+    @Test
+    fun should_patch_session() {
+        val loginDetails = registerAndLogin("user-id", "user-1-pass")
+
+        createSession("user-id", "1", "before", loginDetails.authHeader).andExpect(MockMvcResultMatchers.status().isCreated)
+        val session = mongoTemplate.find(Query(Criteria.where("userId").`is`("user-id")), Session::class.java).first()
+        assert(session.name == "before")
+
+        patchSession("updatePls", loginDetails.authHeader, session.id).andExpect(MockMvcResultMatchers.status().isOk)
+        assert(mongoTemplate.find(Query(Criteria.where("userId").`is`("user-id")), Session::class.java).first().name == "updatePls")
     }
 
     @Test

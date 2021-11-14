@@ -12,7 +12,6 @@ import java.util.*
 @RestController
 internal class EventController(val repository: EventRepository) {
 
-
     @GetMapping("/event")
     @Secured("ROLE_USER")
     fun findAllForUser(authentication: Authentication): List<Event> = repository.findByUserId(authentication.name)

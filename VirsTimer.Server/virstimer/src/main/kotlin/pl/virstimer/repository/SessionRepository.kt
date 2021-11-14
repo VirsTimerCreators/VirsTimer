@@ -20,13 +20,13 @@ interface SessionRepository: MongoRepository<Session, ObjectId> {
 
 }
 interface SessionCustomRepository{
-    fun updateSession(id :ObjectId, sessionUpdate: SessionChange, userId: String)
+    fun updateSession(id: String, sessionUpdate: SessionChange, userId: String)
 }
 @Repository
 class SessionCustomRepositoryImpl(
     val mongoTemplate: MongoTemplate
 ):SessionCustomRepository{
-    override fun updateSession(id: ObjectId, sessionUpdate: SessionChange, userId: String) {
+    override fun updateSession(id: String, sessionUpdate: SessionChange, userId: String) {
         mongoTemplate.updateFirst(
             Query(Criteria("_id").`is`(id).and("userId").`is`(userId)),
             Update().set("name", sessionUpdate.name),
