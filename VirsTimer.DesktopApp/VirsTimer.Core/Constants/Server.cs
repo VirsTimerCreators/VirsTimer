@@ -40,16 +40,6 @@ namespace VirsTimer.Core.Constants
             public static class Session
             {
                 /// <summary>
-                /// GET session by id.
-                /// </summary>
-                public static string Get(string sessionId) => Path.Combine(SessionsResource, sessionId);
-
-                /// <summary>
-                /// GET all sessions.
-                /// </summary>
-                public static string GetAll => Path.Combine(SessionsResource, All);
-
-                /// <summary>
                 /// GET session by event id.
                 /// </summary>
                 public static string GetByEvent(string eventId) => Path.Combine(SessionsResource, EventsResource, eventId);
@@ -57,17 +47,17 @@ namespace VirsTimer.Core.Constants
                 /// <summary>
                 /// POST session.
                 /// </summary>
-                public static string Post => Path.Combine(SessionsResource, "post");
+                public static string Post => SessionsResource;
 
                 /// <summary>
                 /// PATCH session by id.
                 /// </summary>
-                public static string Patch(string sessionId) => Path.Combine(SessionsResource, "patch", sessionId);
+                public static string Patch(string sessionId) => Path.Combine(SessionsResource, sessionId);
 
                 /// <summary>
                 /// DELETE session by id.
                 /// </summary>
-                public static string Delete(string sessionId) => Path.Combine(SessionsResource, "delete", sessionId);
+                public static string Delete(string sessionId) => Path.Combine(SessionsResource, sessionId);
             }
 
             /// <summary>
