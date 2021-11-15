@@ -68,13 +68,16 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
             //TODO watchout for exception - rollback flag change
             Accepted = Flag != SolveFlagsViewModel.ChoosenFlag;
             if (Accepted is false)
+            {
+                window.Close();
                 return;
+            }
 
             Model.Flag = SolveFlagsViewModel.ChoosenFlag;
             await _solvesRepository.UpdateSolveAsync(Model).ConfigureAwait(true);
+            Flag = SolveFlagsViewModel.ChoosenFlag;
             UpdateSummary();
 
-            Flag = SolveFlagsViewModel.ChoosenFlag;
             window.Close();
         }
 
