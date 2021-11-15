@@ -18,7 +18,7 @@ namespace VirsTimer.Core.Utils
         /// <summary>
         /// Calculates best time from <paramref name="solves"/>/
         /// </summary>
-        public static TimeSpan? BestTime(this ICollection<Solve> solves)
+        public static TimeSpan? BestTime(this IEnumerable<Solve> solves)
         {
             return solves.Min(x => x.TimeWithFlag);
         }
@@ -26,20 +26,22 @@ namespace VirsTimer.Core.Utils
         /// <summary>
         /// Calculates Mo3 from <paramref name="source"/>/
         /// </summary>
-        public static TimeSpan? Mo3(this ICollection<Solve> source)
+        public static TimeSpan? Mo3(this IEnumerable<Solve> source)
         {
-            var solves = source.TakeLast(3).ToList();
-            return solves.Count < 3
-                ? null
-                : (solves.Any(x => x.Flag == Constants.SolveFlag.DNF)
-                ? DnfTime
-                : solves.Average());
+            var solves = source.Take(3).ToList();
+            var mo3 = solves.Count >= 3
+                ? (solves.Any(x => x.Flag == Constants.SolveFlag.DNF)
+                    ? DnfTime
+                    : solves.Average())
+                : (TimeSpan?)null;
+
+            return mo3;
         }
 
         /// <summary>
         /// Calculates Ao5 from <paramref name="source"/>/
         /// </summary>
-        public static TimeSpan? Ao5(this ICollection<Solve> source)
+        public static TimeSpan? Ao5(this IEnumerable<Solve> source)
         {
             return Ao(source, 5);
         }
@@ -47,7 +49,7 @@ namespace VirsTimer.Core.Utils
         /// <summary>
         /// Calculates Ao12 from <paramref name="source"/>/
         /// </summary>
-        public static TimeSpan? Ao12(this ICollection<Solve> source)
+        public static TimeSpan? Ao12(this IEnumerable<Solve> source)
         {
             return Ao(source, 12);
         }
@@ -55,7 +57,7 @@ namespace VirsTimer.Core.Utils
         /// <summary>
         /// Calculates Ao12 from <paramref name="source"/>/
         /// </summary>
-        public static TimeSpan? Ao100(this ICollection<Solve> source)
+        public static TimeSpan? Ao100(this IEnumerable<Solve> source)
         {
             return Ao(source, 100);
         }
@@ -63,12 +65,12 @@ namespace VirsTimer.Core.Utils
         /// <summary>
         /// Calculates Ao from <paramref name="source"/>/
         /// </summary>
-        private static TimeSpan? Ao(this ICollection<Solve> source, int amount)
+        private static TimeSpan? Ao(this IEnumerable<Solve> source, int amount)
         {
-            if (source.Count < amount)
+            if (source.Count() < amount)
                 return null;
 
-            var solves = source.TakeLast(amount).ToList();
+            var solves = source.Take(amount).ToList();
             if (solves.Count(x => x.Flag == Constants.SolveFlag.DNF) > 1)
                 return DnfTime;
             var times = solves.OrderBy(x => x.TimeWithFlag).Skip(1).Take(amount - 2).ToList();
@@ -78,13 +80,13 @@ namespace VirsTimer.Core.Utils
         /// <summary>
         /// Calculates average from <paramref name="source"/>/
         /// </summary>
-        private static TimeSpan Average(this ICollection<Solve> source)
+        private static TimeSpan Average(this IEnumerable<Solve> source)
         {
             var sum = 0L;
             foreach (var solve in source)
                 sum += solve.TimeWithFlag.Ticks;
 
-            var average = sum / (decimal)source.Count;
+            var average = sum / (decimal)source.Count();
 
             var rounded = Math.Round(average / 100000m, 0, MidpointRounding.AwayFromZero) * 100000;
             return TimeSpan.FromTicks((long)rounded);

@@ -7,16 +7,14 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
 {
     public class SolveFlagsViewModel : ViewModelBase
     {
-        private readonly ObservableCollection<bool> flagsArray;
-
-        public ObservableCollection<bool> FlagsArray => flagsArray;
+        public ObservableCollection<bool> FlagsArray { get; }
         public SolveFlag ChoosenFlag { get; set; }
 
         public SolveFlagsViewModel(SolveFlag initilaFlag)
         {
             var flags = Enum.GetValues<SolveFlag>().Select(flag => flag == initilaFlag);
-            flagsArray = new ObservableCollection<bool>(flags);
-            flagsArray.CollectionChanged += FlagChanged;
+            FlagsArray = new ObservableCollection<bool>(flags);
+            FlagsArray.CollectionChanged += FlagChanged;
             ChoosenFlag = initilaFlag;
         }
 
