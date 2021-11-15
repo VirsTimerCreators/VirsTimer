@@ -42,6 +42,18 @@ class EventControllerTest : TestCommons() {
             this.puzzleType == "FIVE_BY_FIVE"
         }
     }
+    @Test
+    fun should_patch_event()
+    {
+        val loginDetails = registerAndLogin("user-1", "user-1-pass")
+
+        createEvent("1", "FIVE_BY_FIVE", loginDetails.authHeader).andExpect(MockMvcResultMatchers.status().isCreated)
+        val event  = mongoTemplate.find(Query(Criteria.where("userId").`is`("user-1")), Event::class.java).first()
+        assert(event.puzzleType == "FIVE_BY_FIVE")
+
+        patchEvent("updatedPuzzle", loginDetails.authHeader,event.id).andExpect(MockMvcResultMatchers.status().isOk)
+        assert(mongoTemplate.find(Query(Criteria.where("userId").`is`("user-1")), Event::class.java).first().puzzleType == "updatedPuzzle")
+    }
 
     @Test
     fun should_not_allow_posting_event_if_not_logged_in() {
