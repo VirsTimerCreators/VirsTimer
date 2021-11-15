@@ -1,8 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Microsoft.Extensions.DependencyInjection;
-using VirsTimer.Core.Services.Login;
 using VirsTimer.DesktopApp.ViewModels;
 
 namespace VirsTimer.DesktopApp.Views
@@ -13,14 +11,14 @@ namespace VirsTimer.DesktopApp.Views
 
         public LoginView()
         {
+            ViewModel = new LoginViewModel();
+            DataContext = ViewModel;
+
             InitializeComponent();
 #if DEBUG
             this.AttachDevTools();
 #endif
 
-            var loginRepository = Ioc.Services.GetRequiredService<ILoginRepository>();
-            ViewModel = new LoginViewModel(loginRepository);
-            DataContext = ViewModel;
             var passwordTextBox = this.FindControl<TextBox>("PasswordTextBox");
             passwordTextBox.PasswordChar = '\u2022';
         }

@@ -86,7 +86,7 @@
                 VerticalContentAlignment="Center"
                 HorizontalContentAlignment="Center"
                 Margin="20"
-                Background="#cf8b0c"
+                Background="#4185fa"
                 Content="Kontynuuj bez logowania"
                 Command="{Binding ContinueLocalCommand}"
                 CommandParameter="{Binding $parent[Window]}"/>
@@ -104,18 +104,14 @@
                 Content="Akceptuj"
                 Command="{Binding AcceptLoginCommand}"
                 CommandParameter="{Binding $parent[Window]}"/>
-        <TextBlock
-            Grid.Column="1"
-            Padding="20"
+		<ContentControl
+			Content="{Binding SnackbarViewModel}"
+			Grid.Column="0"
+			Grid.ColumnSpan="3"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
-            Grid.Row="7"
-            Grid.RowSpan="3"
-            Text="{Binding LoginStaus, Converter={converters:LoginStatusConverter}}"
-            TextAlignment="Left"
-            TextWrapping="WrapWithOverflow"
-            IsVisible="{Binding IsResponseUnsccesfull}"
-            Background="#ed924c"
-			Foreground="Black"/>
+			ZIndex="5"
+            Grid.Row="12"
+            Grid.RowSpan="2"/>
     </Grid>
 </Window>

@@ -1,41 +1,21 @@
 ﻿using System;
-using System.Globalization;
-using Avalonia.Data.Converters;
-using Avalonia.Markup.Xaml;
 using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.DesktopApp.ValueConverters
 {
-    public class LoginStatusConverter : MarkupExtension, IValueConverter
+    public class LoginStatusConverter : IExplicitValueConverter<RepositoryResponseStatus, string>
     {
-        private static LoginStatusConverter? _converter = null;
-
-        public override object ProvideValue(IServiceProvider serviceProvider)
+        public string Convert(RepositoryResponseStatus value)
         {
-            return _converter ??= new LoginStatusConverter();
-        }
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null)
-                return string.Empty;
-
-            return value is not RepositoryResponseStatus status
-                ? throw new ArgumentException(null, nameof(value))
-                : status switch
-                {
-                    RepositoryResponseStatus.Ok => string.Empty,
-                    RepositoryResponseStatus.ClientError => "Nie udało się zalogować.\nBłędny login lub hasło.",
-                    RepositoryResponseStatus.NetworkError => "Nie można połączyć się z serwerem.",
-                    RepositoryResponseStatus.RepositoryError => "Wystąpił błąd po stornie serwera.\nNie można się połączyć.",
-                    RepositoryResponseStatus.UnknownError => "Wystąpił nieznany błąd.\nNie można się połączyć.",
-                    _ => throw new ArgumentException(null, nameof(value))
-                };
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
+            return value switch
+            {
+                RepositoryResponseStatus.Ok => string.Empty,
+                RepositoryResponseStatus.ClientError => "Nie udało się zalogować. Błędny login lub hasło.",
+                RepositoryResponseStatus.NetworkError => "Nie można połączyć się z serwerem.",
+                RepositoryResponseStatus.RepositoryError => "Wystąpił błąd po stornie serwera. Nie można się połączyć.",
+                RepositoryResponseStatus.UnknownError => "Wystąpił nieznany błąd. Nie można się połączyć.",
+                _ => throw new ArgumentException(null, nameof(value))
+            };
         }
     }
 }

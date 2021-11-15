@@ -1,0 +1,36 @@
+<reactiveui:ReactiveUserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:reactiveui="http://reactiveui.net"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="64"
+			 Background="Transparent"
+             x:Class="VirsTimer.DesktopApp.Views.Common.SnackbarView"
+			 Focusable="False">
+	<Panel			
+		Height="64"
+		Width="300"> 
+		<Canvas 
+			VerticalAlignment="Stretch"
+			HorizontalAlignment="Stretch">
+			<Border
+				x:Name="Border"
+				CornerRadius="8"
+				Height="64"
+				Width="300">
+				<Border.Background>
+					<SolidColorBrush Color="#d6b27e" Opacity="0.9"/>
+				</Border.Background>
+				<TextBlock
+					x:Name="MessageTextBlock"
+					Margin="15 0 15 0"
+					FontWeight="Medium"
+					Foreground="Black"
+					TextWrapping="WrapWithOverflow"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"/>
+
+			</Border>
+		</Canvas>
+	</Panel>
+</reactiveui:ReactiveUserControl>
