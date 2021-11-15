@@ -2,13 +2,10 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
-using VirsTimer.Core.Services;
 using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.ViewModels.Events;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
@@ -71,11 +68,10 @@ namespace VirsTimer.DesktopApp.ViewModels
             await SessionSummaryViewModel.LoadSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(false);
             await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
             await ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent).ConfigureAwait(false);
-            await StatisticsViewModel.Construct(SolvesListViewModel.Solves.Reverse().Select(x => x.Model)).ConfigureAwait(false);
+            await StatisticsViewModel.Construct(SolvesListViewModel.Solves).ConfigureAwait(false);
 
             EventViewModel.PropertyChanged += OnEventChangeAsync;
             SessionSummaryViewModel.PropertyChanged += OnSessionChangeAsync;
-            SolvesListViewModel.Solves.CollectionChanged += OnSolvesListChangeAsync;
         }
 
         public async Task SaveSolveAsync(Solve solve)
@@ -106,14 +102,6 @@ namespace VirsTimer.DesktopApp.ViewModels
             await SaveSolveAsync(solve).ConfigureAwait(false);
         }
 
-        private async void OnSolvesListChangeAsync(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add || e.Action == NotifyCollectionChangedAction.Move)
-                await StatisticsViewModel.AddSolve((e.NewItems[0] as SolveViewModel)!.Model).ConfigureAwait(false);
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-                await StatisticsViewModel.DeleteSolve((e.OldItems[0] as SolveViewModel)!.Model).ConfigureAwait(false);
-        }
-
         private async void OnEventChangeAsync(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != nameof(EventViewModel.CurrentEvent))
@@ -129,8 +117,7 @@ namespace VirsTimer.DesktopApp.ViewModels
                 return;
 
             await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
-            await StatisticsViewModel.Construct(SolvesListViewModel.Solves.Reverse().Select(x => x.Model)).ConfigureAwait(false);
-            SolvesListViewModel.Solves.CollectionChanged += OnSolvesListChangeAsync;
+            await StatisticsViewModel.Construct(SolvesListViewModel.Solves).ConfigureAwait(false);
         }
     }
 }

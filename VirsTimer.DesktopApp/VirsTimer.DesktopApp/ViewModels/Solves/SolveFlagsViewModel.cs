@@ -1,28 +1,31 @@
-﻿using System;
+﻿using DynamicData;
+using DynamicData.Binding;
+using ReactiveUI.Fody.Helpers;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 using VirsTimer.Core.Constants;
 
 namespace VirsTimer.DesktopApp.ViewModels.Solves
 {
     public class SolveFlagsViewModel : ViewModelBase
     {
-        private readonly ObservableCollection<bool> flagsArray;
+        public ObservableCollection<bool> FlagsArray { get; }
 
-        public ObservableCollection<bool> FlagsArray => flagsArray;
+        [ObservableAsProperty]
         public SolveFlag ChoosenFlag { get; set; }
 
         public SolveFlagsViewModel(SolveFlag initilaFlag)
         {
             var flags = Enum.GetValues<SolveFlag>().Select(flag => flag == initilaFlag);
-            flagsArray = new ObservableCollection<bool>(flags);
-            flagsArray.CollectionChanged += FlagChanged;
-            ChoosenFlag = initilaFlag;
-        }
+            FlagsArray = new ObservableCollection<bool>(flags);
 
-        public void FlagChanged(object? sender, EventArgs e)
-        {
-            ChoosenFlag = (SolveFlag)FlagsArray.IndexOf(true);
+            FlagsArray
+                .ToObservableChangeSet()
+                .ToCollection()
+                .Select(x => (SolveFlag)x.IndexOf(true))
+                .ToPropertyEx(this, x => x.ChoosenFlag);
         }
     }
 }

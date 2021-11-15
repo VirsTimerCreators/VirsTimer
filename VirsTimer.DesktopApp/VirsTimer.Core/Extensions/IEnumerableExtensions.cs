@@ -22,7 +22,7 @@ namespace VirsTimer.Core.Extensions
         /// </summary>
         public static IEnumerable<IEnumerable<T>> StepCollection<T>(this ICollection<T> source, int step)
         {
-            for (var i = 0; i < source.Count - step; i++)
+            for (var i = 0; i <= source.Count - step; i++)
                 yield return source.Skip(i).Take(step);
         }
 

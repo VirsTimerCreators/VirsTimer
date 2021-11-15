@@ -15,12 +15,14 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
     public class SolveViewModel : ViewModelBase
     {
         private readonly ISolvesRepository _solvesRepository;
-        public static event EventHandler? FlagChanged;
 
         public bool Accepted { get; private set; }
         public Solve Model { get; }
         public TimeSpan Time { get; }
+
+        [Reactive]
         public SolveFlag Flag { get; set; }
+
         public DateTime Date { get; }
         public string Scramble { get; }
 
@@ -65,10 +67,17 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
         {
             //TODO watchout for exception - rollback flag change
             Accepted = Flag != SolveFlagsViewModel.ChoosenFlag;
-            Model.Flag = Flag = SolveFlagsViewModel.ChoosenFlag;
+            if (Accepted is false)
+            {
+                window.Close();
+                return;
+            }
+
+            Model.Flag = SolveFlagsViewModel.ChoosenFlag;
             await _solvesRepository.UpdateSolveAsync(Model).ConfigureAwait(true);
-            FlagChanged?.Invoke(this.Model, EventArgs.Empty);
+            Flag = SolveFlagsViewModel.ChoosenFlag;
             UpdateSummary();
+
             window.Close();
         }
 
