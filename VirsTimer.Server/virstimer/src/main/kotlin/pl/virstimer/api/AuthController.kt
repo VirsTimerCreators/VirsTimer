@@ -15,6 +15,7 @@ import pl.virstimer.db.security.model.User
 import pl.virstimer.db.security.repository.RoleRepository
 import pl.virstimer.db.security.repository.UserRepository
 import pl.virstimer.security.*
+import pl.virstimer.service.EventService
 import java.util.*
 import java.util.function.Consumer
 import java.util.stream.Collectors
@@ -31,6 +32,8 @@ class AuthController(
     var userRepository: UserRepository,
     @Autowired
     var roleRepository: RoleRepository,
+    @Autowired
+    val eventService: EventService,
     @Autowired
     var encoder: PasswordEncoder,
     @Autowired
@@ -107,6 +110,9 @@ class AuthController(
 
         user.roles = roles
         userRepository.save(user)
+
+        if(user.username == null) { throw RuntimeException("error: username is null")}
+        eventService.createEvents(user.username!!)
 
         return ResponseEntity.ok(MessageResponse("User registered successfully!"))
     }

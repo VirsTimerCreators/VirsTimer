@@ -6,12 +6,16 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import pl.virstimer.TestCommons
+import pl.virstimer.domain.PuzzleType
+import pl.virstimer.model.Event
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
@@ -55,8 +59,20 @@ class AuthControllerIntTest : TestCommons() {
             .andExpect(MockMvcResultMatchers.status().is4xxClientError)
     }
 
+    @Test
+    fun should_generate_events_for_user() {
+        registerAndLogin("usernameE", "password")
+
+        val foundItems = mongoTemplate.find(
+            Query.query(Criteria.where("userId").`is`("usernameE")),
+            Event::class.java
+        )
+        assert(foundItems.size == PuzzleType.values().size)
+    }
 
     private fun accessResource(resource: String, authHeader: String): ResultActions =
-        mockMvc.perform(get("/api/test/$resource")
-            .header("Authorization", authHeader))
+        mockMvc.perform(
+            get("/api/test/$resource")
+                .header("Authorization", authHeader)
+        )
 }
