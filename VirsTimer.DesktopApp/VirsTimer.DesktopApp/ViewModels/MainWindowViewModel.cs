@@ -2,8 +2,10 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
-using System.ComponentModel;
+using ReactiveUI.Fody.Helpers;
+using System;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Solves;
@@ -19,6 +21,9 @@ namespace VirsTimer.DesktopApp.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly ISolvesRepository _solvesRepository;
+
+        [ObservableAsProperty]
+        public new bool IsBusy { get; set; }
 
         public EventSummaryViewModel EventViewModel { get; }
         public SessionSummaryViewModel SessionSummaryViewModel { get; }
@@ -47,31 +52,35 @@ namespace VirsTimer.DesktopApp.ViewModels
                 (App.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
             });
 
-            EventViewModel.PropertyChanged += OnBusyChange;
-            SessionSummaryViewModel.PropertyChanged += OnBusyChange;
-            SolvesListViewModel.PropertyChanged += OnBusyChange;
-            ScrambleViewModel.PropertyChanged += OnBusyChange;
-            StatisticsViewModel.PropertyChanged += OnBusyChange;
-        }
+            this.WhenAnyValue(x => x.EventViewModel.CurrentEvent)
+                .Skip(1)
+                .Subscribe(async _ =>
+                {
+                    await ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
+                    await SessionSummaryViewModel.LoadSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
+                });
 
-        private void OnBusyChange(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName != nameof(IsBusy))
-                return;
+            this.WhenAnyValue(x => x.SessionSummaryViewModel.CurrentSession)
+                .Skip(1)
+                .Subscribe(async _ =>
+                {
+                    await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
+                    await StatisticsViewModel.Construct(SolvesListViewModel.Solves).ConfigureAwait(false);
+                });
 
-            IsBusy = EventViewModel.IsBusy || SessionSummaryViewModel.IsBusy || SolvesListViewModel.IsBusy || ScrambleViewModel.IsBusy || StatisticsViewModel.IsBusy;
+            this.WhenAnyValue(
+                x => x.EventViewModel.IsBusy,
+                x => x.SessionSummaryViewModel.IsBusy,
+                x => x.SolvesListViewModel.IsBusy,
+                x => x.ScrambleViewModel.IsBusy,
+                x => x.StatisticsViewModel.IsBusy,
+                (b1, b2, b3, b4, b5) => b1 || b2 || b3 || b4 || b5)
+                .ToPropertyEx(this, x => x.IsBusy);
         }
 
         public override async Task ConstructAsync()
         {
             await EventViewModel.ConstructAsync().ConfigureAwait(false);
-            await SessionSummaryViewModel.LoadSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(false);
-            await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
-            await ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent).ConfigureAwait(false);
-            await StatisticsViewModel.Construct(SolvesListViewModel.Solves).ConfigureAwait(false);
-
-            EventViewModel.PropertyChanged += OnEventChangeAsync;
-            SessionSummaryViewModel.PropertyChanged += OnSessionChangeAsync;
         }
 
         public async Task SaveSolveAsync(Solve solve)
@@ -100,24 +109,6 @@ namespace VirsTimer.DesktopApp.ViewModels
                 ScrambleViewModel.CurrentScramble.Value);
 
             await SaveSolveAsync(solve).ConfigureAwait(false);
-        }
-
-        private async void OnEventChangeAsync(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName != nameof(EventViewModel.CurrentEvent))
-                return;
-
-            await ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
-            await SessionSummaryViewModel.LoadSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
-        }
-
-        private async void OnSessionChangeAsync(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName != nameof(SessionSummaryViewModel.CurrentSession))
-                return;
-
-            await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
-            await StatisticsViewModel.Construct(SolvesListViewModel.Solves).ConfigureAwait(false);
         }
     }
 }

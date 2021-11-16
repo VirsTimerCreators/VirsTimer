@@ -16,15 +16,10 @@ namespace VirsTimer.DesktopApp.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
-            this.WhenActivated(disposableRegistration =>
+            this.WhenActivated(async disposableRegistration =>
             {
-                Construct();
+                await ViewModel!.ConstructAsync().ConfigureAwait(false);
             });
-        }
-
-        private async void Construct()
-        {
-            await ViewModel!.ConstructAsync().ConfigureAwait(false);
         }
 
         private void InitializeComponent()
