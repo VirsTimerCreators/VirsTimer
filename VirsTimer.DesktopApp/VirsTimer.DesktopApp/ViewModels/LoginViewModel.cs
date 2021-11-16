@@ -85,7 +85,6 @@ namespace VirsTimer.DesktopApp.ViewModels
 
             var message = _loginStatusConverter.Convert(response.Status);
             await SnackbarViewModel.QueueMessage.Execute(message);
-            ShowUnsuccesfullControlAsync();
             IsBusy = false;
 
             return false;
