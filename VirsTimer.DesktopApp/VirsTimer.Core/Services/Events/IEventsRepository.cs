@@ -18,7 +18,7 @@ namespace VirsTimer.Core.Services.Events
         /// <summary>
         /// Adds event to repository.
         /// </summary>
-        Task<RepositoryResponse<Event>> AddEventAsync(Event @event);
+        Task<RepositoryResponse> AddEventAsync(Event @event);
 
         /// <summary>
         /// Update event in repository.

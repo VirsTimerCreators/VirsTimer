@@ -41,7 +41,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
 
             AddEventCommand = ReactiveCommand.CreateFromTask(AddEventAsync);
 
-            DeleteEventCommand = new AsyncRelayCommand<EventViewModel>(DeleteEventAsync, x => !x.IsPredefined);
+            DeleteEventCommand = new AsyncRelayCommand<EventViewModel>(DeleteEventAsync);
         }
 
         public override async Task ConstructAsync()

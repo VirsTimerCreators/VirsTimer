@@ -2,21 +2,21 @@ package pl.virstimer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
-import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import pl.virstimer.api.SessionRequest
-import pl.virstimer.model.*
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import pl.virstimer.api.EventRequest
 import pl.virstimer.api.SessionChange
+import pl.virstimer.api.SessionRequest
 import pl.virstimer.api.SolveRequest
 import pl.virstimer.db.security.model.ERole
 import pl.virstimer.db.security.model.Role
 import pl.virstimer.db.security.model.User
+import pl.virstimer.model.*
 import pl.virstimer.security.LoginRequest
 import pl.virstimer.security.SignupRequest
 import java.util.*
@@ -65,6 +65,14 @@ open class TestCommons {
             MockMvcRequestBuilders.post("/event")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Gson().toJson(Event(UUID.randomUUID().toString(), userId, puzzleType)))
+                .authorizedWith(token)
+        )
+
+    fun patchEvent(updatePuzzleType: String = "updatePuzzleType", token: String, eventId: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.patch("/event/$eventId")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Gson().toJson(EventRequest(updatePuzzleType)).toString())
                 .authorizedWith(token)
         )
 

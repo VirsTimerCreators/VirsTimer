@@ -1,28 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using Avalonia.Data.Converters;
-using Avalonia.Markup.Xaml;
 using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.DesktopApp.ValueConverters
 {
-    public class RegisterStatusConverter : MarkupExtension, IMultiValueConverter
+    public class RegisterStatusConverter : IValueConverter<RepositoryResponse, string>
     {
-        private static RegisterStatusConverter? _converter = null;
-
-        public override object ProvideValue(IServiceProvider serviceProvider)
+        public string Convert(RepositoryResponse value)
         {
-            return _converter ??= new RegisterStatusConverter();
-        }
-
-        public object Convert(IList<object> values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values.Count < 2
-                || values[0] is not RepositoryResponseStatus status
-                || values[1] is not string message)
-                return string.Empty;
-
+            var (status, message) = (value.Status, value.Message);
             return (status, message) switch
             {
                 (RepositoryResponseStatus.Ok, _) => string.Empty,
@@ -32,7 +17,7 @@ namespace VirsTimer.DesktopApp.ValueConverters
                 (RepositoryResponseStatus.NetworkError, _) => "Nie można połączyć się z serwerem.",
                 (RepositoryResponseStatus.RepositoryError, _) => "Wystąpił błąd po stornie serwera.\nNie można się połączyć.",
                 (RepositoryResponseStatus.UnknownError, _) => "Wystąpił nieznany błąd.\nNie można się połączyć.",
-                _ => throw new ArgumentException(null, nameof(values))
+                _ => throw new ArgumentException(null, nameof(value))
             };
         }
     }

@@ -58,10 +58,10 @@ namespace VirsTimer.Core.Services.Events
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        public async Task<RepositoryResponse<Event>> AddEventAsync(Event @event)
+        public async Task<RepositoryResponse> AddEventAsync(Event @event)
         {
             await AddEventAsync(@event, saveCache: false);
-            return new RepositoryResponse<Event>(@event);
+            return RepositoryResponse.Ok;
         }
 
         private async Task<Event> AddEventAsync(Event @event, bool saveCache)

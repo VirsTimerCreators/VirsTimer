@@ -7,12 +7,14 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Event
+import pl.virstimer.repository.EventCustomRepository
 import pl.virstimer.repository.EventRepository
 import java.util.*
 
 @RestController
 @RequestMapping("/event")
-internal class EventController(val repository: EventRepository) {
+
+internal class EventController(val repository: EventRepository, val customRepository: EventCustomRepository) {
 
     @GetMapping
     @Secured("ROLE_USER")
@@ -31,6 +33,14 @@ internal class EventController(val repository: EventRepository) {
         return ResponseEntity(event, HttpStatus.CREATED)
     }
 
+    @PatchMapping("/{eventId}")
+    @Secured("ROLE_USER")
+    fun updateEvent(@PathVariable eventId: String, @RequestBody event: EventRequest, authentication: Authentication)
+    : ResponseEntity<Unit> {
+        customRepository.updateEvent(eventId, event, authentication.name)
+        return ResponseEntity.ok(Unit)
+    }
+    
     @DeleteMapping("/{eventId}")
     @Secured("ROLE_USER")
     fun deleteEventByIdAndUserId(@PathVariable eventId: String, authentication: Authentication) = repository.deleteEventByIdAndUserId(eventId, authentication.name)
@@ -42,4 +52,4 @@ internal class EventController(val repository: EventRepository) {
     }
 }
 
-data class EventRequest (val puzzleType: String)
+data class EventRequest(val puzzleType: String)
