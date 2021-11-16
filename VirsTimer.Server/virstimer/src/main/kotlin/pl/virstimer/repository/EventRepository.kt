@@ -9,4 +9,6 @@ import pl.virstimer.model.Event
 interface EventRepository : MongoRepository<Event, String> {
     override fun deleteAll()
     fun findByUserId(userId: String): List<Event>
+    fun deleteEventById(id: String)
+    fun deleteAllByUserId(userId: String)
 }
