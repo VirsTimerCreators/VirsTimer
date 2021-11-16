@@ -52,14 +52,15 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public ReactiveCommand<Window, Unit> AcceptRegisterCommand { get; }
 
-        public RegisterViewModel(IRegisterRepository registerRepository)
+        public RegisterViewModel(
+            IRegisterRepository? registerRepository = null)
         {
             Login = string.Empty;
             Email = string.Empty;
             Password = string.Empty;
             RepeatedPassword = string.Empty;
 
-            _registerRepository = registerRepository;
+            _registerRepository = registerRepository ?? Ioc.GetService<IRegisterRepository>();
 
             this.WhenAnyValue(x => x.Login)
                 .Skip(1)

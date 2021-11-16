@@ -1,41 +1,42 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Height="450" Width="600"
-        MinHeight="450" MinWidth="600"
-        MaxHeight="450" MaxWidth="600"
-        x:Class="VirsTimer.DesktopApp.Views.LoginView"
-        Title="Logowanie"
-        TransparencyLevelHint="AcrylicBlur"
-        Background="Transparent"
-        xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
-        ExtendClientAreaToDecorationsHint="True">
-    <Grid
-        RowDefinitions="60,*,0,2*,0,2*,2*,2*"
-        ColumnDefinitions="*,2*,*">
-        <ExperimentalAcrylicBorder
+<reactiveui:ReactiveWindow
+	xmlns="https://github.com/avaloniaui"
+	xmlns:reactiveui="http://reactiveui.net"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Height="450" Width="600"
+	MinHeight="450" MinWidth="600"
+    MaxHeight="450" MaxWidth="600"
+    x:Class="VirsTimer.DesktopApp.Views.LoginView"
+    Title="Logowanie"
+    TransparencyLevelHint="AcrylicBlur"
+    Background="Transparent"
+    ExtendClientAreaToDecorationsHint="True">
+	<Grid
+		RowDefinitions="60,*,0,2*,0,2*,2*,2*"
+		ColumnDefinitions="*,2*,*">
+		<ExperimentalAcrylicBorder
             IsHitTestVisible="False"
-            Grid.ColumnSpan="3" 
+            Grid.ColumnSpan="3"
             Grid.RowSpan="8">
-            <ExperimentalAcrylicBorder.Material>
-                <ExperimentalAcrylicMaterial
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
                     BackgroundSource="Digger"
                     TintColor="Black"
                     TintOpacity="1"
                     MaterialOpacity="0.75" />
-            </ExperimentalAcrylicBorder.Material>
-        </ExperimentalAcrylicBorder>
-        <TextBlock Text="Logowanie" Grid.Row="0" Margin="10"
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<TextBlock Text="Logowanie" Grid.Row="0" Margin="10"
                    FontSize="14"/>
-        <ProgressBar
+		<ProgressBar
+			x:Name="ProgressBar"
             IsIndeterminate="True"
             Grid.ColumnSpan="5"
             HorizontalAlignment="Right"
             Margin="20,40,20,0"
-            VerticalAlignment="Top"
-            IsVisible="{Binding IsBusy}"/>
-        <TextBlock
+            VerticalAlignment="Top"/>
+		<TextBlock
             Text="VirsTimer"
             FontSize="38"
             FontWeight="UltraBold"
@@ -45,65 +46,64 @@
             HorizontalAlignment="Center"
             Margin="20"
             />
-        <TextBox
+		<TextBox
+			x:Name="LoginTextBox"
             Grid.Row="3"
             Grid.Column="1"
             MinHeight="40"
             Watermark="Nazwa użytkownika"
             VerticalContentAlignment="Center"
             VerticalAlignment="Center"
-            HorizontalAlignment="Stretch"
-            Text="{Binding LoginName}"/>
-        <TextBox
-            Name="PasswordTextBox"
+            HorizontalAlignment="Stretch"/>
+		<TextBox
+            x:Name="PasswordTextBox"
             Watermark="Hasło"
             Grid.Row="5"
             MinHeight="40"
             Grid.Column="1"
             VerticalContentAlignment="Center"
-                        VerticalAlignment="Center"
-            HorizontalAlignment="Stretch"
-            Text="{Binding LoginPassowd}"/>
+			VerticalAlignment="Center"
+            HorizontalAlignment="Stretch"/>
 
-        <Button Grid.Row="6"
-                Grid.ColumnSpan="3"
-                MinWidth="150"
-                MinHeight="40"
-                VerticalContentAlignment="Center"
-                HorizontalContentAlignment="Center"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Content="Rejestracja"
-                Command="{Binding RegisterCommand}"
-                CommandParameter="{Binding $parent[Window]}"/>
-        
-        <Button Grid.Row="7"
-                Grid.ColumnSpan="3"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
-                MinWidth="150"
-                MinHeight="40"
-                VerticalContentAlignment="Center"
-                HorizontalContentAlignment="Center"
-                Margin="20"
-                Background="#4185fa"
-                Content="Kontynuuj bez logowania"
-                Command="{Binding ContinueLocalCommand}"
-                CommandParameter="{Binding $parent[Window]}"/>
+		<Button
+			x:Name="RegisterButton"
+			Grid.Row="6"
+			Grid.ColumnSpan="3"
+            MinWidth="150"
+            MinHeight="40"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Content="Rejestracja"/>
 
-        <Button Grid.Row="7"
-                Grid.ColumnSpan="3"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                MinWidth="150"
-                MinHeight="40"
-                VerticalContentAlignment="Center"
-                HorizontalContentAlignment="Center"
-                Margin="20"
-                Background="#0959db"
-                Content="Akceptuj"
-                Command="{Binding AcceptLoginCommand}"
-                CommandParameter="{Binding $parent[Window]}"/>
+		<Button
+			x:Name="ContinueLocalButton"
+			Grid.Row="7"
+            Grid.ColumnSpan="3"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            MinWidth="150"
+            MinHeight="40"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center"
+            Margin="20"
+            Background="#4185fa"
+            Content="Kontynuuj bez logowania"/>
+
+		<Button
+			x:Name="LoginButton"
+			Grid.Row="7"
+            Grid.ColumnSpan="3"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            MinWidth="150"
+            MinHeight="40"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center"
+            Margin="20"
+            Background="#0959db"
+            Content="Akceptuj"/>
 		<ContentControl
 			Content="{Binding SnackbarViewModel}"
 			Grid.Column="0"
@@ -113,5 +113,5 @@
 			ZIndex="5"
             Grid.Row="12"
             Grid.RowSpan="2"/>
-    </Grid>
-</Window>
+	</Grid>
+</reactiveui:ReactiveWindow>

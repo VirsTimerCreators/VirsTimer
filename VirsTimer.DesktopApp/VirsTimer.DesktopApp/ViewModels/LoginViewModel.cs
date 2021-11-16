@@ -1,15 +1,14 @@
-using System;
-using System.Reactive;
-using System.Threading.Tasks;
-using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using VirsTimer.Core.Models.Requests;
 using VirsTimer.Core.Models.Responses;
 using VirsTimer.Core.Services.Login;
 using VirsTimer.DesktopApp.ValueConverters;
 using VirsTimer.DesktopApp.ViewModels.Common;
-using VirsTimer.DesktopApp.Views;
 
 namespace VirsTimer.DesktopApp.ViewModels
 {
@@ -26,11 +25,15 @@ namespace VirsTimer.DesktopApp.ViewModels
         [Reactive]
         public string LoginPassowd { get; set; } = string.Empty;
 
-        public ReactiveCommand<Window, Unit> RegisterCommand { get; }
+        public ReactiveCommand<Unit, Unit> RegisterCommand { get; }
 
-        public ReactiveCommand<Window, Unit> AcceptLoginCommand { get; }
+        public ReactiveCommand<Unit, bool> AcceptLoginCommand { get; }
 
-        public ReactiveCommand<Window, Unit> ContinueLocalCommand { get; }
+        public ReactiveCommand<Unit, Unit> ContinueLocalCommand { get; }
+
+        public Interaction<RegisterViewModel, Unit> ShowRegisterDialog { get; }
+
+        public Interaction<MainWindowViewModel, Unit> ShowMainWindowDialog { get; }
 
         public LoginViewModel(
             ILoginRepository? loginRepository = null,
@@ -46,18 +49,21 @@ namespace VirsTimer.DesktopApp.ViewModels
                 x => x.LoginPassowd,
                 (name, password) => !string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(password));
 
-            RegisterCommand = ReactiveCommand.CreateFromTask<Window>(Register);
-            AcceptLoginCommand = ReactiveCommand.CreateFromTask<Window>(AcceptLoginAsync, acceptLoginEnabled);
-            ContinueLocalCommand = ReactiveCommand.CreateFromTask<Window>(ContinueLocal);
+            RegisterCommand = ReactiveCommand.CreateFromTask(Register);
+            AcceptLoginCommand = ReactiveCommand.CreateFromTask(AcceptLoginAsync, acceptLoginEnabled);
+            ContinueLocalCommand = ReactiveCommand.CreateFromTask(ContinueLocalAsync);
+
+            ShowRegisterDialog = new Interaction<RegisterViewModel, Unit>();
+            ShowMainWindowDialog = new Interaction<MainWindowViewModel, Unit>();
         }
 
-        private async Task Register(Window parent)
+        private async Task Register()
         {
-            var registerWindow = new RegisterView();
-            await registerWindow.ShowDialog(parent).ConfigureAwait(true);
+            var registerViewModel = new RegisterViewModel();
+            await ShowRegisterDialog.Handle(registerViewModel);
         }
 
-        private async Task AcceptLoginAsync(Window parent)
+        private async Task<bool> AcceptLoginAsync()
         {
             IsBusy = true;
 
@@ -67,26 +73,31 @@ namespace VirsTimer.DesktopApp.ViewModels
             if (response.IsSuccesfull)
             {
                 SnackbarViewModel.Disposed = true;
+
                 await Ioc.AddApplicationCacheAsync(serverSide: true);
                 Ioc.ConfigureServerServices(response.Value);
-                var mainWinow = new MainWindow();
-                mainWinow.Show();
-                parent.Close();
+
+                var mainWindowViewModel = new MainWindowViewModel();
+                await ShowMainWindowDialog.Handle(mainWindowViewModel);
+
+                return true;
             }
 
             var message = _loginStatusConverter.Convert(response.Status);
             SnackbarViewModel.QueueMessage.Execute(message).Subscribe();
             ShowUnsuccesfullControlAsync();
             IsBusy = false;
+
+            return false;
         }
 
-        private async Task ContinueLocal(Window parent)
+        private async Task ContinueLocalAsync()
         {
             await Ioc.AddApplicationCacheAsync();
             Ioc.ConfigureLocalServices();
-            var mainWinow = new MainWindow();
-            mainWinow.Show();
-            parent.Close();
+
+            var mainWindowViewModel = new MainWindowViewModel();
+            await ShowMainWindowDialog.Handle(mainWindowViewModel);
         }
     }
 }
