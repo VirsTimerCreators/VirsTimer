@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using ReactiveUI;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.ViewModels;
 
@@ -15,8 +16,10 @@ namespace VirsTimer.DesktopApp.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
-            ViewModel = new MainWindowViewModel();
-            Construct();
+            this.WhenActivated(disposableRegistration =>
+            {
+                Construct();
+            });
         }
 
         private async void Construct()
