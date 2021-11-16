@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Handlers;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Models.Requests;
 using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.Core.Services.Events
@@ -34,22 +36,28 @@ namespace VirsTimer.Core.Services.Events
         /// </summary>
         public async Task<RepositoryResponse<IReadOnlyList<Event>>> GetEventsAsync()
         {
-            using var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
             var httpRequestFunc = () => client.GetAsync(Server.Endpoints.Event.Get);
             var response = await _httpResponseHandler.HandleAsync<IReadOnlyList<Event>>(httpRequestFunc).ConfigureAwait(false);
             return response;
         }
 
-        // dodać poniżesze funkcje gdy backend będzie gotowy
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        public async Task<RepositoryResponse<Event>> AddEventAsync(Event @event)
+        public async Task<RepositoryResponse> AddEventAsync(Event @event)
         {
-            @event.Id = Guid.NewGuid().ToString();
-            return new RepositoryResponse<Event>(@event);
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var request = new EventPostRequest(@event.Name);
+            var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Event.Post, request, Json.ServerSerializerOptions);
+            var response = await _httpResponseHandler.HandleAsync<EventPostResponse>(httpRequestFunc).ConfigureAwait(false);
+            if (response.IsSuccesfull)
+                @event.Id = response.Value!.Id;
+
+            return response;
         }
 
+        // dodać poniżesze funkcje gdy backend będzie gotowy
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
