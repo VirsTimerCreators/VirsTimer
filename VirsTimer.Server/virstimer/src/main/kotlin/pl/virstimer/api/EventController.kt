@@ -33,7 +33,7 @@ internal class EventController(val repository: EventRepository) {
 
     @DeleteMapping("/{eventId}")
     @Secured("ROLE_USER")
-    fun deleteEventById(@PathVariable eventId: String) = repository.deleteEventById(eventId)
+    fun deleteEventByIdAndUserId(@PathVariable eventId: String, authentication: Authentication) = repository.deleteEventByIdAndUserId(eventId, authentication.name)
 
     @DeleteMapping
     @Secured("ROLE_USER")
