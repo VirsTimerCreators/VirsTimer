@@ -10,7 +10,6 @@
         Title="Rejestracja"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
-        xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
         ExtendClientAreaToDecorationsHint="True">
     <Panel>
         <ExperimentalAcrylicBorder
@@ -35,100 +34,81 @@
                     MinHeight="10"
                     Margin="20,0,20,10">
                     <ProgressBar
+						x:Name="ProgressBar"
                         IsIndeterminate="True"
-                        HorizontalAlignment="Right"
-                        IsVisible="{Binding IsBusy}"/>
+                        HorizontalAlignment="Right"/>
                 </Panel>
             </StackPanel>
             <StackPanel Margin="100 0">
                 <TextBox
+					x:Name="LoginTextBox"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
                     MinHeight="40"
                     Margin="0 20 0 0"
                     Watermark="Login"
-                    VerticalContentAlignment="Center"
-                    Text="{Binding Login}"/>
+                    VerticalContentAlignment="Center"/>
                 <Panel MinHeight="40">
                     <TextBlock
+						x:Name="LoginAlertTextBlock"
                         Foreground="Red"
                         HorizontalAlignment="Left"
-                        Text="Login powinien się składać z co najmniej 3 liter (może zawierać kropki i myślniki).">
-                        <TextBlock.IsVisible>
-                            <MultiBinding Converter="{converters:AlertFromBoolConverter}">
-                                <Binding Path="LoginOk"/>
-                                <Binding Path="Login"/>
-                            </MultiBinding>
-                        </TextBlock.IsVisible>
+						TextWrapping="WrapWithOverflow"
+                        Text="Login powinien się składać z co najmniej 3 liter (może zawierać dodatkowo cyfry, kropki i myślniki).">
                     </TextBlock>
                 </Panel>
                 <TextBox
+					x:Name="EmailTextBox"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
                     MinHeight="40"
                     Watermark="Email"
-                    VerticalContentAlignment="Center"
-                    Text="{Binding Email}"/>
+                    VerticalContentAlignment="Center"/>
                 <Panel MinHeight="40">
                     <TextBlock
+						x:Name="EmailAlertTextBlock"
                         Foreground="Red"
                         HorizontalAlignment="Left"
                         Text="Format email nie jest prawidłowy.">
-                        <TextBlock.IsVisible>
-                            <MultiBinding Converter="{converters:AlertFromBoolConverter}">
-                                <Binding Path="EmailOk"/>
-                                <Binding Path="Email"/>
-                            </MultiBinding>
-                        </TextBlock.IsVisible>
                     </TextBlock>
                 </Panel>
 
                 <TextBox
+					x:Name="PasswordTextBox"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
                     MinHeight="40"
                     Watermark="Hasło"
                     VerticalContentAlignment="Center"
-                    Name="PasswordTextBox"
-                    Text="{Binding Password}"/>
+                    Name="PasswordTextBox"/>
                 <Panel MinHeight="40">
                     <TextBlock
+						x:Name="PasswordAlertTextBlock"
                         Foreground="Red"
                         HorizontalAlignment="Left"
                         Text="Hasło powinno składać się z co najmniej 5 znaków."
                         TextWrapping="WrapWithOverflow">
-                        <TextBlock.IsVisible>
-                            <MultiBinding Converter="{converters:AlertFromBoolConverter}">
-                                <Binding Path="PasswordOk"/>
-                                <Binding Path="Password"/>
-                            </MultiBinding>
-                        </TextBlock.IsVisible>
                     </TextBlock>
                 </Panel>
 
                 <TextBox
+					x:Name="RepeatPasswordTextBox"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
                     MinHeight="40"
                     Watermark="Powtórz hasło"
                     VerticalContentAlignment="Center"
-                    Name="RepeatPasswordTextBox"
-                    Text="{Binding RepeatedPassword}"/>
+                    Name="RepeatPasswordTextBox"/>
                 <TextBlock
+					x:Name="PasswordNotSameAlertTextBlock"
                     Foreground="Red"
                     HorizontalAlignment="Left"
-                    Text="Hasła nie są takie same."
-                    IsVisible="{Binding !PasswordsAreSame}">
-                    <TextBlock.IsVisible>
-                        <MultiBinding Converter="{converters:AlertFromBoolConverter}">
-                            <Binding Path="PasswordsAreSame"/>
-                            <Binding Path="Password"/>
-                        </MultiBinding>
-                    </TextBlock.IsVisible>
+                    Text="Hasła nie są takie same.">
                 </TextBlock>
             </StackPanel>
         </StackPanel>
         <Button
+			x:Name="AcceptButton"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Right"
             MinWidth="150"
@@ -136,25 +116,11 @@
             VerticalContentAlignment="Center"
             HorizontalContentAlignment="Center"
             Content="Akceptuj"
-            Margin="20"
-            Command="{Binding AcceptRegisterCommand}"
-            CommandParameter="{Binding $parent[Window]}"/>
-        <TextBlock
-            Padding="20"
+            Margin="20"/>
+		<ContentControl
+			Content="{Binding SnackbarViewModel}"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
-            MaxWidth="210"
-            TextAlignment="Left"
-            TextWrapping="WrapWithOverflow"
-            IsVisible="{Binding IsResponseUnsccesfull}"
-            Background="#ed924c"
-            Foreground="Black">
-            <TextBlock.Text>
-                <MultiBinding Converter="{converters:RegisterStatusConverter}">
-                    <Binding Path="RegisterStatus"/>
-                    <Binding Path="RegisterMessage"/>
-                </MultiBinding>
-            </TextBlock.Text>
-        </TextBlock>
+			ZIndex="5"/>
     </Panel>
 </reactiveui:ReactiveWindow>

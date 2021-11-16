@@ -3,7 +3,7 @@ using VirsTimer.Core.Models.Responses;
 
 namespace VirsTimer.DesktopApp.ValueConverters
 {
-    public class LoginStatusConverter : IExplicitValueConverter<RepositoryResponseStatus, string>
+    public class LoginStatusConverter : IValueConverter<RepositoryResponseStatus, string>
     {
         public string Convert(RepositoryResponseStatus value)
         {

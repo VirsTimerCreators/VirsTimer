@@ -15,7 +15,7 @@ namespace VirsTimer.DesktopApp.ViewModels
     public class LoginViewModel : ViewModelBase
     {
         private readonly ILoginRepository _loginRepository;
-        private readonly IExplicitValueConverter<RepositoryResponseStatus, string> _loginStatusConverter;
+        private readonly IValueConverter<RepositoryResponseStatus, string> _loginStatusConverter;
 
         public SnackbarViewModel SnackbarViewModel { get; }
 
@@ -37,7 +37,7 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public LoginViewModel(
             ILoginRepository? loginRepository = null,
-            IExplicitValueConverter<RepositoryResponseStatus, string>? repositoryResponseValueConverter = null)
+            IValueConverter<RepositoryResponseStatus, string>? repositoryResponseValueConverter = null)
         {
             _loginRepository = loginRepository ?? Ioc.GetService<ILoginRepository>();
             _loginStatusConverter = repositoryResponseValueConverter ?? new LoginStatusConverter();
@@ -84,7 +84,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             }
 
             var message = _loginStatusConverter.Convert(response.Status);
-            SnackbarViewModel.QueueMessage.Execute(message).Subscribe();
+            await SnackbarViewModel.QueueMessage.Execute(message);
             ShowUnsuccesfullControlAsync();
             IsBusy = false;
 

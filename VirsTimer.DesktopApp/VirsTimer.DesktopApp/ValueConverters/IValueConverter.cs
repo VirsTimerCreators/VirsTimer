@@ -1,6 +1,6 @@
 ﻿namespace VirsTimer.DesktopApp.ValueConverters
 {
-    public interface IExplicitValueConverter<T, K>
+    public interface IValueConverter<T, K>
     {
         public K Convert(T value);
     }
