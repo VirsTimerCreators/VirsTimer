@@ -6,17 +6,19 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.model.Event
+import pl.virstimer.repository.EventCustomRepository
 import pl.virstimer.repository.EventRepository
 import java.util.*
 
 @RestController
-internal class EventController(val repository: EventRepository) {
+@RequestMapping("/event")
+internal class EventController(val repository: EventRepository, val customRepository: EventCustomRepository) {
 
-    @GetMapping("/event")
+    @GetMapping
     @Secured("ROLE_USER")
     fun findAllForUser(authentication: Authentication): List<Event> = repository.findByUserId(authentication.name)
 
-    @PostMapping("/event")
+    @PostMapping
     @Secured("ROLE_USER")
     fun createEvent(@RequestBody request: EventRequest, authentication: Authentication): ResponseEntity<Event> {
         val event = repository.save(
@@ -28,6 +30,14 @@ internal class EventController(val repository: EventRepository) {
         )
         return ResponseEntity(event, HttpStatus.CREATED)
     }
+
+    @PatchMapping("/{eventId}")
+    @Secured("ROLE_USER")
+    fun updateEvent(@PathVariable eventId: String, @RequestBody event: EventRequest, authentication: Authentication)
+    : ResponseEntity<Unit> {
+        customRepository.updateEvent(eventId, event, authentication.name)
+        return ResponseEntity.ok(Unit)
+    }
 }
 
-data class EventRequest (val puzzleType: String)
+data class EventRequest(val puzzleType: String)
