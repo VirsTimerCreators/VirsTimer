@@ -2,12 +2,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        MinWidth="600"
-        MinHeight="450"
-        Width="600"
-        Height="450"
-        MaxWidth="600"
-        MaxHeight="450"
+        MinWidth="450"
+        MinHeight="700"
+        Width="450"
+        Height="700"
+        MaxWidth="450"
+        MaxHeight="700"
         x:Class="VirsTimer.DesktopApp.Views.Events.EventChangeView"
         Title="EventChangeView"
         TransparencyLevelHint="AcrylicBlur"
@@ -56,7 +56,7 @@
                             Content="Zmień nazwę"
                             Command="{Binding RenameCommand}"
                             Click="ClickWithUnselect"
-                            IsVisible="{Binding !EditingEvent}"/>
+                            IsVisible="{Binding CanEdit}"/>
                         <Button
                             Margin="15 0 0 0"
                             Grid.Column="2"
@@ -65,7 +65,7 @@
                             Command="{Binding $parent[Window].DataContext.DeleteEventCommand}"
                             CommandParameter="{Binding}"
                             Click="ClickWithUnselect"
-                            IsVisible="{Binding !EditingEvent}"/>
+                            IsVisible="{Binding CanEdit}"/>
                         <Button
                             Grid.Column="1"
                             Grid.ColumnSpan="2"

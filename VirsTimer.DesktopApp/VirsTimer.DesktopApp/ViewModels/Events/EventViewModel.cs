@@ -30,6 +30,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
             }
         }
 
+        [ObservableAsProperty]
+        public bool CanEdit { get; set; }
+
         public ReactiveCommand<Unit, Unit> RenameCommand { get; }
 
         public EventViewModel(Event @event)
@@ -41,8 +44,13 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
                 .Select(n => CoreEvents.Predefined.Any(e => e == n))
                 .ToPropertyEx(this, x => x.IsPredefined);
 
-            var canRename = this.WhenAnyValue(x => x.IsPredefined).Select(x => !x);
-            RenameCommand = ReactiveCommand.Create(() => { EditingEvent = true; }, canRename);
+            this.WhenAnyValue(
+                x => x.EditingEvent,
+                x => x.IsPredefined,
+                (x, y) => !x && !y)
+                .ToPropertyEx(this, x => x.CanEdit);
+
+            RenameCommand = ReactiveCommand.Create(() => { EditingEvent = true; });
         }
     }
 }
