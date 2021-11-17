@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace VirsTimer.Core.Constants
 {
@@ -31,6 +33,16 @@ namespace VirsTimer.Core.Constants
                 /// POST event.
                 /// </summary>
                 public static string Post => EventsResource;
+
+                /// <summary>
+                /// PATCH event by id.
+                /// </summary>
+                public static string Patch(string eventId) => Path.Combine(EventsResource, eventId);
+
+                /// <summary>
+                /// DELETE event by id.
+                /// </summary>
+                public static string Delete(string eventId) => Path.Combine(EventsResource, eventId);
             }
 
 
@@ -112,8 +124,6 @@ namespace VirsTimer.Core.Constants
                 /// </summary>
                 public static string Register => Path.Combine(AuthResource, "signup");
             }
-
-            private const string All = "all";
 
             /// <summary>
             /// Events endpoint.
@@ -221,6 +231,82 @@ namespace VirsTimer.Core.Constants
             /// 5x5x5 blindfolded.
             /// </summary>
             public const string FiveByFiveBlindfold = "FIVE_BY_FIVE_BLINDFOLDED";
+
+            /// <summary>
+            /// All predefined events.
+            /// </summary>
+            public static readonly IReadOnlyList<string> All = new[]
+            {
+                ThreeByThree,
+                TwoByTwo,
+                FourByFour,
+                FiveByFive,
+                SixBySix,
+                SevenBySeven,
+                Megaminx,
+                Pyraminx,
+                Skewb,
+                SquareOne,
+                Clock,
+                ThreeByThreeOneHand,
+                ThreeByThreeBlindfold,
+                FourByFourBlindfold,
+                FiveByFiveBlindfold
+            };
+
+            /// <summary>
+            /// Gets server event name.
+            /// </summary>
+            /// <exception cref="ArgumentException"></exception>
+            public static string GetServerEventName(string eventName)
+            {
+                return eventName switch
+                {
+                    Constants.Events.TwoByTwo => TwoByTwo,
+                    Constants.Events.ThreeByThree => ThreeByThree,
+                    Constants.Events.FourByFour => FourByFour,
+                    Constants.Events.FiveByFive => FiveByFive,
+                    Constants.Events.SixBySix => SixBySix,
+                    Constants.Events.SevenBySeven => SevenBySeven,
+                    Constants.Events.Pyraminx => Pyraminx,
+                    Constants.Events.Megaminx => Megaminx,
+                    Constants.Events.Skewb => Skewb,
+                    Constants.Events.SquareOne => SquareOne,
+                    Constants.Events.Clock => Clock,
+                    Constants.Events.ThreeByThreeBlindfold => ThreeByThreeBlindfold,
+                    Constants.Events.ThreeByThreeOneHand => ThreeByThreeOneHand,
+                    Constants.Events.FourByFourBlindfold => FourByFourBlindfold,
+                    Constants.Events.FiveByFiveBlindfold => FiveByFiveBlindfold,
+                    _ => eventName
+                };
+            }
+
+            /// <summary>
+            /// Gets application event name.
+            /// </summary>
+            /// <exception cref="ArgumentException"></exception>
+            public static string GetEventName(string serverEventName)
+            {
+                return serverEventName switch
+                {
+                    TwoByTwo => Constants.Events.TwoByTwo,
+                    ThreeByThree => Constants.Events.ThreeByThree,
+                    FourByFour => Constants.Events.FourByFour,
+                    FiveByFive => Constants.Events.FiveByFive,
+                    SixBySix => Constants.Events.SixBySix,
+                    SevenBySeven => Constants.Events.SevenBySeven,
+                    Pyraminx => Constants.Events.Pyraminx,
+                    Megaminx => Constants.Events.Megaminx,
+                    Skewb => Constants.Events.Skewb,
+                    SquareOne => Constants.Events.SquareOne,
+                    Clock => Constants.Events.Clock,
+                    ThreeByThreeBlindfold => Constants.Events.ThreeByThreeBlindfold,
+                    ThreeByThreeOneHand => Constants.Events.ThreeByThreeOneHand,
+                    FourByFourBlindfold => Constants.Events.FourByFourBlindfold,
+                    FiveByFiveBlindfold => Constants.Events.FiveByFiveBlindfold,
+                    _ => serverEventName
+                };
+            }
         }
     }
 }

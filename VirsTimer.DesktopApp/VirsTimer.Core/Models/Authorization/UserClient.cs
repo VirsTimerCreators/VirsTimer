@@ -10,6 +10,7 @@ namespace VirsTimer.Core.Models.Authorization
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
+        [JsonPropertyName("username")]
         public string Id { get; }
 
         /// <summary>

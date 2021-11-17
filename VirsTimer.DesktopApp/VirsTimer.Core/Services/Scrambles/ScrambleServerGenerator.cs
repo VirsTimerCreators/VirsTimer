@@ -35,35 +35,13 @@ namespace VirsTimer.Core.Services.Scrambles
                 return Enumerable.Repeat(Scramble.Empty, scramblesAmount).ToList();
 
             using var httpClient = _httpClientFactory.CreateClient();
-            var endpoint = Server.Endpoints.Scramble.Get(GetServerEventName(@event.Name));
+            var serverEventName = Server.Events.GetServerEventName(@event.Name);
+            var endpoint = Server.Endpoints.Scramble.Get(serverEventName);
             var tasks = Enumerable.Range(0, scramblesAmount).Select(i => httpClient.GetFromJsonAsync<Scramble>(endpoint));
             var scrambles = await Task.WhenAll(tasks).ConfigureAwait(false);
             if (scrambles is null)
                 return Array.Empty<Scramble>();
             return scrambles.Where(scramble => scramble != null).ToList()!;
-        }
-
-        private static string GetServerEventName(string eventName)
-        {
-            return eventName switch
-            {
-                Constants.Events.TwoByTwo => Server.Events.TwoByTwo,
-                Constants.Events.ThreeByThree => Server.Events.ThreeByThree,
-                Constants.Events.FourByFour => Server.Events.FourByFour,
-                Constants.Events.FiveByFive => Server.Events.FiveByFive,
-                Constants.Events.SixBySix => Server.Events.SixBySix,
-                Constants.Events.SevenBySeven => Server.Events.SevenBySeven,
-                Constants.Events.Pyraminx => Server.Events.Pyraminx,
-                Constants.Events.Megaminx => Server.Events.Megaminx,
-                Constants.Events.Skewb => Server.Events.Skewb,
-                Constants.Events.SquareOne => Server.Events.SquareOne,
-                Constants.Events.Clock => Server.Events.Clock,
-                Constants.Events.ThreeByThreeBlindfold => Server.Events.ThreeByThreeBlindfold,
-                Constants.Events.ThreeByThreeOneHand => Server.Events.ThreeByThreeOneHand,
-                Constants.Events.FourByFourBlindfold => Server.Events.FourByFourBlindfold,
-                Constants.Events.FiveByFiveBlindfold => Server.Events.FiveByFiveBlindfold,
-                _ => throw new ArgumentException(nameof(eventName))
-            };
         }
     }
 }

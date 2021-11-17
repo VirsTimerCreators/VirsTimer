@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
+using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Handlers;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Requests;
@@ -39,6 +41,15 @@ namespace VirsTimer.Core.Services.Events
             var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
             var httpRequestFunc = () => client.GetAsync(Server.Endpoints.Event.Get);
             var response = await _httpResponseHandler.HandleAsync<IReadOnlyList<Event>>(httpRequestFunc).ConfigureAwait(false);
+            if (response.IsSuccesfull)
+            {
+                response!.Value.ForEach(e =>
+                {
+                    if (Server.Events.All.Contains(e.Name))
+                        e.Name = Server.Events.GetEventName(e.Name);
+                });
+            };
+
             return response;
         }
 
@@ -57,21 +68,37 @@ namespace VirsTimer.Core.Services.Events
             return response;
         }
 
-        // dodać poniżesze funkcje gdy backend będzie gotowy
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        public async Task<RepositoryResponse> DeleteEventAsync(Event @event)
-        {
-            return RepositoryResponse.Ok;
-        }
-
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         public async Task<RepositoryResponse> UpdateEventAsync(Event @event)
         {
-            return RepositoryResponse.Ok;
+            if (@event.Id == null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Event Id cannot be null.");
+
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var endpoint = Server.Endpoints.Event.Patch(@event.Id);
+            var request = new EventPatchRequest(@event.Name);
+            var httpResponseFunc = () => client.PatchAsJsonAsync(endpoint, request);
+            var response = await _httpResponseHandler.HandleAsync(httpResponseFunc).ConfigureAwait(false);
+
+            return response;
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public async Task<RepositoryResponse> DeleteEventAsync(Event @event)
+        {
+            if (@event.Id == null)
+                return new RepositoryResponse(RepositoryResponseStatus.ClientError, "Event Id cannot be null.");
+
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var endpoint = Server.Endpoints.Event.Delete(@event.Id);
+            var httpResponseFunc = () => client.DeleteAsync(endpoint);
+            var response = await _httpResponseHandler.HandleAsync(httpResponseFunc).ConfigureAwait(false);
+
+            return response;
         }
     }
 }
