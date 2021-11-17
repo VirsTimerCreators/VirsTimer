@@ -22,6 +22,9 @@ namespace VirsTimer.DesktopApp.ViewModels
     {
         private readonly ISolvesRepository _solvesRepository;
 
+        [Reactive]
+        public bool IsBusyManual { get; set; }
+
         [ObservableAsProperty]
         public new bool IsBusy { get; set; }
 
@@ -74,7 +77,8 @@ namespace VirsTimer.DesktopApp.ViewModels
                 x => x.SolvesListViewModel.IsBusy,
                 x => x.ScrambleViewModel.IsBusy,
                 x => x.StatisticsViewModel.IsBusy,
-                (b1, b2, b3, b4, b5) => b1 || b2 || b3 || b4 || b5)
+                x => x.IsBusyManual,
+                (b1, b2, b3, b4, b5, b6) => b1 || b2 || b3 || b4 || b5 || b6)
                 .ToPropertyEx(this, x => x.IsBusy);
         }
 
@@ -85,12 +89,12 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public async Task SaveSolveAsync(Solve solve)
         {
-            IsBusy = true;
+            IsBusyManual = true;
             await _solvesRepository.AddSolveAsync(solve).ConfigureAwait(false);
             SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve, _solvesRepository));
 
             await ScrambleViewModel.GetNextScrambleAsync().ConfigureAwait(false);
-            IsBusy = false;
+            IsBusyManual = false;
         }
 
         private async Task AddSolveManually(Window window)

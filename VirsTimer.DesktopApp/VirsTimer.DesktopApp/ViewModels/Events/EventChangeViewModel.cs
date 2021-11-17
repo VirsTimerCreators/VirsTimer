@@ -9,6 +9,7 @@ using DynamicData.Alias;
 using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using VirsTimer.Core.Constants;
 using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Events;
@@ -57,7 +58,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
                 .Select(vms =>
                 {
                     return vms.All(vm => !string.IsNullOrWhiteSpace(vm.Name))
-                    && vms.AllDistinctBy(vm => vm.Name);
+                    && vms.AllDistinctBy(vm => vm.Name)
+                    && Server.Events.All
+                    .All(serverEvent => vms.Count(vm => Server.Events.GetServerEventName(vm.Name) == serverEvent) <= 1);
                 });
 
             AcceptRenameEventCommand = ReactiveCommand.CreateFromTask<EventViewModel, Event>(AcceptRename, canAcceptRenaming);
