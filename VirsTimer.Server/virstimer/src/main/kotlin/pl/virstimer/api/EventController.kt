@@ -1,5 +1,6 @@
 package pl.virstimer.api
 
+import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
@@ -12,6 +13,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/event")
+
 internal class EventController(val repository: EventRepository, val customRepository: EventCustomRepository) {
 
     @GetMapping
@@ -37,6 +39,16 @@ internal class EventController(val repository: EventRepository, val customReposi
     : ResponseEntity<Unit> {
         customRepository.updateEvent(eventId, event, authentication.name)
         return ResponseEntity.ok(Unit)
+    }
+    
+    @DeleteMapping("/{eventId}")
+    @Secured("ROLE_USER")
+    fun deleteEventByIdAndUserId(@PathVariable eventId: String, authentication: Authentication) = repository.deleteEventByIdAndUserId(eventId, authentication.name)
+
+    @DeleteMapping
+    @Secured("ROLE_USER")
+    fun deleteAllUserEvents(authentication: Authentication){
+        repository.deleteAllByUserId(authentication.name)
     }
 }
 
