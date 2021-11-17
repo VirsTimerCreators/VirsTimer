@@ -54,7 +54,7 @@ class SessionController(
 
     @DeleteMapping("/{sessionId}")
     @Secured("ROLE_USER")
-    fun deleteSessionById(@PathVariable sessionId: ObjectId) = repository.deleteSessionById(sessionId)
+    fun deleteSessionByIdAndUserId(@PathVariable sessionId: String, authentication: Authentication) = repository.deleteSessionByIdAndUserId(sessionId, authentication.name)
 
     @DeleteMapping
     @Secured("ROLE_USER")
