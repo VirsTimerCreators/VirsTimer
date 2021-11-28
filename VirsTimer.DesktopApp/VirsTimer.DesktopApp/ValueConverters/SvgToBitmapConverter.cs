@@ -29,7 +29,7 @@ namespace VirsTimer.DesktopApp.ValueConverters
             var xmldocument = new XmlDocument();
             xmldocument.LoadXml(str);
             var svgDocument = SvgDocument.Open(xmldocument);
-            using var bitmap = svgDocument.Draw(1500, 1000);
+            using var bitmap = svgDocument.Draw(1500, 0);
             var avaloniaBitmap = new Bitmap(bitmap.ToStream());
 
             return avaloniaBitmap;
