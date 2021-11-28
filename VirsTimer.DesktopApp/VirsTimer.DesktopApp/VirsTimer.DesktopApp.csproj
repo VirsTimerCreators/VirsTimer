@@ -8,6 +8,14 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Resources\QuestionMark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\QuestionMark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.2" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.2" />
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.2" />

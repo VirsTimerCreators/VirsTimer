@@ -13,16 +13,20 @@
                     MaterialOpacity="1" />
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
-        <TextBlock
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center"
-            Text="{Binding CurrentScramble.Value}"
-            TextWrapping="WrapWithOverflow"
-            MinWidth="200"
-            FontSize="42"
-            Foreground="White"
-            FontFamily="Consolas"
-            FontWeight="Regular"
-            Padding="30"/>
+		<ScrollViewer>
+			<TextBlock
+				ScrollViewer.HorizontalScrollBarVisibility="Auto"
+				ScrollViewer.VerticalScrollBarVisibility="Disabled"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="{Binding CurrentScramble.Value}"
+				TextWrapping="WrapWithOverflow"
+				MinWidth="200"
+				FontSize="42"
+				Foreground="White"
+				FontFamily="Consolas"
+				FontWeight="Regular"
+				Padding="30"/>
+		</ScrollViewer>
     </Panel>
 </UserControl>
