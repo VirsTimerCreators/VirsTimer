@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.ViewModels.Events;
+using VirsTimer.DesktopApp.ViewModels.Export;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
 using VirsTimer.DesktopApp.ViewModels.Sessions;
 using VirsTimer.DesktopApp.ViewModels.Solves;
@@ -37,6 +38,10 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public ReactiveCommand<Window, Unit> AddSolveManualyCommand { get; }
         public ReactiveCommand<Unit, Unit> ExitCommand { get; }
+        public ReactiveCommand<Unit, Unit> ExportCommand { get; }
+
+
+        public Interaction<ExportsViewModel, Unit> ShowExportDialog { get; }
 
         public MainWindowViewModel()
         {
@@ -80,11 +85,20 @@ namespace VirsTimer.DesktopApp.ViewModels
                 x => x.IsBusyManual,
                 (b1, b2, b3, b4, b5, b6) => b1 || b2 || b3 || b4 || b5 || b6)
                 .ToPropertyEx(this, x => x.IsBusy);
+
+            ShowExportDialog = new Interaction<ExportsViewModel, Unit>();
+            ExportCommand = ReactiveCommand.CreateFromTask(ExportAsync);
         }
 
         public override async Task ConstructAsync()
         {
             await EventViewModel.ConstructAsync().ConfigureAwait(false);
+        }
+
+        private async Task ExportAsync()
+        {
+            var exportsViewModel = new ExportsViewModel(SolvesListViewModel.Solves);
+            await ShowExportDialog.Handle(exportsViewModel);
         }
 
         public async Task SaveSolveAsync(Solve solve)

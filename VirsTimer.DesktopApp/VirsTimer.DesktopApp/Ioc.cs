@@ -6,6 +6,7 @@ using System.IO.Abstractions;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
+using VirsTimer.Core.Export;
 using VirsTimer.Core.Handlers;
 using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Services;
@@ -66,6 +67,9 @@ namespace VirsTimer.DesktopApp
             services.AddSingleton<IRegisterRepository, RegisterServerRepository>();
             services.AddSingleton<ICustomScrambleGeneratorsCollector, AssemblyCustomScrambleGeneratorsCollector>();
             services.AddHttpClient();
+
+            services.AddSingleton<ISolvesJsonExporter, SolvesJsonExporter>();
+            services.AddSingleton<ISolvesCsvExporter, SolvesCsvExporter>();
 
             Services = ServiceDescriptors.BuildServiceProvider();
         }

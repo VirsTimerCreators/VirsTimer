@@ -16,15 +16,16 @@ namespace VirsTimer.DesktopApp.Views.Common
         private static readonly TimeSpan Speed = TimeSpan.FromMilliseconds(8);
         private static readonly TimeSpan Break = TimeSpan.FromMilliseconds(2000);
 
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
+        private readonly SemaphoreSlim _semaphoreSlim;
 
         public Border Border { get; }
         public TextBlock MessageTextBlock { get; }
 
         public SnackbarView()
         {
-            InitializeComponent();
+            _semaphoreSlim = new(1, 1);
 
+            InitializeComponent();
             Border = this.FindControl<Border>("Border");
             MessageTextBlock = this.FindControl<TextBlock>("MessageTextBlock");
 
@@ -41,6 +42,8 @@ namespace VirsTimer.DesktopApp.Views.Common
                 ViewModel!.QueueMessage.Subscribe(async _ => await Enqueue()).DisposeWith(disposableRegistration);
 
                 _semaphoreSlim.DisposeWith(disposableRegistration);
+
+                Parent!.ZIndex = -100;
             });
         }
 
@@ -66,6 +69,8 @@ namespace VirsTimer.DesktopApp.Views.Common
 
         public async Task MoveCanvasAsync()
         {
+            Parent!.ZIndex = 100;
+
             for (var i = HeightConst; i >= 0; i -= 4)
             {
                 await Task.Delay(Speed);
@@ -79,6 +84,8 @@ namespace VirsTimer.DesktopApp.Views.Common
                 await Task.Delay(Speed);
                 Canvas.SetTop(Border, i);
             }
+
+            Parent!.ZIndex = -100;
         }
     }
 }

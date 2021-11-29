@@ -1,0 +1,101 @@
+<reactiveui:ReactiveWindow
+	xmlns="https://github.com/avaloniaui"
+	xmlns:reactiveui="http://reactiveui.net"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
+	MinWidth="600"
+	MaxWidth="600"
+	MinHeight="400"
+	MaxHeight="400"
+    x:Class="VirsTimer.DesktopApp.Views.Export.ExportsView"
+    Title="ExportsView"
+	TransparencyLevelHint="AcrylicBlur"
+	Background="Transparent"
+	ExtendClientAreaToDecorationsHint="True">
+	<Panel>
+		<ExperimentalAcrylicBorder
+            IsHitTestVisible="False"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.75" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<DockPanel>
+			<Panel
+				DockPanel.Dock="Bottom">
+				<ContentControl
+					Width="400"
+					Content="{Binding SnackbarViewModel}"
+					VerticalAlignment="Bottom"
+					HorizontalAlignment="Center"
+					ZIndex="5"/>
+				<Button
+					x:Name="OkButton"
+					HorizontalAlignment="Right"
+					VerticalContentAlignment="Center"
+					HorizontalContentAlignment="Center"
+					Content="OK"
+					MinWidth="150"
+					MinHeight="40"
+					Margin="40 20"/>
+			</Panel>
+			<TextBlock
+				DockPanel.Dock="Top"
+				Text="Import oraz Eksport"
+				FontSize="14"
+				Margin="10 10 0 0"/>
+			<Grid
+				ColumnDefinitions="20,*,20,*,20"
+				RowDefinitions="10,*,20,*,20"
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch">
+				<Button
+					x:Name="ExportJsonButton"
+					Content="Eksportuj do formatu JSON"
+					Grid.Column="1"
+					Grid.Row="1"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					VerticalContentAlignment="Center"
+					HorizontalContentAlignment="Center"/>
+
+				<Button
+					x:Name="ImportJsonButton"
+					Content="Importuj z formatu JSON"
+					Grid.Column="1"
+					Grid.Row="3"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					VerticalContentAlignment="Center"
+					HorizontalContentAlignment="Center"/>
+
+				<Button
+					x:Name="ExportCsvButton"
+					Content="Eksportuj do formatu CSV"
+					Grid.Column="3"
+					Grid.Row="1"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					VerticalContentAlignment="Center"
+					HorizontalContentAlignment="Center"/>
+
+				<Button
+					x:Name="ImportCsvButton"
+					Content="Importuj z formatu CSV"
+					Grid.Column="3"
+					Grid.Row="3"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					VerticalContentAlignment="Center"
+					HorizontalContentAlignment="Center"/>
+			</Grid>
+		</DockPanel>
+	</Panel>
+</reactiveui:ReactiveWindow>

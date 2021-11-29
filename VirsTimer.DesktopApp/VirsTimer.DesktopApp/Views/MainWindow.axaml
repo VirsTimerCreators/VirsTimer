@@ -28,8 +28,8 @@
                     MaterialOpacity="0.75" />
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
-        <Grid Grid.Row="0" ColumnDefinitions="*,*,*,Auto">
-            <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="4">
+        <Grid Grid.Row="0" ColumnDefinitions="*,*,*,200,Auto">
+            <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="5">
                 <ExperimentalAcrylicBorder.Material>
                     <ExperimentalAcrylicMaterial
                         BackgroundSource="Digger"
@@ -49,10 +49,19 @@
                 Content="{Binding SessionSummaryViewModel}"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"/>
+			<Button
+                Margin="20,0,20,0"
+                Height="38"
+				HorizontalAlignment="Right"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Grid.Column="2"
+                Content="Eksport/Import ułożeń"
+                Command="{Binding ExportCommand}"/>
             <StackPanel
                 IsVisible="{Binding IsBusy}"
                 Width="200"
-                Grid.Column="2"
+                Grid.Column="3"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Right">
                 <ProgressBar Width="20" IsIndeterminate="True"/>
@@ -64,7 +73,7 @@
                 Width="90"
                 VerticalContentAlignment="Center"
                 HorizontalContentAlignment="Center"
-                Grid.Column="3"
+                Grid.Column="4"
                 Content="Wyjście"
                 Command="{Binding ExitCommand}"
                 Background="#cf8b0c"/>
