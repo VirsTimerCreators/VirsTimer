@@ -16,4 +16,8 @@
     <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
     <PackageReference Include="System.IO.Abstractions" Version="13.2.29" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VirsTimer.Scrambles\VirsTimer.Scrambles.csproj" />
+  </ItemGroup>
 </Project>

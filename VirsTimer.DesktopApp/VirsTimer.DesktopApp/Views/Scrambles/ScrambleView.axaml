@@ -13,16 +13,43 @@
                     MaterialOpacity="1" />
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
-        <TextBlock
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center"
-            Text="{Binding CurrentScramble.Value}"
-            TextWrapping="WrapWithOverflow"
-            MinWidth="200"
-            FontSize="42"
-            Foreground="White"
-            FontFamily="Consolas"
-            FontWeight="Regular"
-            Padding="30"/>
+		<DockPanel>
+			<Button
+				IsVisible="{Binding GenerateScrambleInfoVisible}"
+				Margin="5"
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch"
+				DockPanel.Dock="Right"
+				Command="{Binding OpenGenerateScrambleInfoCommand}"
+				CommandParameter="{Binding $parent[Window]}">
+				<StackPanel>
+					<Image
+						Source="/Assets/QuestionMark.png"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						MaxWidth="100"/>
+					<TextBlock
+						TextAlignment="Center"
+						Text="Generowanie scrambli"
+						TextWrapping="WrapWithOverflow"
+						Foreground="Black"/>
+				</StackPanel>
+			</Button>
+			<ScrollViewer>
+				<TextBlock
+					ScrollViewer.HorizontalScrollBarVisibility="Auto"
+					ScrollViewer.VerticalScrollBarVisibility="Disabled"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Text="{Binding CurrentScramble.Value}"
+					TextWrapping="WrapWithOverflow"
+					MinWidth="200"
+					FontSize="42"
+					Foreground="White"
+					FontFamily="Consolas"
+					FontWeight="Regular"
+					Padding="30"/>
+		</ScrollViewer>
+		</DockPanel>
     </Panel>
 </UserControl>

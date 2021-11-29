@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 
 namespace VirsTimer.Core.Constants
 {
@@ -25,5 +26,10 @@ namespace VirsTimer.Core.Constants
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 Company,
                 Name);
+
+        /// <summary>
+        /// Current application directory.
+        /// </summary>
+        public static string? CurrentDirectory => Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
     }
 }
