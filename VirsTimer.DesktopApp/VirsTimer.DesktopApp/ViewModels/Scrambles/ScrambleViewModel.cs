@@ -105,8 +105,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
         {
             var message = string.Join("\n\n",
                 "1. Stworzyć bibliotekę klas (Class Library) w technologii .NET 6.",
-                "2. Dodać paczkę VirsTimer.Scrambles z witryny nuget.org: \n" + 
-                "https://www.nuget.org/packages/Newtonsoft.Json/ \n" + 
+                "2. Dodać paczkę VirsTimer.Scrambles z witryny nuget.org: \n" +
+                "https://www.nuget.org/packages/VirsTimer.Scrambles/1.0.0 \n" + 
                 "do stworzonej bibliteki.",
                 "3. Zaimplementować interfejs ICustomScrambleGenerator gdzie w właściwości EventName należy umieścić nazwę stworzonej konkurencji w aplikacji.\n" +
                 "Biblioteka może zawierać wiele implemenacjia interfejsu, ale tylko jedną dla danej konkurencji.",
