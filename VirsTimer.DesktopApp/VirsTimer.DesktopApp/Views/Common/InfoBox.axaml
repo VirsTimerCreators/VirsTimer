@@ -4,10 +4,10 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	SizeToContent="WidthAndHeight"
+	SizeToContent="Height"
     Height="150" Width="200"
-    MinHeight="150" MinWidth="200"
-    MaxHeight="450" MaxWidth="600"
+    MinHeight="150" MinWidth="300"
+	MaxWidth="600"
 	x:Class="VirsTimer.DesktopApp.Views.Common.InfoBox"
 	Title="InfoBox"
 	TransparencyLevelHint="AcrylicBlur"
@@ -43,9 +43,10 @@
 				MinHeight="40"
 				Margin="20"/>
 			<TextBlock x:Name="MessageTextBox"
-				TextWrapping="WrapWithOverflow"
+				TextWrapping="Wrap"
 				Margin="20"
-				VerticalAlignment="Center"
+			    FontSize="16"
+				VerticalAlignment="Top"
 				HorizontalAlignment="Center"/>
 		</DockPanel>
 	</Panel>
