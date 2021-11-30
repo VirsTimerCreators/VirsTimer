@@ -48,11 +48,11 @@ class EventControllerTest : TestCommons() {
         val loginDetails = registerAndLogin("user-1", "user-1-pass")
 
         createEvent("1", "FIVE_BY_FIVE", loginDetails.authHeader).andExpect(MockMvcResultMatchers.status().isCreated)
-        val event  = mongoTemplate.find(Query(Criteria.where("userId").`is`("user-1")), Event::class.java).first()
+        val event  = mongoTemplate.find(Query(Criteria.where("userId").`is`("user-1")), Event::class.java).last()
         assert(event.puzzleType == "FIVE_BY_FIVE")
 
         patchEvent("updatedPuzzle", loginDetails.authHeader,event.id).andExpect(MockMvcResultMatchers.status().isOk)
-        assert(mongoTemplate.find(Query(Criteria.where("userId").`is`("user-1")), Event::class.java).first().puzzleType == "updatedPuzzle")
+        assert(mongoTemplate.find(Query(Criteria.where("userId").`is`("user-1")), Event::class.java).last().puzzleType == "updatedPuzzle")
     }
 
     @Test

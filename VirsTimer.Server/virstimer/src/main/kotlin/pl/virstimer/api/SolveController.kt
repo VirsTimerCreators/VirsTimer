@@ -49,6 +49,26 @@ class SolveController(
         )
         return ResponseEntity(solve, HttpStatus.CREATED)
     }
+    @PostMapping("/many")
+    @Secured("ROLE_USER")
+    fun createSolves(@RequestBody request: List<SolveRequest>, authentication: Authentication):ResponseEntity<MutableList<Solve>> {
+        var solves = mutableListOf<Solve>()
+        request.forEach{
+            solves.add(
+                Solve(
+                    id = UUID.randomUUID().toString(),
+                    userId = authentication.name,
+                    sessionId = it.sessionId,
+                    scramble = it.scramble,
+                    time = it.time,
+                    timestamp = it.timestamp,
+                    solved = it.solved
+                )
+            )
+        }
+        solves = repository.saveAll(solves)
+        return ResponseEntity(solves, HttpStatus.CREATED)
+    }
 
     @PatchMapping("/{solveId}")
     @Secured("ROLE_USER")

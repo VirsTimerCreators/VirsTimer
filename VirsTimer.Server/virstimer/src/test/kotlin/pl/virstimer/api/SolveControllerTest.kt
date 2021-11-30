@@ -73,14 +73,24 @@ class SolveControllerTest : TestCommons() {
     }
 
     @Test
+    fun should_post_solves(){
+        val auth = registerAndLogin("manySolves", "password").authHeader
+
+        createSolves("1", Solved.OK, auth).andExpect(MockMvcResultMatchers.status().isCreated)
+        val solves = mongoTemplate.find(Query(Criteria.where("userId").`is`("manySolves")), Solve::class.java)
+        assert(solves.count() == 2)
+        assert(solves.last().solved == Solved.OK)
+    }
+
+    @Test
     fun should_patch_solve() {
         val auth = registerAndLogin("username", "password").authHeader
 
         createSolve("1", Solved.PLUS_TWO, auth).andExpect(MockMvcResultMatchers.status().isCreated)
-        val solve = mongoTemplate.find(Query(Criteria.where("userId").`is`("username")), Solve::class.java).first()
+        val solve = mongoTemplate.find(Query(Criteria.where("userId").`is`("username")), Solve::class.java).last()
         assert(solve.solved == Solved.PLUS_TWO)
 
         patchSolve(solve.id, Solved.DNF, auth).andExpect(MockMvcResultMatchers.status().isOk)
-        assert(mongoTemplate.find(Query(Criteria.where("userId").`is`("username")), Solve::class.java).first().solved == Solved.DNF)
+        assert(mongoTemplate.find(Query(Criteria.where("userId").`is`("username")), Solve::class.java).last().solved == Solved.DNF)
     }
 }
