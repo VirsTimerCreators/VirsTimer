@@ -41,3 +41,6 @@ To access configuration, run application and visit:
 ```
 http://localhost:8080/swagger-ui.html
 ```
+
+### TODO:
+sudo docker run -p 8080:8080 virstimer-test-2 -it --network="host"

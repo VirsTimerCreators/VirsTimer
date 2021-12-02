@@ -7,6 +7,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -17,9 +19,12 @@ import pl.virstimer.model.Solved
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class SolveControllerTest : TestCommons() {
     @BeforeEach
     fun injections() {
+        Thread.sleep(1000)
         before_each()
         mongoTemplate.insert(Session("id-1", "user-1", "event-1","session_name1"))
         mongoTemplate.insert(Session("id-2", "user-2", "event-2","session_name2"))
@@ -43,6 +48,18 @@ class SolveControllerTest : TestCommons() {
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].timestamp").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].solved").isNotEmpty)
             .andExpect(MockMvcResultMatchers.status().isOk)
+    }
+
+    @Test
+    fun should_patch_solve() {
+        val auth = registerAndLogin("username", "password").authHeader
+
+        createSolve("1", Solved.PLUS_TWO, auth).andExpect(MockMvcResultMatchers.status().isCreated)
+        val solve = mongoTemplate.find(Query(Criteria.where("userId").`is`("username")), Solve::class.java).first()
+        assert(solve.solved == Solved.PLUS_TWO)
+
+        patchSolve(solve.id, Solved.DNF, auth).andExpect(MockMvcResultMatchers.status().isOk)
+        assert(mongoTemplate.find(Query(Criteria.where("userId").`is`("username")), Solve::class.java).first().solved == Solved.DNF)
     }
 
     @Test
@@ -70,17 +87,5 @@ class SolveControllerTest : TestCommons() {
         )
             .andExpect(MockMvcResultMatchers.jsonPath("$").isEmpty)
 
-    }
-
-    @Test
-    fun should_patch_solve() {
-        val auth = registerAndLogin("username", "password").authHeader
-
-        createSolve("1", Solved.PLUS_TWO, auth).andExpect(MockMvcResultMatchers.status().isCreated)
-        val solve = mongoTemplate.find(Query(Criteria.where("userId").`is`("username")), Solve::class.java).first()
-        assert(solve.solved == Solved.PLUS_TWO)
-
-        patchSolve(solve.id, Solved.DNF, auth).andExpect(MockMvcResultMatchers.status().isOk)
-        assert(mongoTemplate.find(Query(Criteria.where("userId").`is`("username")), Solve::class.java).first().solved == Solved.DNF)
     }
 }
