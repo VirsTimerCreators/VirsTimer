@@ -78,7 +78,7 @@ class SessionControllerTest : TestCommons() {
     fun should_patch_session() {
         val loginDetails = registerAndLogin("user-id", "user-1-pass")
 
-        createSession("user-id", "1", "before", loginDetails.authHeader).andExpect(MockMvcResultMatchers.status().isCreated)
+        createSession("1", "before", loginDetails.authHeader).andExpect(MockMvcResultMatchers.status().isCreated)
         val session = mongoTemplate.find(Query(Criteria.where("userId").`is`("user-id")), Session::class.java).last()
         assert(session.name == "before")
 
@@ -88,7 +88,7 @@ class SessionControllerTest : TestCommons() {
 
     @Test
     fun should_not_patch_session_if_user_is_not_logged_in() {
-        createSession("1", "1", "before", "non-existing-token").andExpect(MockMvcResultMatchers.status().is4xxClientError)
+        createSession("1", "before", "non-existing-token").andExpect(MockMvcResultMatchers.status().is4xxClientError)
         patchSession("update", "non-existing-id").andExpect(MockMvcResultMatchers.status().is4xxClientError)
     }
 }

@@ -19,7 +19,6 @@ import pl.virstimer.db.security.model.User
 import pl.virstimer.model.*
 import pl.virstimer.security.LoginRequest
 import pl.virstimer.security.SignupRequest
-import java.util.*
 import kotlin.collections.ArrayList
 
 open class TestCommons {
@@ -60,11 +59,11 @@ open class TestCommons {
         return login(username, password).bearerToken()
     }
 
-    fun createEvent(userId: String, puzzleType: String, token: String) =
+    fun createEvent(puzzleType: String, token: String) =
         mockMvc.perform(
             MockMvcRequestBuilders.post("/event")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(Gson().toJson(Event(UUID.randomUUID().toString(), userId, puzzleType)))
+                .content(Gson().toJson(EventRequest(puzzleType)))
                 .authorizedWith(token)
         )
 
@@ -87,11 +86,11 @@ open class TestCommons {
                 )
         )
 
-    fun createSession(userId: String, eventId: String, name: String, token: String) =
+    fun createSession(eventId: String, name: String, token: String) =
         mockMvc.perform(
             MockMvcRequestBuilders.post("/session")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(Gson().toJson(SessionRequest(userId, eventId, name)).toString())
+                .content(Gson().toJson(SessionRequest(eventId, name)).toString())
                 .header("Authorization", token)
         )
 
