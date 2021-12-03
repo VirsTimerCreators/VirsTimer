@@ -42,7 +42,7 @@ namespace VirsTimer.Core.Export
             using var stream = File.OpenWrite(destination);
             await JsonSerializer.SerializeAsync(stream, scrambles).ConfigureAwait(false);
 
-            return nextName;
+            return destination;
         }
     }
 }
