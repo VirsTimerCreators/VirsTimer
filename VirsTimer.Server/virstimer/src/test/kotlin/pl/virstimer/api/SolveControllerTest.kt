@@ -24,7 +24,6 @@ import pl.virstimer.model.Solved
 class SolveControllerTest : TestCommons() {
     @BeforeEach
     fun injections() {
-        Thread.sleep(1000)
         before_each()
         mongoTemplate.insert(Session("id-1", "user-1", "event-1","session_name1"))
         mongoTemplate.insert(Session("id-2", "user-2", "event-2","session_name2"))

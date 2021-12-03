@@ -1,5 +1,6 @@
 package pl.virstimer.api
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -12,6 +13,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/test")
 class TestController {
+    @GetMapping("/secret-test")
+    fun getSecret(@Value("\${sm://my-secret}") secret: String): String {
+        return secret
+    }
+
+
     @GetMapping("/all")
     fun allAccess(): String {
         return "Public Content."
