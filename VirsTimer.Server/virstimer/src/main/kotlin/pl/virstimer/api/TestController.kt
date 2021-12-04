@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/test")
 class TestController {
-    @GetMapping("/secret-test")
-    fun getSecret(@Value("\${sm://my-secret}") secret: String): String {
+    @GetMapping("/api/test/secret-test")
+    fun getSecret(@Value("\${debugging.secret.test}") secret: String): String {
         return secret
     }
 
