@@ -111,6 +111,15 @@ open class TestCommons {
                 .header("Authorization", token)
         )
 
+    fun createSolves(sessionId: String, solved: Solved, token: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/solve/many")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Gson().toJson(mutableListOf(SolveRequest(sessionId, "", 7, 11, solved),
+                    SolveRequest(sessionId, "", 11, 13, solved))).toString())
+                .header("Authorization", token)
+        )
+
     fun patchSolve(solveId: String, newSolved: Solved, token: String) =
         mockMvc.perform(
             MockMvcRequestBuilders.patch("/solve/$solveId")

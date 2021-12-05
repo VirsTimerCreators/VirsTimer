@@ -82,13 +82,13 @@ class SessionControllerTest : TestCommons() {
         val session = mongoTemplate.find(Query(Criteria.where("userId").`is`("user-id")), Session::class.java).last()
         assert(session.name == "before")
 
-        patchSession("updatePls", loginDetails.authHeader, session.id).andExpect(MockMvcResultMatchers.status().isOk)
-        assert(mongoTemplate.find(Query(Criteria.where("userId").`is`("user-id")), Session::class.java).last().name == "updatePls")
+        patchSession("update", loginDetails.authHeader, session.id).andExpect(MockMvcResultMatchers.status().isOk)
+        assert(mongoTemplate.find(Query(Criteria.where("userId").`is`("user-id")), Session::class.java).last().name == "update")
     }
 
     @Test
     fun should_not_patch_session_if_user_is_not_logged_in() {
         createSession("1", "before", "non-existing-token").andExpect(MockMvcResultMatchers.status().is4xxClientError)
-        patchSession("updatePls", "non-existing-id").andExpect(MockMvcResultMatchers.status().is4xxClientError)
+        patchSession("update", "non-existing-id").andExpect(MockMvcResultMatchers.status().is4xxClientError)
     }
 }
