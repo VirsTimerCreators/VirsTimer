@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
@@ -10,12 +11,16 @@ namespace VirsTimer.DesktopApp.Views
 {
     public class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
+        public SplitView SplitView { get; }
+
         public MainWindow()
         {
             InitializeComponent();
 #if DEBUG
             this.AttachDevTools();
 #endif
+            SplitView = this.FindControl<SplitView>("SplitView");
+
             this.WhenActivated(async disposableRegistration =>
             {
                 await ViewModel!.ConstructAsync().ConfigureAwait(false);
@@ -49,6 +54,16 @@ namespace VirsTimer.DesktopApp.Views
         {
             if (keyEventArgs.Key == Key.Space && !ViewModel.TimerViewModel.Timer.IsRunning)
                 ViewModel.TimerViewModel.Timer.Start();
+        }
+
+        public void ShowMenu(object? sender, PointerEventArgs e)
+        {
+            SplitView.IsPaneOpen = true;
+        }
+
+        public void HideMenu(object? sender, PointerEventArgs e)
+        {
+            SplitView.IsPaneOpen = false;
         }
     }
 }

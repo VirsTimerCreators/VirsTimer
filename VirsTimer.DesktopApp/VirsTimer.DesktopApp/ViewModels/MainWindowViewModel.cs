@@ -1,14 +1,17 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Solves;
+using VirsTimer.DesktopApp.ValueConverters;
 using VirsTimer.DesktopApp.ViewModels.Events;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
 using VirsTimer.DesktopApp.ViewModels.Sessions;
@@ -21,6 +24,7 @@ namespace VirsTimer.DesktopApp.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly ISolvesRepository _solvesRepository;
+        private readonly IValueConverter<string, Bitmap> _svgToBitmapConverter;
 
         [Reactive]
         public bool IsBusyManual { get; set; }
@@ -36,11 +40,39 @@ namespace VirsTimer.DesktopApp.ViewModels
         public StatisticsViewModel StatisticsViewModel { get; } = null!;
 
         public ReactiveCommand<Window, Unit> AddSolveManualyCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenMultiplayerCommand { get; }
         public ReactiveCommand<Unit, Unit> ExitCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenMenuCommand { get; }
 
-        public MainWindowViewModel()
+        [Reactive]
+        public Bitmap? ChooseEventImage { get; private set; }
+
+        [Reactive]
+
+        public Bitmap? ChooseSessionImage { get; private set; }
+
+        [Reactive]
+
+        public Bitmap? ImportExportImage { get; private set; }
+
+        [Reactive]
+
+        public Bitmap? MultiplayerImage { get; private set; }
+
+        [Reactive]
+
+        public Bitmap? ExitImage { get; private set; }
+
+        [Reactive]
+
+        public Bitmap? MenuImage { get; private set; }
+
+        public MainWindowViewModel(
+            bool online,
+            IValueConverter<string, Bitmap>? svgToBitmapConverter = null)
         {
             _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
+            _svgToBitmapConverter = svgToBitmapConverter ?? new SvgToBitmapConverter();
 
             EventViewModel = new EventSummaryViewModel();
             SessionSummaryViewModel = new SessionSummaryViewModel();
@@ -50,10 +82,12 @@ namespace VirsTimer.DesktopApp.ViewModels
             StatisticsViewModel = new StatisticsViewModel();
 
             AddSolveManualyCommand = ReactiveCommand.CreateFromTask<Window>(AddSolveManually);
+            OpenMultiplayerCommand = ReactiveCommand.Create(() => { }, Observable.Return(online));
             ExitCommand = ReactiveCommand.Create(() =>
             {
                 (App.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
             });
+            OpenMenuCommand = ReactiveCommand.Create(() => { }, Observable.Return(false));
 
             this.WhenAnyValue(x => x.EventViewModel.CurrentEvent)
                 .Skip(1)
@@ -84,7 +118,33 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         public override async Task ConstructAsync()
         {
+            IsBusyManual = true;
+
             await EventViewModel.ConstructAsync().ConfigureAwait(false);
+
+            var hamburgerSvgTask = File.ReadAllTextAsync("Assets/hamburger.svg");
+            var eventSvgTask = File.ReadAllTextAsync("Assets/event.svg");
+            var sessionSvgTask = File.ReadAllTextAsync("Assets/session.svg");
+            var exportSvgTask = File.ReadAllTextAsync("Assets/export.svg");
+            var multiplayerSvgTask = File.ReadAllTextAsync("Assets/multiplayer.svg");
+            var exitSvgTask = File.ReadAllTextAsync("Assets/exit.svg");
+
+            var svgs = await Task.WhenAll(
+                hamburgerSvgTask,
+                eventSvgTask,
+                sessionSvgTask,
+                exportSvgTask,
+                multiplayerSvgTask,
+                exitSvgTask).ConfigureAwait(false);
+
+            MenuImage = _svgToBitmapConverter.Convert(svgs[0]);
+            ChooseEventImage = _svgToBitmapConverter.Convert(svgs[1]);
+            ChooseSessionImage = _svgToBitmapConverter.Convert(svgs[2]);
+            ImportExportImage = _svgToBitmapConverter.Convert(svgs[3]);
+            MultiplayerImage = _svgToBitmapConverter.Convert(svgs[4]);
+            ExitImage = _svgToBitmapConverter.Convert(svgs[5]);
+
+            IsBusyManual = false;
         }
 
         public async Task SaveSolveAsync(Solve solve)
