@@ -1,0 +1,105 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Height="620"
+		Width="400"
+		MaxHeight="620"
+		MaxWidth="400"
+		MinHeight="620"
+		MinWidth="400"
+        x:Class="VirsTimer.DesktopApp.Views.Rooms.RoomCreationView"
+        Title="RoomCreationView"
+		TransparencyLevelHint="AcrylicBlur"
+		Background="Transparent"
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaChromeHints="NoChrome"
+		ExtendClientAreaTitleBarHeightHint="-1">
+	<Window.Styles>
+		<Style Selector="Button">
+			<Setter Property="Width" Value="300"/>
+			<Setter Property="VerticalContentAlignment" Value="Top"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="10"/>
+			<Setter Property="Padding" Value="10"/>
+		</Style>
+	</Window.Styles>
+	<Panel>
+		<ExperimentalAcrylicBorder
+            IsHitTestVisible="False">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.75" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<StackPanel>
+			<Panel Height="20"/>
+			<Button
+				x:Name="CreateRoomButton"
+				Height="400"
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch">
+				<DockPanel
+					VerticalAlignment="Stretch">
+					<TextBlock
+						Margin="0 10 0 0"
+						Text="Załóż pokój"
+						FontSize="20"
+						FontWeight="SemiBold"
+						DockPanel.Dock="Top"
+						HorizontalAlignment="Center"/>
+					
+						<ListBox
+							DockPanel.Dock="Bottom"
+							Width="230"
+							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+							ScrollViewer.VerticalScrollBarVisibility="Disabled"
+							x:Name="EventsListBox"
+							Items="{Binding AllEvents}"
+							Margin="0 15 0 10">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding}"/>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+			
+				</DockPanel>
+			</Button>
+			<Button
+				x:Name="JoinRoomButton"
+				Height="130"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center">
+				<StackPanel>
+					<TextBlock
+						Margin="0 10 0 0"
+						Text="Dołącz do pokoju"
+						FontSize="20"
+						FontWeight="SemiBold"
+						HorizontalAlignment="Center"/>
+					<TextBox
+						x:Name="AccessCodeTextBox"
+						Watermark="Kod dostępu"
+						Margin="0 15 0 0"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"
+						Width="230"/>
+				</StackPanel>
+			</Button>
+			<Button
+				x:Name="CancelButton"
+				Width="130"
+				Margin="15 10 0 0"
+				Content="Anuluj"/>
+		</StackPanel>
+		<ContentControl
+			x:Name="SnackBarContentControl"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+			ZIndex="-5"/>
+	</Panel>
+</Window>

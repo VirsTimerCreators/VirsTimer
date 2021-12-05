@@ -7,17 +7,6 @@
 	mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 	x:Class="VirsTimer.DesktopApp.Views.Solves.SolvesListView">
 
-	<Panel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-		<ExperimentalAcrylicBorder IsHitTestVisible="False">
-			<ExperimentalAcrylicBorder.Material>
-				<ExperimentalAcrylicMaterial
-					BackgroundSource="Digger"
-					TintColor="Black"
-					TintOpacity="1"
-					MaterialOpacity="0.75" />
-			</ExperimentalAcrylicBorder.Material>
-		</ExperimentalAcrylicBorder>
-
 		<ListBox Background="Transparent" Items="{Binding Solves}">
 			<ListBox.Styles>
 				<Style Selector="ListBoxItem">
@@ -61,5 +50,4 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-	</Panel>
 </UserControl>

@@ -1,0 +1,72 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:views="clr-namespace:VirsTimer.DesktopApp.Views;assembly=VirsTimer.DesktopApp"
+        xmlns:solvesViews="clr-namespace:VirsTimer.DesktopApp.Views.Solves;assembly=VirsTimer.DesktopApp"
+        xmlns:eventsViews="clr-namespace:VirsTimer.DesktopApp.Views.Events;assembly=VirsTimer.DesktopApp"
+        xmlns:sessionsViews="clr-namespace:VirsTimer.DesktopApp.Views.Sessions;assembly=VirsTimer.DesktopApp"
+        xmlns:scramblesViews="clr-namespace:VirsTimer.DesktopApp.Views.Scrambles;assembly=VirsTimer.DesktopApp"
+        xmlns:statisticsViews="clr-namespace:VirsTimer.DesktopApp.Views.Statistics;assembly=VirsTimer.DesktopApp"
+		xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="VirsTimer.DesktopApp.Views.Rooms.RoomView"
+        Title="RoomView">
+	<Grid RowDefinitions="100,Auto,300,*">
+		<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.75" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<Grid Grid.Row="0" ColumnDefinitions="*,*">
+			<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="4">
+				<ExperimentalAcrylicBorder.Material>
+					<ExperimentalAcrylicMaterial
+                        BackgroundSource="Digger"
+                        TintColor="Black"
+                        TintOpacity="1"
+                        MaterialOpacity="0.45" />
+				</ExperimentalAcrylicBorder.Material>
+			</ExperimentalAcrylicBorder>
+			<TextBlock
+				Text="Kod dostępu:"
+				Margin="20 0"
+				FontSize="24"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"/>
+
+			<Button
+                Margin="20,0,20,0"
+                Height="38"
+                Width="90"
+				HorizontalAlignment="Right"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Grid.Column="1"
+                Content="Wyjście"
+                Command="{Binding ExitCommand}"
+                Background="#cf8b0c"/>
+		</Grid>
+		<scramblesViews:ScrambleView
+            MinHeight="100"
+            MaxHeight="300"
+            Grid.Row="1"
+            Content="{Binding ScrambleViewModel}"/>
+		<views:TimerView
+            Grid.Row="2"
+            Content="{Binding TimerViewModel}"/>
+		<Grid
+            Grid.Row="3"
+            ColumnDefinitions="*,*">
+			<ContentControl/>
+			<Image
+				Grid.Column="1"
+				Focusable="False"
+				Source="{Binding ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
+		</Grid>
+	</Grid>
+</Window>
