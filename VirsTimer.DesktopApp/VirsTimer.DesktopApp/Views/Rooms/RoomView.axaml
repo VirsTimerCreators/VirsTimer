@@ -9,10 +9,17 @@
         xmlns:scramblesViews="clr-namespace:VirsTimer.DesktopApp.Views.Scrambles;assembly=VirsTimer.DesktopApp"
         xmlns:statisticsViews="clr-namespace:VirsTimer.DesktopApp.Views.Statistics;assembly=VirsTimer.DesktopApp"
 		xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1400 " d:DesignHeight="1050"
         x:Class="VirsTimer.DesktopApp.Views.Rooms.RoomView"
-        Title="RoomView">
-	<Grid RowDefinitions="100,Auto,300,*">
+        Title="RoomView"
+        KeyDown="WindowKeyDown"
+        KeyUp="WindowKeyUp"
+        TransparencyLevelHint="AcrylicBlur"
+        WindowState="Maximized"
+		ExtendClientAreaChromeHints="NoChrome"
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaTitleBarHeightHint="-1">
+	<Grid RowDefinitions="110,Auto,300,*">
 		<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
 			<ExperimentalAcrylicBorder.Material>
 				<ExperimentalAcrylicMaterial
@@ -22,51 +29,131 @@
                     MaterialOpacity="0.75" />
 			</ExperimentalAcrylicBorder.Material>
 		</ExperimentalAcrylicBorder>
-		<Grid Grid.Row="0" ColumnDefinitions="*,*">
-			<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="4">
-				<ExperimentalAcrylicBorder.Material>
-					<ExperimentalAcrylicMaterial
-                        BackgroundSource="Digger"
-                        TintColor="Black"
-                        TintOpacity="1"
-                        MaterialOpacity="0.45" />
-				</ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
+
+		<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="4">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+					BackgroundSource="Digger"
+					TintColor="Black"
+					TintOpacity="1"
+					MaterialOpacity="0.45" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<Panel
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center">
+			<StackPanel
+				Orientation="Horizontal"
+				Spacing="20">
+				<TextBlock
+					Text="Status:"
+					FontSize="20"
+					HorizontalAlignment="Left"
+					FontWeight="Medium"
+					VerticalAlignment="Center"/>
+				<Border
+					CornerRadius="10"
+					Height="50"
+					Background="{Binding BorderColor}"
+					Width="170">
+					<TextBlock
+						x:Name="StatusTextBlock"
+						Text="Zapraszanie"
+						FontSize="20"
+						HorizontalAlignment="Center"
+						FontWeight="Medium"
+						VerticalAlignment="Center"/>
+				</Border>
+			</StackPanel>
+		</Panel>
+		<StackPanel
+			Orientation="Horizontal"
+			Spacing="30">
+			<Panel/>
 			<TextBlock
 				Text="Kod dostępu:"
-				Margin="20 0"
-				FontSize="24"
+				FontSize="20"
 				HorizontalAlignment="Left"
+				FontWeight="Medium"
+				VerticalAlignment="Center"/>
+			<TextBlock
+				x:Name="AccessCodeTextBlock"
+				Text="xxxxxxxxxx"
+				FontSize="20"
+				HorizontalAlignment="Left"
+				FontWeight="Medium"
 				VerticalAlignment="Center"/>
 
 			<Button
-                Margin="20,0,20,0"
-                Height="38"
-                Width="90"
-				HorizontalAlignment="Right"
-                VerticalContentAlignment="Center"
-                HorizontalContentAlignment="Center"
-                Grid.Column="1"
-                Content="Wyjście"
-                Command="{Binding ExitCommand}"
-                Background="#cf8b0c"/>
-		</Grid>
-		<scramblesViews:ScrambleView
-            MinHeight="100"
-            MaxHeight="300"
-            Grid.Row="1"
-            Content="{Binding ScrambleViewModel}"/>
-		<views:TimerView
-            Grid.Row="2"
-            Content="{Binding TimerViewModel}"/>
+				x:Name="CopyButton"
+				Focusable="False"
+				Background="Transparent"
+				Width="50"
+				Height="50">
+				<Image
+					x:Name="CopyImage"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"/>
+			</Button>
+			
+		</StackPanel>
+		<StackPanel
+			Orientation="Horizontal"
+			HorizontalAlignment="Right"
+			Spacing="30">
+
+			<Button
+				x:Name="StartButton"
+				Focusable="False"
+				Height="50"
+				Width="180"
+				VerticalContentAlignment="Center"
+				HorizontalContentAlignment="Center"
+				Grid.Column="1"
+				Background="#0959db">
+				<TextBlock
+					Text="Start pokoju"
+					FontSize="18"/>
+			</Button>
+
+			<Button
+				x:Name="ExitButton"
+				Focusable="False"
+				Height="50"
+				Width="180"
+				VerticalContentAlignment="Center"
+				HorizontalContentAlignment="Center"
+				Grid.Column="1"
+				Background="#cf8b0c">
+				<TextBlock
+					Text="Wyjdź z pokoju"
+					FontSize="18"/>
+			</Button>
+			<Panel/>
+		</StackPanel>
+		<ContentControl
+			MinHeight="100"
+			MaxHeight="300"
+			Grid.Row="1"
+			Content="{Binding ScrambleViewModel}"/>
+		<ContentControl
+			Grid.Row="2"
+			Content="{Binding TimerViewModel}"/>
 		<Grid
-            Grid.Row="3"
-            ColumnDefinitions="*,*">
-			<ContentControl/>
+			ColumnDefinitions="2*,*">
+			<ContentControl
+				Content="{Binding RoomUsersViewModel}">
+			</ContentControl>
 			<Image
 				Grid.Column="1"
 				Focusable="False"
 				Source="{Binding ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
 		</Grid>
+		<ContentControl
+			Content="{Binding SnackbarViewModel}"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+			ZIndex="5"
+            Grid.RowSpan="4"/>
 	</Grid>
 </Window>

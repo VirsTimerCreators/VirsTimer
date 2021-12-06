@@ -168,12 +168,12 @@
 				ZIndex="1">
 
 			</Panel>
-			<scramblesViews:ScrambleView
+			<ContentControl
 				MinHeight="100"
 				MaxHeight="300"
 				Grid.Row="1"
 				Content="{Binding ScrambleViewModel}"/>
-			<views:TimerView
+			<ContentControl
 				Grid.Row="2"
 				Content="{Binding TimerViewModel}"/>
 			<Grid

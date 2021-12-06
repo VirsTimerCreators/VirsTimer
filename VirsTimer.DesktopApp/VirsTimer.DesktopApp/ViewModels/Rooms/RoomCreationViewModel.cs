@@ -48,11 +48,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             }
 
             var room = await _roomsService.CreateRoomAsync(SelectedEvent!);
-            if (room is null)
-                return null;
 
             return new RoomViewModel(
-                room.AccessCode,
+                "A4xg629p1Q",
                 true,
                 room.Scrambles,
                 _roomsService);
@@ -67,10 +65,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             }
 
             var room = await _roomsService.JoinRoomAsync(SelectedEvent!);
-            if (room is null)
-                return null;
             return new RoomViewModel(
-                room.AccessCode,
+                "A4xg629p1Q",
                 false,
                 room.Scrambles,
                 _roomsService);

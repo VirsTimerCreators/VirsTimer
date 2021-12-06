@@ -4,8 +4,13 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
+using System.Reactive;
+using System.Reactive.Disposables;
+using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.ViewModels;
+using VirsTimer.DesktopApp.ViewModels.Rooms;
+using VirsTimer.DesktopApp.Views.Rooms;
 
 namespace VirsTimer.DesktopApp.Views
 {
@@ -23,6 +28,8 @@ namespace VirsTimer.DesktopApp.Views
 
             this.WhenActivated(async disposableRegistration =>
             {
+                ViewModel.ShowRoomCreationDialog.RegisterHandler(DoShowRoomCreationDialogAsync).DisposeWith(disposableRegistration);
+                ViewModel.ShowRoomDialog.RegisterHandler(DoShowRoomDialogAsync).DisposeWith(disposableRegistration);
                 await ViewModel!.ConstructAsync().ConfigureAwait(false);
             });
         }
@@ -30,6 +37,28 @@ namespace VirsTimer.DesktopApp.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        private async Task DoShowRoomCreationDialogAsync(InteractionContext<RoomCreationViewModel, RoomViewModel?> interaction)
+        {
+            var dialog = new RoomCreationView
+            {
+                DataContext = interaction.Input
+            };
+
+            var output = await dialog.ShowDialog<RoomViewModel?>(this);
+            interaction.SetOutput(output);
+        }
+
+        private async Task DoShowRoomDialogAsync(InteractionContext<RoomViewModel, Unit> interaction)
+        {
+            var dialog = new RoomView
+            {
+                DataContext = interaction.Input
+            };
+
+            dialog.Show(this);
+            interaction.SetOutput(Unit.Default);
         }
 
         public async void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)

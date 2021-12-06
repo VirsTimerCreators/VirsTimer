@@ -8,6 +8,7 @@
 	MinHeight="450" MinWidth="600"
     MaxHeight="450" MaxWidth="600"
     x:Class="VirsTimer.DesktopApp.Views.LoginView"
+	WindowStartupLocation="CenterScreen"
     Title="Logowanie"
     TransparencyLevelHint="AcrylicBlur"
     Background="Transparent"
