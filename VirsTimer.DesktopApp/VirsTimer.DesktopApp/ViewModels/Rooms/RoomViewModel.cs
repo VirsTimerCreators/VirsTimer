@@ -67,11 +67,27 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             //{
             //    return new object();
             //});
-            RoomUsersViewModel = new RoomUsersViewModel(Array.Empty<RoomUserViewModel>());
 
             CopyToClipboardCommand = ReactiveCommand.CreateFromTask(CopyToClipboard);
             StartCommand = ReactiveCommand.CreateFromTask(StartCompetition, Observable.Return(_isAdmin));
             ExitCommand = ReactiveCommand.Create(() => { });
+
+            var users = new List<RoomUserViewModel>
+            {
+                new RoomUserViewModel("Adam",5)
+                {
+                    Solves = new System.Collections.ObjectModel.ObservableCollection<RoomUserSolveViewModel>
+                    {
+                        new RoomUserSolveViewModel(new Core.Models.Solve(null!, TimeSpan.FromSeconds(6).Add(TimeSpan.FromMilliseconds(42)), "R U X A T R' C")),
+                        new RoomUserSolveViewModel(new Core.Models.Solve(null!, TimeSpan.FromSeconds(7).Add(TimeSpan.FromMilliseconds(567)), "R U X A T R' C"))
+                    }
+                },
+                new RoomUserViewModel("Bartek",5),
+                new RoomUserViewModel("Kuba",5),
+                new RoomUserViewModel("Michał",5),
+            };
+
+            RoomUsersViewModel = new RoomUsersViewModel(users);
         }
 
         public override async Task ConstructAsync()

@@ -49,6 +49,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
             var room = await _roomsService.CreateRoomAsync(SelectedEvent!);
 
+            SnackbarViewModel.Disposed = true;
             return new RoomViewModel(
                 "A4xg629p1Q",
                 true,
@@ -65,9 +66,11 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             }
 
             var room = await _roomsService.JoinRoomAsync(SelectedEvent!);
+
+            SnackbarViewModel.Disposed = true;
             return new RoomViewModel(
                 "A4xg629p1Q",
-                false,
+                true,
                 room.Scrambles,
                 _roomsService);
         }

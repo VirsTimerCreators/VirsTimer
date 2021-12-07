@@ -17,7 +17,7 @@ namespace VirsTimer.DesktopApp.Views.Common
         private static readonly TimeSpan Speed = TimeSpan.FromMilliseconds(8);
         private static readonly TimeSpan Break = TimeSpan.FromMilliseconds(2000);
 
-        private ContentControl _parent;
+        private ContentControl _parent = null!;
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         public Border Border { get; }
@@ -26,8 +26,6 @@ namespace VirsTimer.DesktopApp.Views.Common
         public SnackbarView()
         {
             InitializeComponent();
-
-            var s = this;
 
             Border = this.FindControl<Border>("Border");
             MessageTextBlock = this.FindControl<TextBlock>("MessageTextBlock");

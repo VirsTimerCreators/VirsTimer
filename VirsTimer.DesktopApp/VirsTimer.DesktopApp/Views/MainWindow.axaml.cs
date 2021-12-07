@@ -50,7 +50,7 @@ namespace VirsTimer.DesktopApp.Views
             interaction.SetOutput(output);
         }
 
-        private async Task DoShowRoomDialogAsync(InteractionContext<RoomViewModel, Unit> interaction)
+        private Task DoShowRoomDialogAsync(InteractionContext<RoomViewModel, Unit> interaction)
         {
             var dialog = new RoomView
             {
@@ -59,6 +59,8 @@ namespace VirsTimer.DesktopApp.Views
 
             dialog.Show(this);
             interaction.SetOutput(Unit.Default);
+
+            return Task.CompletedTask;
         }
 
         public async void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)

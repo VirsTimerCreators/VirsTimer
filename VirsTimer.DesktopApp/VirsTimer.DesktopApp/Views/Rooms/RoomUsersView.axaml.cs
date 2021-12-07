@@ -1,10 +1,10 @@
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
+using VirsTimer.DesktopApp.ViewModels.Rooms;
 
 namespace VirsTimer.DesktopApp.Views.Rooms
 {
-    public partial class RoomUsersView : UserControl
+    public partial class RoomUsersView : ReactiveUserControl<RoomUsersViewModel>
     {
         public RoomUsersView()
         {

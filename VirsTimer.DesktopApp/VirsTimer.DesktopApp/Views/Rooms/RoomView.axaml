@@ -140,6 +140,7 @@
 			Grid.Row="2"
 			Content="{Binding TimerViewModel}"/>
 		<Grid
+			Grid.Row="3"
 			ColumnDefinitions="2*,*">
 			<ContentControl
 				Content="{Binding RoomUsersViewModel}">

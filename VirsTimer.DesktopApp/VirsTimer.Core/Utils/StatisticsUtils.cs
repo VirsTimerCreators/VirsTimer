@@ -24,6 +24,14 @@ namespace VirsTimer.Core.Utils
         }
 
         /// <summary>
+        /// Calculates best time from <paramref name="solves"/>/
+        /// </summary>
+        public static TimeSpan? WorstTime(this IEnumerable<Solve> solves)
+        {
+            return solves.Max(x => x.TimeWithFlag);
+        }
+
+        /// <summary>
         /// Calculates Mo3 from <paramref name="source"/>/
         /// </summary>
         public static TimeSpan? Mo3(this IEnumerable<Solve> source)
@@ -65,7 +73,7 @@ namespace VirsTimer.Core.Utils
         /// <summary>
         /// Calculates Ao from <paramref name="source"/>/
         /// </summary>
-        private static TimeSpan? Ao(this IEnumerable<Solve> source, int amount)
+        public static TimeSpan? Ao(this IEnumerable<Solve> source, int amount)
         {
             if (source.Count() < amount)
                 return null;
@@ -78,15 +86,18 @@ namespace VirsTimer.Core.Utils
         }
 
         /// <summary>
-        /// Calculates average from <paramref name="source"/>/
+        /// Calculates average from <paramref name="solves"/>/
         /// </summary>
-        private static TimeSpan Average(this IEnumerable<Solve> source)
+        public static TimeSpan Average(this IEnumerable<Solve> solves)
         {
+            if (solves.Count(x => x.Flag == Constants.SolveFlag.DNF) > 1)
+                return DnfTime;
+
             var sum = 0L;
-            foreach (var solve in source)
+            foreach (var solve in solves)
                 sum += solve.TimeWithFlag.Ticks;
 
-            var average = sum / (decimal)source.Count();
+            var average = sum / (decimal)solves.Count();
 
             var rounded = Math.Round(average / 100000m, 0, MidpointRounding.AwayFromZero) * 100000;
             return TimeSpan.FromTicks((long)rounded);
