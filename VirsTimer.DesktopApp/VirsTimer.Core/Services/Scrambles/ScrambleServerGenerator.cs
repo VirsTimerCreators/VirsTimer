@@ -6,6 +6,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
+using VirsTimer.Scrambles;
 
 namespace VirsTimer.Core.Services.Scrambles
 {
@@ -32,7 +33,7 @@ namespace VirsTimer.Core.Services.Scrambles
         public async Task<IReadOnlyList<Scramble>> GenerateScrambles(Event @event, int scramblesAmount)
         {
             if (Constants.Events.Predefined.All(e => e != @event.Name))
-                return Enumerable.Repeat(Scramble.Empty, scramblesAmount).ToList();
+                return Enumerable.Repeat(new Scramble(), scramblesAmount).ToList();
 
             using var httpClient = _httpClientFactory.CreateClient();
             var serverEventName = Server.Events.GetServerEventName(@event.Name);

@@ -64,6 +64,7 @@ namespace VirsTimer.DesktopApp
             services.AddSingleton<IUserClient, UserClient>();
             services.AddSingleton<ILoginRepository, LoginServerRepository>();
             services.AddSingleton<IRegisterRepository, RegisterServerRepository>();
+            services.AddSingleton<ICustomScrambleGeneratorsCollector, AssemblyCustomScrambleGeneratorsCollector>();
             services.AddHttpClient();
 
             Services = ServiceDescriptors.BuildServiceProvider();

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Company>VirsTimer Creators</Company>
+    <Description>Package for VirsTimer (https://github.com/Outreaver/VirsTimer) app intergration that enables implementing scramble generators for custom events.</Description>
+    <PackageProjectUrl>https://github.com/Outreaver/VirsTimer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Outreaver/VirsTimer</RepositoryUrl>
+    <PackageTags>VirsTimer</PackageTags>
+  </PropertyGroup>
+
+</Project>

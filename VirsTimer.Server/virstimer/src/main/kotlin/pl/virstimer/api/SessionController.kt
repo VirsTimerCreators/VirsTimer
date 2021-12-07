@@ -32,10 +32,10 @@ class SessionController(
 
     @PostMapping
     @Secured("ROLE_USER")
-    fun createSession(@RequestBody request: SessionRequest): ResponseEntity<Session> {
+    fun createSession(@RequestBody request: SessionRequest,authentication: Authentication): ResponseEntity<Session> {
         val session = repository.save(
             Session(
-                userId = request.userId,
+                userId = authentication.name,
                 eventId = request.eventId,
                 name = request.name,
                 id = UUID.randomUUID().toString()
@@ -64,7 +64,6 @@ class SessionController(
 }
 
 data class SessionRequest(
-    val userId: String,
     val eventId: String,
     val name: String
 )
