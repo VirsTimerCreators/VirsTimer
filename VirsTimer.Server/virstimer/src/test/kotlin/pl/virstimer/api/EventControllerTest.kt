@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import pl.virstimer.TestCommons
@@ -15,12 +16,12 @@ import pl.virstimer.model.Event
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class EventControllerTest : TestCommons() {
-
 
     @BeforeEach
     fun injections() { before_each() }
-
 
     @Test
     fun posting_event_ok() {
