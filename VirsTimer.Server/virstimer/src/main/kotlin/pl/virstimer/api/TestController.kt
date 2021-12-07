@@ -13,11 +13,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/test")
 class TestController {
-    @GetMapping("/api/test/secret-test")
-    fun getSecret(@Value("\${debugging.secret.test}") secret: String): String {
-        return secret
-    }
 
+    @GetMapping("/secret-test")
+    fun getSecret(@Value("\${debugging.secret.test}") secret: String): String = secret
 
     @GetMapping("/all")
     fun allAccess(): String {

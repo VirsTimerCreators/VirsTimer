@@ -69,12 +69,6 @@ class AuthController(
 
     @PostMapping("/signup")
     fun registerUser(@Valid @RequestBody signUpRequest: SignupRequest): ResponseEntity<*> {
-        logger.trace("A TRACE Message");
-        logger.debug("A DEBUG Message");
-        logger.info("An INFO Message");
-        logger.warn("A WARN Message");
-        logger.error("An ERROR Message");
-
         if (userRepository.existsByUsername(signUpRequest.username)) {
             return ResponseEntity
                 .badRequest()
