@@ -5,91 +5,94 @@
 			 xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="VirsTimer.DesktopApp.Views.Rooms.RoomUsersView">
-	<ItemsControl Items="{Binding Users}" Margin="20 0 0 0">
-		<ItemsControl.ItemsPanel>
-			<ItemsPanelTemplate>
-				<WrapPanel />
-			</ItemsPanelTemplate>
-		</ItemsControl.ItemsPanel>
-		<ItemsControl.ItemTemplate>
-			<DataTemplate>
-				<Border
-					Background="GreenYellow" Margin="20" CornerRadius="5">
-					<StackPanel Spacing="10" MinWidth="130" Margin="15">
-						<TextBlock Text="{Binding UserName}" HorizontalAlignment="Center"/>
+	<ScrollViewer>
 
-						<StackPanel Orientation="Horizontal">
+		<ItemsControl Items="{Binding Users}" Margin="20 0 0 0">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapPanel />
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Border
+						Background="DarkSeaGreen" Margin="20" CornerRadius="5">
+						<StackPanel Spacing="10" MinWidth="130" Margin="15">
+							<TextBlock Text="{Binding UserName}" HorizontalAlignment="Center"/>
+
+							<StackPanel Orientation="Horizontal">
+								<TextBlock
+									Text="Best:"
+									Width="70"
+									HorizontalAlignment="Left"/>
+								<TextBlock
+									Text="{Binding Best, Converter={converters:TimeSpanStatisticsValueConverte}}"/>
+							</StackPanel>
+
+							<StackPanel Orientation="Horizontal">
+								<TextBlock
+									Text="Worst:"
+									Width="70"
+									HorizontalAlignment="Left"/>
+								<TextBlock
+									Text="{Binding Worst, Converter={converters:TimeSpanStatisticsValueConverte}}"/>
+							</StackPanel>
+
+							<StackPanel Orientation="Horizontal">
+								<TextBlock
+									Text="Ao:"
+									Width="70"
+									HorizontalAlignment="Left"/>
+								<TextBlock
+									Text="{Binding Ao, Converter={converters:TimeSpanStatisticsValueConverte}}"/>
+							</StackPanel>
+
+							<StackPanel Orientation="Horizontal">
+								<TextBlock
+									Text="Avg:"
+									Width="70"
+									HorizontalAlignment="Left"/>
+								<TextBlock
+									Text="{Binding Avg, Converter={converters:TimeSpanStatisticsValueConverte}}"/>
+							</StackPanel>
+
 							<TextBlock
-								Text="Best:"
+								Text="Ułożenia"
 								Width="70"
-								HorizontalAlignment="Left"/>
-							<TextBlock
-								Text="{Binding Best, Converter={converters:TimeSpanStatisticsValueConverte}}"/>
-						</StackPanel>
+								HorizontalAlignment="Center"/>
 
-						<StackPanel Orientation="Horizontal">
-							<TextBlock
-								Text="Worst:"
-								Width="70"
-								HorizontalAlignment="Left"/>
-							<TextBlock
-								Text="{Binding Worst, Converter={converters:TimeSpanStatisticsValueConverte}}"/>
-						</StackPanel>
-
-						<StackPanel Orientation="Horizontal">
-							<TextBlock
-								Text="Ao:"
-								Width="70"
-								HorizontalAlignment="Left"/>
-							<TextBlock
-								Text="{Binding Ao, Converter={converters:TimeSpanStatisticsValueConverte}}"/>
-						</StackPanel>
-
-						<StackPanel Orientation="Horizontal">
-							<TextBlock
-								Text="Avg:"
-								Width="70"
-								HorizontalAlignment="Left"/>
-							<TextBlock
-								Text="{Binding Avg, Converter={converters:TimeSpanStatisticsValueConverte}}"/>
-						</StackPanel>
-
-						<TextBlock
-							Text="Ułożenia"
-							Width="70"
-							HorizontalAlignment="Center"/>
-
-						<ItemsControl Background="Transparent" Items="{Binding Solves}">
-							<ItemsControl.Styles>
-								<Style Selector="ListBoxItem">
-									<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-									<Setter Property="VerticalContentAlignment" Value="Center"/>
-								</Style>
-							</ItemsControl.Styles>
-							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<Grid ColumnDefinitions="35,*" Margin="0 5">
-										<Border BorderBrush="#b1b536" BorderThickness="0,0,1,0">
+							<ItemsControl Background="Transparent" Items="{Binding Solves}">
+								<ItemsControl.Styles>
+									<Style Selector="ListBoxItem">
+										<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+										<Setter Property="VerticalContentAlignment" Value="Center"/>
+									</Style>
+								</ItemsControl.Styles>
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<Grid ColumnDefinitions="35,*" Margin="0 5">
+											<Border BorderBrush="#b1b536" BorderThickness="0,0,1,0">
+												<TextBlock
+													Grid.Column="0"
+													Margin="0 0 15 0"
+													VerticalAlignment="Center"
+													HorizontalAlignment="Left"
+													Text="{Binding Index}"/>
+											</Border>
 											<TextBlock
-												Grid.Column="0"
-												Margin="0 0 15 0"
+												Grid.Column="1"
+												FontFamily="Verdana"
 												VerticalAlignment="Center"
-												HorizontalAlignment="Left"
-												Text="{Binding Index}"/>
-										</Border>
-										<TextBlock
-											Grid.Column="1"
-											FontFamily="Verdana"
-											VerticalAlignment="Center"
-											HorizontalAlignment="Center"
-											Text="{Binding Summary}"/>
-									</Grid>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-						</ItemsControl>
-					</StackPanel>
-				</Border>
-			</DataTemplate>
-		</ItemsControl.ItemTemplate>
-	</ItemsControl>
+												HorizontalAlignment="Center"
+												Text="{Binding Summary}"/>
+										</Grid>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</StackPanel>
+					</Border>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+	</ScrollViewer>
 </UserControl>
