@@ -2,10 +2,50 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 mc:Ignorable="d" d:DesignWidth="340" d:DesignHeight="100"
+			 mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="300"
 			 xmlns:constatns="clr-namespace:VirsTimer.Core.Constants;assembly=VirsTimer.Core"
 			 x:Class="VirsTimer.DesktopApp.Views.Solves.SolveFlagsView">
-	<Grid ColumnDefinitions="*,3*,*,3*,*,3*,*">
+	<UserControl.Styles>
+		<Style Selector="RadioButton">
+			<Setter Property="Background" Value="#646464"/>
+			<Setter Property="BorderBrush" Value="Black"/>
+			<Setter Property="BorderThickness" Value="1, 1, 1, 1"/>
+			<Setter Property="Foreground" Value="#FFFFFF"/>
+			<Setter Property="Padding" Value="4"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="Template">
+				<ControlTemplate>
+					<ContentPresenter Name="PART_ContentPresenter"
+									  Background="{TemplateBinding Background}"
+									  BorderBrush="{TemplateBinding BorderBrush}"
+									  BorderThickness="{TemplateBinding BorderThickness}"
+									  CornerRadius="6"
+									  ContentTemplate="{TemplateBinding ContentTemplate}"
+									  Content="{TemplateBinding Content}"
+									  Padding="{TemplateBinding Padding}"
+									  RecognizesAccessKey="True"
+									  TextBlock.Foreground="{TemplateBinding Foreground}"
+									  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+									  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+		<Style Selector="RadioButton:checked /template/ ContentPresenter">
+			<Setter Property="Background" Value="#0078D7"/>
+			<Setter Property="BorderBrush" Value="#FF808080"/>
+		</Style>
+		<Style Selector="RadioButton:pointerover /template/ ContentPresenter">
+			<Setter Property="BorderBrush" Value="#FF808080"/>
+		</Style>
+		<Style Selector="RadioButton:pressed  /template/ ContentPresenter">
+			<Setter Property="Background" Value="#FF808080"/>
+		</Style>
+		<Style Selector="RadioButton:disabled">
+			<Setter Property="Opacity" Value="0.5"/>
+		</Style>
+	</UserControl.Styles>
+	<Grid ColumnDefinitions="0,3*,*,3*,*,3*,0">
 		<RadioButton
 			Name="OkButton"
 			IsChecked="{Binding FlagsArray[0]}"
@@ -16,7 +56,7 @@
 			HorizontalContentAlignment="Center"
 			FontSize="20"
 			Padding="0 4 0 0"
-			VerticalContentAlignment="Top"
+			VerticalContentAlignment="Center"
 			Content="OK"
 			FontWeight="Bold"/>
 		<RadioButton
@@ -30,7 +70,7 @@
 			HorizontalAlignment="Stretch"
 			HorizontalContentAlignment="Center"
 			VerticalAlignment="Stretch"
-			VerticalContentAlignment="Top"
+			VerticalContentAlignment="Center"
 			Content="+2"
 			FontWeight="Bold"/>
 		<RadioButton
@@ -44,7 +84,7 @@
 			HorizontalAlignment="Stretch"
 			HorizontalContentAlignment="Center"
 			VerticalAlignment="Stretch"
-			VerticalContentAlignment="Top"
+			VerticalContentAlignment="Center"
 			Content="DNF"
 			FontWeight="Bold"/>
 	</Grid>

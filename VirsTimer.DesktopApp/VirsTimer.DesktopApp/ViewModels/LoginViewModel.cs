@@ -77,7 +77,7 @@ namespace VirsTimer.DesktopApp.ViewModels
                 await Ioc.AddApplicationCacheAsync(serverSide: true);
                 Ioc.ConfigureServerServices(response.Value);
 
-                var mainWindowViewModel = new MainWindowViewModel();
+                var mainWindowViewModel = new MainWindowViewModel(online: true);
                 await ShowMainWindowDialog.Handle(mainWindowViewModel);
 
                 return true;
@@ -95,7 +95,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             await Ioc.AddApplicationCacheAsync();
             Ioc.ConfigureLocalServices();
 
-            var mainWindowViewModel = new MainWindowViewModel();
+            var mainWindowViewModel = new MainWindowViewModel(online: false);
             await ShowMainWindowDialog.Handle(mainWindowViewModel);
         }
     }

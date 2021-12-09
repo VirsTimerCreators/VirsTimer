@@ -17,94 +17,194 @@
         xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
-        WindowState="FullScreen">
-    <Grid RowDefinitions="100,Auto,300,*">
-        <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
-            <ExperimentalAcrylicBorder.Material>
-                <ExperimentalAcrylicMaterial
-                    BackgroundSource="Digger"
-                    TintColor="Black"
-                    TintOpacity="1"
-                    MaterialOpacity="0.75" />
-            </ExperimentalAcrylicBorder.Material>
-        </ExperimentalAcrylicBorder>
-        <Grid Grid.Row="0" ColumnDefinitions="*,*,*,Auto">
-            <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="4">
-                <ExperimentalAcrylicBorder.Material>
-                    <ExperimentalAcrylicMaterial
-                        BackgroundSource="Digger"
-                        TintColor="Black"
-                        TintOpacity="1"
-                        MaterialOpacity="0.45" />
-                </ExperimentalAcrylicBorder.Material>
-            </ExperimentalAcrylicBorder>
-            <eventsViews:EventSummaryView 
-                Grid.Column="0"
-                Content="{Binding EventViewModel}"
-                Margin="30,0,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"/>
-            <sessionsViews:SessionSummaryView
-                Grid.Column="1"
-                Content="{Binding SessionSummaryViewModel}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
-            <StackPanel
-                IsVisible="{Binding IsBusy}"
-                Width="200"
-                Grid.Column="2"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Right">
-                <ProgressBar Width="20" IsIndeterminate="True"/>
-                <TextBlock Margin="0,10,0,0" VerticalAlignment="Center" TextAlignment="Center" Text="Synchronizacja danych"></TextBlock>
-            </StackPanel>
-            <Button 
-                Margin="20,0,20,0"
-                Height="38"
-                Width="90"
-                VerticalContentAlignment="Center"
-                HorizontalContentAlignment="Center"
-                Grid.Column="3"
-                Content="Wyjście"
-                Command="{Binding ExitCommand}"
-                Background="#cf8b0c"/>
-        </Grid>
-        <scramblesViews:ScrambleView
-            MinHeight="100" 
-            MaxHeight="300"
-            Grid.Row="1" 
-            Content="{Binding ScrambleViewModel}"/>
-        <views:TimerView 
-            Grid.Row="2"
-            Content="{Binding TimerViewModel}"/>
-        <Grid 
-            Grid.Row="3" 
-            ColumnDefinitions="*,*"
-            RowDefinitions="*, Auto">
-            <solvesViews:SolvesListView
-                Grid.Row="0"
-                Content="{Binding SolvesListViewModel}"/>
-            <Button 
-                Grid.Row="1"
-                HorizontalAlignment="Right"
-                Command="{Binding AddSolveManualyCommand}"
-                CommandParameter="{Binding $parent[Window]}"
-                Background="#0959db"
-                Content="Dodaj ręcznie" 
-                HorizontalContentAlignment="Center"
-                Width="130" 
-                Margin="20 12 26 12"/>
-            <Grid 
-                Grid.Column="1"
-                Grid.RowSpan="2"
-                RowDefinitions="*,*">
-                <Image
-                    Name="ImageLayout"
-                    Grid.Column="1"
-                    Focusable="False" 
-                    Source="{Binding ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
-                <statisticsViews:StatisticsView Margin="30"  Grid.Column="1" Grid.Row="1" Content="{Binding StatisticsViewModel}"/>
-            </Grid>
-        </Grid>
-    </Grid>
+        WindowState="FullScreen"
+		ExtendClientAreaChromeHints="NoChrome"
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaTitleBarHeightHint="-1">
+	<SplitView
+		x:Name="SplitView"
+		DisplayMode="CompactOverlay"
+		OpenPaneLength="300"
+		CompactPaneLength="0"
+		IsPaneOpen="False">
+		<SplitView.Pane>
+			<Panel
+				Background="Transparent"
+				PointerLeave="HideMenu">
+				<StackPanel
+					HorizontalAlignment="Stretch">
+					<Button
+						Focusable="False"
+						Background="Transparent"
+						Padding="15"
+						Height="100"
+						HorizontalAlignment="Stretch"
+						VerticalContentAlignment="Center"
+						Command="{Binding OpenMenuCommand}">
+						<Grid ColumnDefinitions="30, 30, *">
+							<Image
+								Source="{Binding MenuImage}"
+								MaxWidth="30"/>
+						</Grid>
+					</Button>
+
+					<Button
+						Focusable="False"
+						Padding="15"
+						Height="100"
+						HorizontalAlignment="Stretch"
+						VerticalContentAlignment="Center"
+						Command="{Binding EventViewModel.ChangeEventCommand}"
+						CommandParameter="{Binding $parent[Window]}">
+						<Grid ColumnDefinitions="30, 30, *">
+							<Image
+								Source="{Binding ChooseEventImage}"
+								MaxWidth="30"/>
+							<StackPanel Grid.Column="2" VerticalAlignment="Center">
+								<TextBlock
+									Text="Event"/>
+								<Panel Height="10"/>
+								<TextBlock
+									Text="{Binding EventViewModel.CurrentEvent.Name}"/>
+							</StackPanel>
+						</Grid>
+					</Button>
+
+					<Button
+						Focusable="False"
+						Padding="15"
+						Height="100"
+						HorizontalAlignment="Stretch"
+						VerticalContentAlignment="Center"
+						Command="{Binding SessionSummaryViewModel.ChangeSessionCommand}"
+						CommandParameter="{Binding $parent[Window]}">
+						<Grid ColumnDefinitions="30, 30, *">
+							<Image
+								Source="{Binding ChooseSessionImage}"
+								MaxWidth="30"/>
+							<StackPanel Grid.Column="2" VerticalAlignment="Center">
+								<TextBlock
+									Text="Sesja"/>
+								<Panel Height="10"/>
+								<TextBlock
+									Text="{Binding SessionSummaryViewModel.CurrentSession.Name}"/>
+							</StackPanel>
+						</Grid>
+					</Button>
+
+					<Button
+						Focusable="False"
+						Padding="15"
+						Height="100"
+						HorizontalAlignment="Stretch"
+						VerticalContentAlignment="Center">
+						<Grid ColumnDefinitions="30, 30, *">
+							<Image
+								Source="{Binding ImportExportImage}"
+								MaxWidth="30"/>
+							<TextBlock
+								Grid.Column="2"
+								Text="Import/Export"
+								VerticalAlignment="Center"/>
+						</Grid>
+					</Button>
+
+					<Button
+						Focusable="False"
+						Padding="15"
+						Height="100"
+						HorizontalAlignment="Stretch"
+						VerticalContentAlignment="Center"
+						Command="{Binding OpenMultiplayerCommand}">
+						<Grid ColumnDefinitions="30, 30, *">
+							<Image
+								Source="{Binding MultiplayerImage}"
+								MaxWidth="30"/>
+							<TextBlock
+								Grid.Column="2"
+								Text="Multiplayer"
+								VerticalAlignment="Center"/>
+						</Grid>
+					</Button>
+
+					<Button
+						Focusable="False"
+						Padding="15"
+						Height="100"
+						HorizontalAlignment="Stretch"
+						VerticalContentAlignment="Center"
+						Background="#cf8b0c"
+						Command="{Binding ExitCommand}">
+						<Grid ColumnDefinitions="30, 30, *">
+							<Image
+								Source="{Binding ExitImage}"
+								MaxWidth="30"/>
+							<TextBlock
+								Grid.Column="2"
+								Text="Wyjście"
+								VerticalAlignment="Center"/>
+						</Grid>
+					</Button>
+				</StackPanel>
+			</Panel>
+		</SplitView.Pane>
+		<Grid RowDefinitions="0,Auto,300,*">
+			<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
+				<ExperimentalAcrylicBorder.Material>
+					<ExperimentalAcrylicMaterial
+						BackgroundSource="Digger"
+						TintColor="Black"
+						TintOpacity="1"
+						MaterialOpacity="0.75" />
+				</ExperimentalAcrylicBorder.Material>
+			</ExperimentalAcrylicBorder>
+
+			<Panel
+				PointerEnter="ShowMenu"
+				Grid.RowSpan="5"
+				Width="300"
+				Background="Transparent"
+				HorizontalAlignment="Left"
+				ZIndex="1">
+
+			</Panel>
+			<ContentControl
+				MinHeight="100"
+				MaxHeight="300"
+				Grid.Row="1"
+				Content="{Binding ScrambleViewModel}"/>
+			<ContentControl
+				Grid.Row="2"
+				Content="{Binding TimerViewModel}"/>
+			<Grid
+				Grid.Row="3"
+				ColumnDefinitions="*,*"
+				RowDefinitions="*, Auto">
+				<solvesViews:SolvesListView
+					Grid.Row="0"
+					Content="{Binding SolvesListViewModel}"/>
+				<Button
+					Grid.Row="1"
+					HorizontalAlignment="Right"
+					Command="{Binding AddSolveManualyCommand}"
+					CommandParameter="{Binding $parent[Window]}"
+					Background="#0959db"
+					Content="Dodaj ręcznie"
+					HorizontalContentAlignment="Center"
+					Width="130"
+					Margin="20 12 26 12"/>
+				<Grid
+					Grid.Column="1"
+					Grid.RowSpan="2"
+					RowDefinitions="*,*">
+					<Image
+						Name="ImageLayout"
+						Grid.Column="1"
+						Focusable="False"
+						Source="{Binding ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
+					<statisticsViews:StatisticsView Margin="30"  Grid.Column="1" Grid.Row="1" Content="{Binding StatisticsViewModel}"/>
+				</Grid>
+			</Grid>
+		</Grid>
+	</SplitView>
 </Window>

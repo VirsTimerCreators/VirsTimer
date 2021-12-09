@@ -1,5 +1,6 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
 using System.Reactive;
 
 namespace VirsTimer.DesktopApp.ViewModels.Common
@@ -16,6 +17,11 @@ namespace VirsTimer.DesktopApp.ViewModels.Common
         public SnackbarViewModel()
         {
             QueueMessage = ReactiveCommand.Create<string>(x => Message = x);
+        }
+
+        public IObservable<Unit> Enqueue(string message)
+        {
+            return QueueMessage.Execute(message);
         }
     }
 }
