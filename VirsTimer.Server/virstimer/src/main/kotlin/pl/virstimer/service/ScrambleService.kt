@@ -5,12 +5,27 @@ import org.worldcubeassociation.tnoodle.puzzle.*
 import org.worldcubeassociation.tnoodle.scrambles.Puzzle
 import pl.virstimer.domain.DomainScramble
 import pl.virstimer.domain.PuzzleType
+import pl.virstimer.model.multiplayer.PersistentScramble
+import pl.virstimer.repository.multiplayer.ScrambleRepository
 import java.util.*
 
 @Component
-class ScrambleService {
+class ScrambleService(
+    val scrambleRepository: ScrambleRepository
+) {
 
     private val random = Random(RANDOM_SEED)
+
+    fun createPersistentScrambles(scrambleType: PuzzleType, numberOfScrambles: Int): List<PersistentScramble> {
+        val documents = Array(numberOfScrambles) { PersistentScramble(
+            UUID.randomUUID().toString(),
+            generateScrambleAndSvg(scrambleType).scrambleString,
+            Date().toInstant().toEpochMilli(),
+            scrambleType
+        )}
+
+        return scrambleRepository.saveAll(documents.toList())
+    }
 
     fun generateScrambleAndSvg(puzzleType: PuzzleType): DomainScramble =
         when (puzzleType) {
@@ -40,6 +55,8 @@ class ScrambleService {
             puzzleType
         )
     }
+
+    fun findScramblesById(scrambleIds: Set<String>): List<PersistentScramble> = scrambleRepository.findByIds(scrambleIds)
 
     companion object {
         val RANDOM_SEED: Long = 3434343434 // Move to RandomProvider spring bean
