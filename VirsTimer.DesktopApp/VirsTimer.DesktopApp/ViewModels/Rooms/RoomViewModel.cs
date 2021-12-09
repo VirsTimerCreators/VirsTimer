@@ -5,9 +5,13 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using VirsTimer.Core.Constants;
+using VirsTimer.Core.Models;
+using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Services.Rooms;
 using VirsTimer.DesktopApp.ValueConverters;
 using VirsTimer.DesktopApp.ViewModels.Common;
@@ -20,6 +24,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
     {
         private readonly IValueConverter<string, Bitmap> _svgToBitmapConverter;
         private readonly bool _isAdmin;
+        private readonly IUserClient _userClient;
 
         public bool Valid { get; } = true;
         public string AccessCode { get; }
@@ -29,6 +34,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
         [Reactive]
         public string Status { get; set; }
+
+        [Reactive]
+        public ViewModelBase TimerContent { get; set; }
 
         public ScrambleViewModel ScrambleViewModel { get; }
 
@@ -48,20 +56,26 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
         public ReactiveCommand<Unit, Unit> ExitCommand { get; set; }
 
+        private RoomUserViewModel Me => RoomUsersViewModel.Users.First(x => x.UserName == _userClient.Id);
+
         public RoomViewModel(
             string accessCode,
             bool isAdmin,
+            IUserClient userClient,
             IEnumerable<Scramble> scrambles,
             IRoomsService? roomsService = null,
             IValueConverter<string, Bitmap>? svgToBitmapConverter = null)
         {
             _svgToBitmapConverter = svgToBitmapConverter ?? new SvgToBitmapConverter(300);
             _isAdmin = isAdmin;
+            _userClient = userClient;
             AccessCode = accessCode;
             Status = "Zapraszanie";
             BorderColor = "#4185fa";
             ScrambleViewModel = new ScrambleViewModel();
             TimerViewModel = new TimerViewModel();
+            TimerViewModel.Timer.Stopped += SolveFinished;
+            TimerContent = TimerViewModel;
             SnackbarViewModel = new SnackbarViewModel();
             //roomsService.Notifications.Select(notification =>
             //{
@@ -74,20 +88,63 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
             var users = new List<RoomUserViewModel>
             {
-                new RoomUserViewModel("Adam",5)
-                {
-                    Solves = new System.Collections.ObjectModel.ObservableCollection<RoomUserSolveViewModel>
-                    {
-                        new RoomUserSolveViewModel(new Core.Models.Solve(null!, TimeSpan.FromSeconds(6).Add(TimeSpan.FromMilliseconds(42)), "R U X A T R' C")),
-                        new RoomUserSolveViewModel(new Core.Models.Solve(null!, TimeSpan.FromSeconds(7).Add(TimeSpan.FromMilliseconds(567)), "R U X A T R' C"))
-                    }
-                },
+                new RoomUserViewModel("Adam",5),
                 new RoomUserViewModel("Bartek",5),
                 new RoomUserViewModel("Kuba",5),
+                new RoomUserViewModel("padge",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
+                new RoomUserViewModel("Michał",5),
                 new RoomUserViewModel("Michał",5),
             };
 
+            users[0].Solves.Add(new RoomUserSolveViewModel(new  Solve(null!, TimeSpan.FromSeconds(6).Add(TimeSpan.FromMilliseconds(42)), "R U X A T R' C")));
+            users[0].Solves.Add(new RoomUserSolveViewModel(new  Solve(null!, TimeSpan.FromSeconds(7).Add(TimeSpan.FromMilliseconds(567)), "R U X A T R' C")));
+                                                                
+            users[12].Solves.Add(new RoomUserSolveViewModel(new Solve(null!, TimeSpan.FromSeconds(6).Add(TimeSpan.FromMilliseconds(42)), "R U X A T R' C")));
+            users[12].Solves.Add(new RoomUserSolveViewModel(new Solve(null!, TimeSpan.FromSeconds(7).Add(TimeSpan.FromMilliseconds(567)), "R U X A T R' C")));
+                                                                
+            users[20].Solves.Add(new RoomUserSolveViewModel(new Solve(null!, TimeSpan.FromSeconds(6).Add(TimeSpan.FromMilliseconds(42)), "R U X A T R' C")));
+            users[20].Solves.Add(new RoomUserSolveViewModel(new Solve(null!, TimeSpan.FromSeconds(7).Add(TimeSpan.FromMilliseconds(567)), "R U X A T R' C")));
             RoomUsersViewModel = new RoomUsersViewModel(users);
+        }
+
+        public void SolveFinished()
+        {
+            var roomSolveFlagViewModel = new RoomSolveFlagsViewModel(TimerViewModel.SavedTime);
+            TimerContent = roomSolveFlagViewModel;
+            roomSolveFlagViewModel.AcceptFlagCommand.Subscribe(async x => await AddSolveToMeAsync(x));
+        }
+
+        private Task AddSolveToMeAsync(SolveFlag solveFlag)
+        {
+            var time = TimerViewModel.SavedTime;
+            var solve = new Solve(null!, time, "xxx")
+            {
+                Flag = solveFlag
+            };
+            Me.Solves.Insert(0, new RoomUserSolveViewModel(solve));
+
+            TimerContent = TimerViewModel;
+            return Task.CompletedTask;
         }
 
         public override async Task ConstructAsync()

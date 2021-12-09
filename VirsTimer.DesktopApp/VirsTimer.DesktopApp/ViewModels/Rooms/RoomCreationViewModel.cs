@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Services.Rooms;
 using VirsTimer.DesktopApp.ViewModels.Common;
 
@@ -11,6 +12,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 {
     public class RoomCreationViewModel : ViewModelBase
     {
+        private readonly IUserClient _userClient;
         private readonly IRoomsService _roomsService;
 
         public ReactiveCommand<Unit, RoomViewModel?> CreateRoomCommand { get; }
@@ -28,8 +30,11 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
         public ReactiveCommand<Unit, Unit> CancelCommand { get; }
 
-        public RoomCreationViewModel(IRoomsService? roomsService = null)
+        public RoomCreationViewModel(
+            IUserClient? userClient = null,
+            IRoomsService? roomsService = null)
         {
+            _userClient = userClient ?? Ioc.GetService<IUserClient>();
             _roomsService = roomsService ?? Ioc.GetService<IRoomsService>();
             AllEvents = Core.Constants.Events.Predefined;
             CreateRoomCommand = ReactiveCommand.CreateFromTask(CreateRoomAsync);
@@ -53,6 +58,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             return new RoomViewModel(
                 "A4xg629p1Q",
                 true,
+                _userClient,
                 room.Scrambles,
                 _roomsService);
         }
@@ -71,6 +77,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             return new RoomViewModel(
                 "A4xg629p1Q",
                 true,
+                _userClient,
                 room.Scrambles,
                 _roomsService);
         }

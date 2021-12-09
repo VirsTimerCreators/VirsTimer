@@ -25,6 +25,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         [Reactive]
         public TimeSpan? Avg { get; set; }
 
+        [Reactive]
         public ObservableCollection<RoomUserSolveViewModel> Solves { get; set; } = new();
 
         public RoomUserViewModel(

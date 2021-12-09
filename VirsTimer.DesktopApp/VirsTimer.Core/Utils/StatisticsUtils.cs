@@ -90,10 +90,13 @@ namespace VirsTimer.Core.Utils
         /// </summary>
         public static TimeSpan Average(this IEnumerable<Solve> solves)
         {
-            if (solves.Count(x => x.Flag == Constants.SolveFlag.DNF) > 1)
+            if (solves.Count(x => x.Flag == Constants.SolveFlag.DNF) > 0)
                 return DnfTime;
 
-            var sum = 0L;
+            if (solves.Count() == 1)
+                return solves.First().TimeAsSpan;
+
+           var sum = 0L;
             foreach (var solve in solves)
                 sum += solve.TimeWithFlag.Ticks;
 

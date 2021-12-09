@@ -6,7 +6,7 @@ using VirsTimer.DesktopApp.Extensions;
 
 namespace VirsTimer.DesktopApp.ViewModels.Rooms
 {
-    public class RoomUserSolveViewModel
+    public class RoomUserSolveViewModel : ViewModelBase
     {
         public Solve Model { get; }
 

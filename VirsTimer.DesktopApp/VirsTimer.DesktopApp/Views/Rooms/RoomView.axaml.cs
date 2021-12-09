@@ -1,12 +1,13 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
-using System.Reactive.Disposables;
-using VirsTimer.DesktopApp.ViewModels.Rooms;
 using System;
-using Avalonia.Input;
+using System.Reactive.Disposables;
+using VirsTimer.DesktopApp.ViewModels;
+using VirsTimer.DesktopApp.ViewModels.Rooms;
 
 namespace VirsTimer.DesktopApp.Views.Rooms
 {
@@ -82,19 +83,20 @@ namespace VirsTimer.DesktopApp.Views.Rooms
             AvaloniaXamlLoader.Load(this);
         }
 
-        public async void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)
+        public void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)
         {
             keyEventArgs.Handled = true;
             if (ViewModel!.Status != "Rozpoczêto")
                 return;
 
-            if (keyEventArgs.Key == Key.Space && !ViewModel.TimerViewModel.Timer.IsRunning && !ViewModel.TimerViewModel.Timer.CountdownStarted)
+            if (keyEventArgs.Key == Key.Space
+                && ViewModel.TimerContent is TimerViewModel
+                && !ViewModel.TimerViewModel.Timer.IsRunning
+                && !ViewModel.TimerViewModel.Timer.CountdownStarted)
                 ViewModel.TimerViewModel.Timer.StartCountdown();
             else if (ViewModel.TimerViewModel.Timer.IsRunning)
             {
                 ViewModel.TimerViewModel.Timer.Stop();
-
-                // after stop
             }
         }
 
