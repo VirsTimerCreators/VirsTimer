@@ -55,7 +55,8 @@
 					CornerRadius="10"
 					Height="50"
 					Background="{Binding BorderColor}"
-					Width="170">
+					MinWidth="170"
+					Padding="15 0">
 					<TextBlock
 						x:Name="StatusTextBlock"
 						Text="Zapraszanie"

@@ -70,7 +70,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             _isAdmin = isAdmin;
             _userClient = userClient;
             AccessCode = accessCode;
-            Status = "Zapraszanie";
+            Status = _isAdmin ? "Zapraszanie" : "Oczekiwanie na rozpoczęcie administratora.";
             BorderColor = "#4185fa";
             ScrambleViewModel = new ScrambleViewModel();
             TimerViewModel = new TimerViewModel();
@@ -85,6 +85,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             CopyToClipboardCommand = ReactiveCommand.CreateFromTask(CopyToClipboard);
             StartCommand = ReactiveCommand.CreateFromTask(StartCompetition, Observable.Return(_isAdmin));
             ExitCommand = ReactiveCommand.Create(() => { });
+
+            StartCommand.ThrownExceptions.Subscribe(ExceptionThrown);
 
             var users = new List<RoomUserViewModel>
             {
@@ -132,6 +134,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             var roomSolveFlagViewModel = new RoomSolveFlagsViewModel(TimerViewModel.SavedTime);
             TimerContent = roomSolveFlagViewModel;
             roomSolveFlagViewModel.AcceptFlagCommand.Subscribe(async x => await AddSolveToMeAsync(x));
+            roomSolveFlagViewModel.AcceptFlagCommand.ThrownExceptions.Subscribe(ExceptionThrown);
+            roomSolveFlagViewModel.ClickFlagCommand.ThrownExceptions.Subscribe(ExceptionThrown);
+            roomSolveFlagViewModel.RadioButtonFocusedCommand.ThrownExceptions.Subscribe(ExceptionThrown);
         }
 
         private Task AddSolveToMeAsync(SolveFlag solveFlag)
@@ -164,6 +169,11 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             Status = "Rozpoczęto";
             BorderColor = "#9e5e4d";
             return Task.CompletedTask;
+        }
+
+        public void ExceptionThrown(Exception e)
+        {
+            SnackbarViewModel.Enqueue("Wystąpił problem podczas łączenia z serwem.");
         }
     }
 }

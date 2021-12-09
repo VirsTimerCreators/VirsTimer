@@ -76,7 +76,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             SnackbarViewModel.Disposed = true;
             return new RoomViewModel(
                 "A4xg629p1Q",
-                true,
+                false,
                 _userClient,
                 room.Scrambles,
                 _roomsService);
