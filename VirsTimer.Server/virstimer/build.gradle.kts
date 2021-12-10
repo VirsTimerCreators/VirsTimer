@@ -49,9 +49,6 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-ui:1.5.12")
 	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-gcp-starter-secretmanager
 	implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
-	implementation("org.springframework.cloud:spring-cloud-gcp-starter")
-	implementation("org.springframework.cloud:spring-cloud-gcp-starter-secretmanager:1.2.8.RELEASE")
-
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

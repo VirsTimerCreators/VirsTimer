@@ -146,5 +146,4 @@ class RoomControllerTest : TestCommons() {
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.length()", `is`(3)))
     }
-
 }
