@@ -79,6 +79,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         public MainWindowViewModel(
             bool online,
             IValueConverter<string, Bitmap>? svgToBitmapConverter = null)
+        { 
             _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
             _svgToBitmapConverter = svgToBitmapConverter ?? new SvgToBitmapConverter(100);
 
