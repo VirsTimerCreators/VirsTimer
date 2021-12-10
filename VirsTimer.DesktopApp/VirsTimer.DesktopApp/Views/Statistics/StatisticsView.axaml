@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
+             xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
              x:Class="VirsTimer.DesktopApp.Views.Statistics.StatisticsView">
     <UserControl.Styles>
         <Style Selector="TextBlock">
@@ -12,15 +12,6 @@
         </Style>
     </UserControl.Styles>
     <Grid RowDefinitions="*,*,*" ColumnDefinitions="*,*,*,*,*,*">
-        <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="10" Grid.RowSpan="10">
-            <ExperimentalAcrylicBorder.Material>
-                <ExperimentalAcrylicMaterial
-                    BackgroundSource="Digger"
-                    TintColor="Black"
-                    TintOpacity="1"
-                    MaterialOpacity="0.75" />
-            </ExperimentalAcrylicBorder.Material>
-        </ExperimentalAcrylicBorder>
         <Border Grid.Row="0" BorderBrush="#b1b536" BorderThickness="0,0,1,1"/>
         <Border Grid.Row="1" BorderBrush="#b1b536" BorderThickness="0,0,1,1">
             <TextBlock Text="Obecny" VerticalAlignment="Center" HorizontalAlignment="Center"/>

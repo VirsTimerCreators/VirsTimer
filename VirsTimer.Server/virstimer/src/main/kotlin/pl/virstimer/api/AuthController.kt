@@ -1,5 +1,6 @@
 package pl.virstimer.api
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
@@ -37,7 +38,10 @@ class AuthController(
     @Autowired
     var encoder: PasswordEncoder,
     @Autowired
-    var jwtUtils: JwtUtils
+    var jwtUtils: JwtUtils,
+
+    var logger: org.slf4j.Logger = LoggerFactory.getLogger(AuthController::class.java)
+
 ) {
 
 

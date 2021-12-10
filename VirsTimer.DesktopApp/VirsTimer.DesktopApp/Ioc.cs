@@ -14,6 +14,7 @@ using VirsTimer.Core.Services.Cache;
 using VirsTimer.Core.Services.Events;
 using VirsTimer.Core.Services.Login;
 using VirsTimer.Core.Services.Register;
+using VirsTimer.Core.Services.Rooms;
 using VirsTimer.Core.Services.Scrambles;
 using VirsTimer.Core.Services.Sessions;
 using VirsTimer.Core.Services.Solves;
@@ -108,6 +109,7 @@ namespace VirsTimer.DesktopApp
             ServiceDescriptors.AddSingleton<ISessionsRepository, SessionsServerRepository>();
             ServiceDescriptors.AddSingleton<ISolvesRepository, SolvesServerRepository>();
             ServiceDescriptors.AddSingleton<IScrambleGenerator, ScrambleServerGenerator>();
+            ServiceDescriptors.AddSingleton<IRoomsService, RoomServerService>();
             ServiceDescriptors.AddSingleton(userClient);
             Services = ServiceDescriptors.BuildServiceProvider();
         }

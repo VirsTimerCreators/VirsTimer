@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using Avalonia.VisualTree;
 using ReactiveUI;
 using System;
 using System.Reactive.Disposables;
@@ -16,7 +17,8 @@ namespace VirsTimer.DesktopApp.Views.Common
         private static readonly TimeSpan Speed = TimeSpan.FromMilliseconds(8);
         private static readonly TimeSpan Break = TimeSpan.FromMilliseconds(2000);
 
-        private readonly SemaphoreSlim _semaphoreSlim;
+        private ContentControl _parent = null!;
+        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         public Border Border { get; }
         public TextBlock MessageTextBlock { get; }
@@ -33,6 +35,9 @@ namespace VirsTimer.DesktopApp.Views.Common
 
             this.WhenActivated(disposableRegistration =>
             {
+                _parent = this.FindAncestorOfType<ContentControl>();
+                _parent.ZIndex = -1;
+
                 this.OneWayBind(
                     ViewModel,
                     viewModel => viewModel.Message,
@@ -69,8 +74,7 @@ namespace VirsTimer.DesktopApp.Views.Common
 
         public async Task MoveCanvasAsync()
         {
-            Parent!.ZIndex = 100;
-
+            _parent.ZIndex = 5;
             for (var i = HeightConst; i >= 0; i -= 4)
             {
                 await Task.Delay(Speed);
@@ -85,7 +89,7 @@ namespace VirsTimer.DesktopApp.Views.Common
                 Canvas.SetTop(Border, i);
             }
 
-            Parent!.ZIndex = -100;
+            _parent.ZIndex = -5;
         }
     }
 }

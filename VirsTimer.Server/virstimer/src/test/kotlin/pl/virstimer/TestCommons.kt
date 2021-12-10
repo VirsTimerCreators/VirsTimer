@@ -13,13 +13,16 @@ import pl.virstimer.api.EventRequest
 import pl.virstimer.api.SessionChange
 import pl.virstimer.api.SessionRequest
 import pl.virstimer.api.SolveRequest
+import pl.virstimer.api.multiplayer.*
 import pl.virstimer.db.security.model.ERole
 import pl.virstimer.db.security.model.Role
 import pl.virstimer.db.security.model.User
+import pl.virstimer.domain.PuzzleType
 import pl.virstimer.model.*
+import pl.virstimer.model.multiplayer.PersistentRoom
+import pl.virstimer.model.multiplayer.PersistentScramble
 import pl.virstimer.security.LoginRequest
 import pl.virstimer.security.SignupRequest
-import java.util.*
 import kotlin.collections.ArrayList
 
 open class TestCommons {
@@ -38,6 +41,9 @@ open class TestCommons {
         mongoTemplate.dropCollection(Solve::class.java)
         mongoTemplate.dropCollection(User::class.java)
         mongoTemplate.dropCollection(Role::class.java)
+
+        mongoTemplate.dropCollection(PersistentRoom::class.java)
+        mongoTemplate.dropCollection(PersistentScramble::class.java)
 
         mongoTemplate.insertAll(
             listOf(
@@ -60,11 +66,11 @@ open class TestCommons {
         return login(username, password).bearerToken()
     }
 
-    fun createEvent(userId: String, puzzleType: String, token: String) =
+    fun createEvent(puzzleType: String, token: String) =
         mockMvc.perform(
             MockMvcRequestBuilders.post("/event")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(Gson().toJson(Event(UUID.randomUUID().toString(), userId, puzzleType)))
+                .content(Gson().toJson(EventRequest(puzzleType)))
                 .authorizedWith(token)
         )
 
@@ -87,11 +93,11 @@ open class TestCommons {
                 )
         )
 
-    fun createSession(userId: String, eventId: String, name: String, token: String) =
+    fun createSession(eventId: String, name: String, token: String) =
         mockMvc.perform(
             MockMvcRequestBuilders.post("/session")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(Gson().toJson(SessionRequest(userId, eventId, name)).toString())
+                .content(Gson().toJson(SessionRequest(eventId, name)).toString())
                 .header("Authorization", token)
         )
 
@@ -109,6 +115,15 @@ open class TestCommons {
             MockMvcRequestBuilders.post("/solve")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Gson().toJson(SolveRequest(sessionId, "", 10, 10, solved)).toString())
+                .header("Authorization", token)
+        )
+
+    fun createSolves(sessionId: String, solved: Solved, token: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/solve/many")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Gson().toJson(mutableListOf(SolveRequest(sessionId, "", 7, 11, solved),
+                    SolveRequest(sessionId, "", 11, 13, solved))).toString())
                 .header("Authorization", token)
         )
 
@@ -141,8 +156,60 @@ open class TestCommons {
                         SessionChange(updateName)
                     ).toString()
                 )
-
         )
+
+    fun createRoom(numberOfScrambles: Int, puzzleType: PuzzleType, token: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/room")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", token)
+                .content(
+                    Gson().toJson(
+                        CreateRoomRequest(
+                            numberOfScrambles,
+                            puzzleType
+                        )
+                    ).toString()
+                )
+        )
+
+    fun modifyRoomStatus(roomId: String, newStatus: RoomStatus, token: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.patch("/room/$roomId")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", token)
+                .content(
+                    Gson().toJson(
+                        ChangeRoomStatusRequest(
+                            newStatus
+                        )
+                    ).toString()
+                )
+        )
+
+    fun joinRoom(joinCode: String, token: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/room/join")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", token)
+                .content(
+                    Gson().toJson(JoinRequest(joinCode)).toString()
+                )
+        )
+
+    fun leaveRoom(roomId: String, token: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/room/leave")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", token)
+                .content(
+                    Gson().toJson(LeaveRequest(roomId)).toString()
+                )
+        )
+
+    fun getRoomScrambles(roomId: String, token: String) =
+        mockMvc.perform(MockMvcRequestBuilders.get("/room/$roomId/scrambles")
+            .header("Authorization", token))
 
     fun ResultActions.bearerToken(): LoginResponseData {
         val map = Gson().fromJson(this.andReturn().response.contentAsString, Map::class.java)
