@@ -2,11 +2,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Height="760"
+        Height="810"
 		Width="600"
-		MaxHeight="760"
+		MaxHeight="810"
 		MaxWidth="600"
-		MinHeight="760"
+		MinHeight="810"
 		MinWidth="600"
         x:Class="VirsTimer.DesktopApp.Views.Rooms.RoomCreationView"
         Title="RoomCreationView"
@@ -40,7 +40,7 @@
 			<Panel Height="30"/>
 			<Button
 				x:Name="CreateRoomButton"
-				Height="500"
+				Height="550"
 				Width="400"
 				VerticalAlignment="Stretch"
 				HorizontalAlignment="Stretch">
@@ -53,10 +53,14 @@
 						FontWeight="SemiBold"
 						DockPanel.Dock="Top"
 						HorizontalAlignment="Center"/>
-					
+
+					<DockPanel
+						DockPanel.Dock="Bottom"
+						VerticalAlignment="Stretch">
 						<ListBox
-							DockPanel.Dock="Bottom"
+							DockPanel.Dock="Top"
 							Width="310"
+							Height="400"
 							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							ScrollViewer.VerticalScrollBarVisibility="Disabled"
 							x:Name="EventsListBox"
@@ -68,7 +72,17 @@
 								</DataTemplate>
 							</ListBox.ItemTemplate>
 						</ListBox>
-			
+						<TextBox
+							DockPanel.Dock="Bottom"
+							Margin="0 15 0 15"
+							x:Name="ScramblesAmountTextBox"
+							Watermark="Liczba scrambli (3-20)"
+							Height="45"
+							VerticalContentAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							Width="310"/>
+					</DockPanel>
 				</DockPanel>
 			</Button>
 			<Button

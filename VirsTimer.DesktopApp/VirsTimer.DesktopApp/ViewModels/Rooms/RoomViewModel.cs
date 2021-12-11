@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Authorization;
-using VirsTimer.Core.Services.Rooms;
+using VirsTimer.Core.Multiplayer;
 using VirsTimer.DesktopApp.ValueConverters;
 using VirsTimer.DesktopApp.ViewModels.Common;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
@@ -84,7 +84,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
             CopyToClipboardCommand = ReactiveCommand.CreateFromTask(CopyToClipboard);
             StartCommand = ReactiveCommand.CreateFromTask(StartCompetition, Observable.Return(_isAdmin));
-            ExitCommand = ReactiveCommand.Create(() => { });
+            ExitCommand = ReactiveCommand.Create(() => 
+            {
+                SnackbarViewModel.Disposed = true;
+            });
 
             StartCommand.ThrownExceptions.Subscribe(ExceptionThrown);
 

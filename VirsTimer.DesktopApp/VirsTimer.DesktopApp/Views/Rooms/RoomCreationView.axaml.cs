@@ -16,6 +16,7 @@ namespace VirsTimer.DesktopApp.Views.Rooms
         public Button CancelButton { get; }
         public ListBox EventsListBox { get; }
         public TextBox AccessCodeTextBox { get; }
+        public TextBox ScramblesAmountTextBox { get; }
         public ContentControl SnackBarContentControl { get; }
 
         public RoomCreationView()
@@ -30,6 +31,7 @@ namespace VirsTimer.DesktopApp.Views.Rooms
             CancelButton = this.Find<Button>("CancelButton");
             EventsListBox = this.Find<ListBox>("EventsListBox");
             AccessCodeTextBox = this.Find<TextBox>("AccessCodeTextBox");
+            ScramblesAmountTextBox = this.Find<TextBox>("ScramblesAmountTextBox");
             SnackBarContentControl = this.Find<ContentControl>("SnackBarContentControl");
 
             this.WhenActivated(disposableRegistration =>
@@ -44,6 +46,12 @@ namespace VirsTimer.DesktopApp.Views.Rooms
                     ViewModel,
                     viewModel => viewModel.AccessCode,
                     view => view.AccessCodeTextBox.Text)
+                .DisposeWith(disposableRegistration);
+
+                this.Bind(
+                    ViewModel,
+                    viewModel => viewModel.ScramblesAmount,
+                    view => view.ScramblesAmountTextBox.Text)
                 .DisposeWith(disposableRegistration);
 
                 this.Bind(

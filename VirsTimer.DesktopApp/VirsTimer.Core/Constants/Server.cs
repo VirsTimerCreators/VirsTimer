@@ -110,6 +110,37 @@ namespace VirsTimer.Core.Constants
             }
 
             /// <summary>
+            /// Rooms resource endpoints.
+            /// </summary>
+            public static class Room
+            {
+                /// <summary>
+                /// POST room.
+                /// </summary>
+                public static string Post => RoomsResource;
+
+                /// <summary>
+                /// POST room join.
+                /// </summary>
+                public static string Join => Path.Combine(RoomsResource, "join");
+
+                /// <summary>
+                /// POST room leave.
+                /// </summary>
+                public static string Leave => Path.Combine(RoomsResource, "leave");
+
+                /// <summary>
+                /// PATCH room by id.
+                /// </summary>
+                public static string Patch(string roomId) => Path.Combine(RoomsResource, roomId);
+
+                /// <summary>
+                /// POST register.
+                /// </summary>
+                public static string Register => Path.Combine(AuthResource, "signup");
+            }
+
+            /// <summary>
             /// Auth resource endpoints.
             /// </summary>
             public static class Auth
@@ -148,8 +179,12 @@ namespace VirsTimer.Core.Constants
             /// <summary>
             /// Auth endpoint.
             /// </summary>
-
             private const string AuthResource = "api/auth/";
+
+            /// <summary>
+            /// Rooms endpoint.
+            /// </summary>
+            private const string RoomsResource = "room/";
         }
 
         /// <summary>

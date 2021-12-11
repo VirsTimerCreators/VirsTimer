@@ -15,7 +15,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
     {
         public string SolveTimeText { get; }
 
-        public ObservableCollection<FlagViewModel> FlagsArray { get; }
+        public ObservableCollection<RoomFlagViewModel> FlagsArray { get; }
 
         public ReactiveCommand<int, Unit> RadioButtonFocusedCommand { get; }
 
@@ -26,14 +26,14 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         public RoomSolveFlagsViewModel(TimeSpan solveTime)
         {
             SolveTimeText = "Czas ułożenia: " + solveTime.ToDynamicString();
-            var flags = new FlagViewModel[3]
+            var flags = new RoomFlagViewModel[3]
             {
                 new(),
                 new(),
                 new()
             };
 
-            FlagsArray = new ObservableCollection<FlagViewModel>(flags);
+            FlagsArray = new ObservableCollection<RoomFlagViewModel>(flags);
             RadioButtonFocusedCommand = ReactiveCommand.Create<int>(RadioButtonFocused);
 
             var canAccpet = FlagsArray

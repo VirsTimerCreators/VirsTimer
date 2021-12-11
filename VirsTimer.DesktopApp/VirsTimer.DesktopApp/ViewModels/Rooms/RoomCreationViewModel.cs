@@ -5,7 +5,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models.Authorization;
-using VirsTimer.Core.Services.Rooms;
+using VirsTimer.Core.Multiplayer;
 using VirsTimer.DesktopApp.ViewModels.Common;
 
 namespace VirsTimer.DesktopApp.ViewModels.Rooms
@@ -26,6 +26,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         [Reactive]
         public string AccessCode { get; set; }
 
+        [Reactive]
+        public string ScramblesAmount { get; set; }
+
         public SnackbarViewModel SnackbarViewModel { get; }
 
         public ReactiveCommand<Unit, Unit> CancelCommand { get; }
@@ -39,7 +42,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             AllEvents = Core.Constants.Events.Predefined;
             CreateRoomCommand = ReactiveCommand.CreateFromTask(CreateRoomAsync);
             JoinRoomCommand = ReactiveCommand.CreateFromTask(JoinRoomAsync);
-            CancelCommand = ReactiveCommand.Create(() => { });
+            CancelCommand = ReactiveCommand.Create(() => 
+            {
+                SnackbarViewModel.Disposed = true;
+            });
             AccessCode = "";
             SnackbarViewModel = new SnackbarViewModel();
         }
@@ -52,15 +58,34 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
                 return null;
             }
 
-            var room = await _roomsService.CreateRoomAsync(SelectedEvent!);
+            if (string.IsNullOrEmpty(ScramblesAmount))
+            {
+                await SnackbarViewModel.Enqueue("Uzupełnij liczbę scrambli.");
+                return null;
+            }
+            var scramblesAmountParsed = int.TryParse(ScramblesAmount, out var scramblesAmount) 
+                && 3 <= scramblesAmount 
+                && scramblesAmount <= 20;
+
+            if (scramblesAmountParsed is false)
+            {
+                await SnackbarViewModel.Enqueue("Liczba scrambli musi być w przedziale [3, 20].");
+                return null;
+            }
+
+            var response = await _roomsService.CreateRoomAsync(SelectedEvent!, scramblesAmount);
+            if (response.IsSuccesfull is false)
+            {
+                await SnackbarViewModel.Enqueue("Podczas tworzenia pokoju wystąpił problem.");
+                return null;
+            }
 
             SnackbarViewModel.Disposed = true;
             return new RoomViewModel(
-                "A4xg629p1Q",
+                response.Value.AccessCode,
                 true,
                 _userClient,
-                room.Scrambles,
-                _roomsService);
+                response.Value.Scrambles);
         }
 
         public async Task<RoomViewModel?> JoinRoomAsync()
@@ -70,16 +95,19 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
                 await SnackbarViewModel.Enqueue("Uzupełnij kod dostępu.");
                 return null;
             }
-
-            var room = await _roomsService.JoinRoomAsync(SelectedEvent!);
+            var response = await _roomsService.JoinRoomAsync(AccessCode!);
+            if (response.IsSuccesfull is false)
+            {
+                await SnackbarViewModel.Enqueue("Podczas dołączania do pokoju wystąpił problem.");
+                return null;
+            }
 
             SnackbarViewModel.Disposed = true;
             return new RoomViewModel(
-                "A4xg629p1Q",
+                response.Value.AccessCode,
                 false,
                 _userClient,
-                room.Scrambles,
-                _roomsService);
+                response.Value.Scrambles);
         }
     }
 }
