@@ -1,5 +1,6 @@
 package pl.virstimer.api.multiplayer
 
+import org.springframework.data.annotation.Id
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import pl.virstimer.domain.PuzzleType
@@ -14,7 +15,7 @@ class RoomController(
 ) {
 
     @PostMapping
-    fun createRoom(@RequestBody createRoomRequest: CreateRoomRequest, authentication: Authentication): PersistentRoom =
+    fun createRoom(@RequestBody createRoomRequest: CreateRoomRequest, authentication: Authentication): RoomResponse =
         roomService.createRoom(createRoomRequest, authentication.name)
 
     @PatchMapping("/{roomId}")
@@ -22,7 +23,7 @@ class RoomController(
         roomService.modifyRoomStatus(roomId, changeRoomStatus.newStatus, authentication.name)
 
     @PostMapping("/join")
-    fun joinRoom(@RequestBody joinRequest: JoinRequest, authentication: Authentication) =
+    fun joinRoom(@RequestBody joinRequest: JoinRequest, authentication: Authentication): RoomResponse =
         roomService.joinRoom(joinRequest.joinCode, authentication.name)
 
     @PostMapping("/leave")
@@ -35,6 +36,20 @@ class RoomController(
 }
 
 enum class RoomStatus { CLOSED, INPROGRESS, OPEN}
+
+data class RoomResponse(
+    val id: String,
+    val scrambleIds: List<ScrambleResponse>,
+    val status: RoomStatus,
+    val administratorId: String,
+    val users: Set<String>,
+    val joinCode: String
+)
+
+data class ScrambleResponse(
+    val scramble: String,
+    val scrambleSvg: String
+)
 
 data class LeaveRequest(
     val roomId: String
