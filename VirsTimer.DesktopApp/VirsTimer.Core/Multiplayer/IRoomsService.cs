@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Responses;
-using VirsTimer.Scrambles;
 
 namespace VirsTimer.Core.Multiplayer
 {
@@ -9,7 +9,7 @@ namespace VirsTimer.Core.Multiplayer
     {
         public Task<RepositoryResponse<Room>> CreateRoomAsync(string eventName, int solvesAmount);
         public Task<RepositoryResponse<Room>> JoinRoomAsync(string accessCode);
-        public Task<RepositoryResponse> SendScrambleAsync(Scramble scramble);
+        public Task<RepositoryResponse> SendSolveAsync(string scrambleId, Solve solve);
         public IObservable<RoomNotification> Notifications { get; }
     }
 }

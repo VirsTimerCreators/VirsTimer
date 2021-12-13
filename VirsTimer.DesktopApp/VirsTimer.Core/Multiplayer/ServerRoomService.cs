@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Handlers;
+using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Responses;
 using VirsTimer.Core.Multiplayer.Requests;
 using VirsTimer.Core.Multiplayer.Responses;
-using VirsTimer.Scrambles;
 
 namespace VirsTimer.Core.Multiplayer
 {
@@ -34,7 +35,8 @@ namespace VirsTimer.Core.Multiplayer
             var response = await _httpResponseHandler.HandleAsync<CreateRoomResponse>(httpRequestFunc).ConfigureAwait(false);
             if (response.IsSuccesfull)
             {
-                var room = new Room(response.Value!.Id, response.Value.JoinCode, Array.Empty<Scramble>());
+                var users = response.Value!.Users.Select(user => new RoomUser(user)).ToList();
+                var room = new Room(response.Value!.Id, response.Value.JoinCode, response.Value.ScrambleIds, users);
                 return new RepositoryResponse<Room>(response, room);
             }
 
@@ -49,16 +51,21 @@ namespace VirsTimer.Core.Multiplayer
             var response = await _httpResponseHandler.HandleAsync<JoinRoomResponse>(httpRequestFunc).ConfigureAwait(false);
             if (response.IsSuccesfull)
             {
-                var room = new Room(response.Value!.Id, accessCode, Array.Empty<Scramble>());
+                var users = response.Value!.Users.Select(user => new RoomUser(user)).ToList();
+                var room = new Room(response.Value!.Id, accessCode, response.Value.ScrambleIds, users);
                 return new RepositoryResponse<Room>(response, room);
             }
 
             return new RepositoryResponse<Room>(response, null!);
         }
 
-        public Task<RepositoryResponse> SendScrambleAsync(Scramble scramble)
+        public async Task<RepositoryResponse> SendSolveAsync(string scrambleId, Solve solve)
         {
-            return Task.FromResult(RepositoryResponse.Ok);
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var request = new SendSolveRequest(scrambleId, solve);
+            var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Room.Join, request);
+            var response = await _httpResponseHandler.HandleAsync(httpRequestFunc).ConfigureAwait(false);
+            return response;
         }
     }
 }

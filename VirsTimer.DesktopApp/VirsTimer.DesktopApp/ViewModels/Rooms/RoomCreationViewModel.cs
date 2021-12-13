@@ -82,10 +82,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
             SnackbarViewModel.Disposed = true;
             return new RoomViewModel(
-                response.Value.AccessCode,
-                true,
-                _userClient,
-                response.Value.Scrambles);
+                isAdmin: true,
+                response.Value!,
+                _userClient);
         }
 
         public async Task<RoomViewModel?> JoinRoomAsync()
@@ -104,10 +103,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
             SnackbarViewModel.Disposed = true;
             return new RoomViewModel(
-                response.Value.AccessCode,
-                false,
-                _userClient,
-                response.Value.Scrambles);
+                isAdmin: false,
+                response.Value!,
+                _userClient);
         }
     }
 }

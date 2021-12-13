@@ -7,18 +7,20 @@ namespace VirsTimer.Core.Multiplayer
     {
         public string Id { get; }
         public string AccessCode { get; }
-        public IReadOnlyList<Scramble> Scrambles { get; }
+        public IReadOnlyList<RoomScramble> Scrambles { get; }
         public RoomStatus Status { get; set; }
+        public IList<RoomUser> Users { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Room"/> class.
         /// </summary>
-        public Room(string id, string accesCode, IEnumerable<Scramble> scrambles)
+        public Room(string id, string accesCode, IEnumerable<RoomScramble> scrambles, IList<RoomUser> users)
         {
             Id = id;
             AccessCode = accesCode;
-            Scrambles = new List<Scramble>(scrambles);
+            Scrambles = new List<RoomScramble>(scrambles);
             Status = RoomStatus.Open;
+            Users = users;
         }
     }
 }
