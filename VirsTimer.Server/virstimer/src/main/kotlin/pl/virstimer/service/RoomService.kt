@@ -17,6 +17,9 @@ class RoomService(
     private val scrambleService: ScrambleService
 ) {
 
+    fun getRoom(roomId: String, user: String): PersistentRoom =
+        roomRepository.findByIdAndUser(roomId, user) ?: throw RuntimeException("RoomId $roomId not found")
+
     fun createRoom(createRoomRequest: CreateRoomRequest, userId: String): RoomResponse {
         val newScrambles = scrambleService.createPersistentScrambles(createRoomRequest.scrambleType, createRoomRequest.numberOfScrambles)
 
