@@ -4,9 +4,9 @@ namespace VirsTimer.Core.Multiplayer.Responses
 {
     internal class CreateRoomResponse
     {
-        public string Id { get; set; } = string.Empty;
-        public string JoinCode { get; set; } = string.Empty;
-        public RoomScramble[] ScrambleIds { get; set; } = Array.Empty<RoomScramble>();
-        public string[] Users { get; set; } = Array.Empty<string>();
+        public string Id { get; init; } = string.Empty;
+        public string JoinCode { get; init; } = string.Empty;
+        public RoomScramble[] Scrambles { get; init; } = Array.Empty<RoomScramble>();
+        public string[] Users { get; init; } = Array.Empty<string>();
     }
 }

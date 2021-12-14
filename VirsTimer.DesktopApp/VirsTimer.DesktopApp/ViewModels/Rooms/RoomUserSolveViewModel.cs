@@ -1,14 +1,14 @@
 ﻿using ReactiveUI.Fody.Helpers;
 using System;
 using VirsTimer.Core.Constants;
-using VirsTimer.Core.Models;
+using VirsTimer.Core.Multiplayer;
 using VirsTimer.DesktopApp.Extensions;
 
 namespace VirsTimer.DesktopApp.ViewModels.Rooms
 {
     public class RoomUserSolveViewModel : ViewModelBase
     {
-        public Solve Model { get; }
+        public RoomSolve Model { get; }
 
         public string Summary =>
             Model.Flag switch
@@ -22,7 +22,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         [Reactive]
         public string Index { get; set; }
 
-        public RoomUserSolveViewModel(Solve solve)
+        public RoomUserSolveViewModel(RoomSolve solve)
         {
             Model = solve;
             Index = "-1";

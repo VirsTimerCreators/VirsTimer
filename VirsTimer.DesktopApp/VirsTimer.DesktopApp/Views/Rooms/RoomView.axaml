@@ -142,14 +142,14 @@
 			Content="{Binding TimerContent}"/>
 		<Grid
 			Grid.Row="3"
-			ColumnDefinitions="2*,*">
+			ColumnDefinitions="2*,*,50">
 			<ContentControl
 				Content="{Binding RoomUsersViewModel}">
 			</ContentControl>
 			<Image
 				Grid.Column="1"
 				Focusable="False"
-				Source="{Binding ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
+				Source="{Binding ScrambleViewModel.Current.Svg, Converter={converters:SvgToBitmapConverter}}"/>
 		</Grid>
 		<ContentControl
 			Content="{Binding SnackbarViewModel}"

@@ -86,7 +86,7 @@ namespace VirsTimer.DesktopApp.Views.Rooms
         public void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)
         {
             keyEventArgs.Handled = true;
-            if (ViewModel!.Status != "Rozpoczêto")
+            if (ViewModel!.Status != "Rozpoczêto" || ViewModel.ScrambleViewModel.Current is null)
                 return;
 
             if (keyEventArgs.Key == Key.Space

@@ -137,7 +137,7 @@ namespace VirsTimer.Core.Constants
                 /// <summary>
                 /// POST register.
                 /// </summary>
-                public static string Register => Path.Combine(AuthResource, "signup");
+                public static string Notifications(string roomId) => Path.Combine(RoomsResource, roomId, "feed");
             }
 
             /// <summary>

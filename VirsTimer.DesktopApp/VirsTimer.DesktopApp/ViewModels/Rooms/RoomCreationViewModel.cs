@@ -73,7 +73,12 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
                 return null;
             }
 
+            IsBusy = true;
+
             var response = await _roomsService.CreateRoomAsync(SelectedEvent!, scramblesAmount);
+
+            IsBusy = false;
+
             if (response.IsSuccesfull is false)
             {
                 await SnackbarViewModel.Enqueue("Podczas tworzenia pokoju wystąpił problem.");
@@ -94,10 +99,16 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
                 await SnackbarViewModel.Enqueue("Uzupełnij kod dostępu.");
                 return null;
             }
+
+            IsBusy = true;
+
             var response = await _roomsService.JoinRoomAsync(AccessCode!);
+
+            IsBusy = false;
+
             if (response.IsSuccesfull is false)
             {
-                await SnackbarViewModel.Enqueue("Podczas dołączania do pokoju wystąpił problem.");
+                await SnackbarViewModel.Enqueue("Nie można dołaczyć do pokoju ponieważ już się rozpoczął lub nie istnieje.");
                 return null;
             }
 

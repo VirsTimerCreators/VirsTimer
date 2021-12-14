@@ -1,23 +1,11 @@
-﻿using System.Collections.Generic;
-using VirsTimer.Scrambles;
+﻿using System;
+using System.Collections.Generic;
 
 namespace VirsTimer.Core.Multiplayer
 {
     public class RoomUser
     {
-        public string Name { get; }
-        public IList<Scramble> Scrambles { get; }
-
-        public RoomUser(string name, IList<Scramble> scrambles)
-        {
-            Name = name;
-            Scrambles = scrambles;
-        }
-
-        public RoomUser(string name)
-        {
-            Name = name;
-            Scrambles = new List<Scramble>();
-        }
+        public string Name { get; init; } = string.Empty;
+        public IReadOnlyList<RoomSolve> Solves { get; init; } = Array.Empty<RoomSolve>();
     }
 }

@@ -1,16 +1,15 @@
-﻿namespace VirsTimer.Core.Multiplayer
+﻿using System.Text.Json.Serialization;
+
+namespace VirsTimer.Core.Multiplayer
 {
     public class RoomScramble
     {
-        public string Id { get; }
-        public string Value { get; }
-        public string Svg { get; }
+        public string Id { get; init; } = string.Empty;
 
-        public RoomScramble(string id, string value, string svg)
-        {
-            Id = id;
-            Value = value;
-            Svg = svg;
-        }
+        [JsonPropertyName("scramble")]
+        public string Value { get; init; } = string.Empty;
+
+        [JsonPropertyName("scrambleSvg")]
+        public string Svg { get; init; } = string.Empty;
     }
 }

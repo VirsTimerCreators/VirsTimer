@@ -3,6 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using VirsTimer.Core.Multiplayer;
 using VirsTimer.Core.Utils;
 
 namespace VirsTimer.DesktopApp.ViewModels.Rooms
@@ -34,10 +35,18 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         {
             UserName = userName;
             _scramblesAmount = scramblesAmount;
-            Solves.CollectionChanged += UpdateIndexesAndStatisticAsync;
         }
 
-        private async void UpdateIndexesAndStatisticAsync(object? sender, EventArgs e)
+        public RoomUserViewModel(
+            RoomUser roomUser,
+            int scramblesAmount)
+        {
+            _scramblesAmount = scramblesAmount;
+            UserName = roomUser.Name;
+            Solves = new(roomUser.Solves.Select(x => new RoomUserSolveViewModel(x)));
+        }
+
+        public async Task UpdateIndexesAndStatisticAsync()
         {
             var tasks = Solves.Select(solve => Task.Run(() => solve.Index = $"{Solves.Count - Solves.IndexOf(solve)}."));
             await Task.WhenAll(tasks).ConfigureAwait(false);

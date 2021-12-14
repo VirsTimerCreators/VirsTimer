@@ -1,5 +1,4 @@
-﻿using VirsTimer.Core.Models;
-using VirsTimer.Core.Models.Requests;
+﻿using VirsTimer.Core.Models.Requests;
 
 namespace VirsTimer.Core.Multiplayer.Requests
 {
@@ -10,9 +9,9 @@ namespace VirsTimer.Core.Multiplayer.Requests
         public long Timestamp { get; set; }
         public string Solved { get; set; }
 
-        public SendSolveRequest(string scrambleId, Solve solve)
+        public SendSolveRequest(RoomSolve solve)
         {
-            ScrambleId = scrambleId;
+            ScrambleId = solve.ScrambleId;
             Time = solve.Time;
             Timestamp = solve.Date.Ticks;
             Solved = SolveServerFlags.ConvertFromSolveFlag(solve.Flag);

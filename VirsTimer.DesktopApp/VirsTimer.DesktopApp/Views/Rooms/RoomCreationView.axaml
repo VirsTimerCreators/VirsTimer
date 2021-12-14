@@ -38,9 +38,16 @@
 		</ExperimentalAcrylicBorder>
 		<StackPanel>
 			<Panel Height="30"/>
+			<ProgressBar 
+				IsIndeterminate="True"
+				Width="40"
+				HorizontalAlignment="Right"
+				Margin="0 0 30 0"
+				IsVisible="{Binding IsBusy}"/>
+			<Panel Height="20"/>
 			<Button
 				x:Name="CreateRoomButton"
-				Height="550"
+				Height="520"
 				Width="400"
 				VerticalAlignment="Stretch"
 				HorizontalAlignment="Stretch">
@@ -60,7 +67,7 @@
 						<ListBox
 							DockPanel.Dock="Top"
 							Width="310"
-							Height="400"
+							Height="370"
 							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							ScrollViewer.VerticalScrollBarVisibility="Disabled"
 							x:Name="EventsListBox"
