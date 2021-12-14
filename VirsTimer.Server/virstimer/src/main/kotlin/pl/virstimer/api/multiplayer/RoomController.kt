@@ -51,7 +51,7 @@ class RoomController(
                 ServerSentEvent.builder<String>()
                     .id(sequence.toString())
                     .event("periodic-event")
-                    .data( Gson().toJson(roomService.getRoom(roomId, authentication.name)).toString() )
+                    .data( Gson().toJson(roomService.getRoomWithSolves(roomId, authentication.name)).toString() )
                     .build()
             }
             .onErrorMap { e -> throw RuntimeException("Exception during feed subscription: $e") }
