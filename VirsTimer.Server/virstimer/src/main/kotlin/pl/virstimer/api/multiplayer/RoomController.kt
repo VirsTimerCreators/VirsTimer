@@ -39,7 +39,7 @@ enum class RoomStatus { CLOSED, INPROGRESS, OPEN}
 
 data class RoomResponse(
     val id: String,
-    val scrambleIds: List<ScrambleResponse>,
+    val scrambles: List<ScrambleResponse>,
     val status: RoomStatus,
     val administratorId: String,
     val users: Set<String>,
@@ -47,6 +47,7 @@ data class RoomResponse(
 )
 
 data class ScrambleResponse(
+    val id: String,
     val scramble: String,
     val scrambleSvg: String
 )

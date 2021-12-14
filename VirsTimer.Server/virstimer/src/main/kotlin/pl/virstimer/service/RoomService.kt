@@ -44,7 +44,7 @@ class RoomService(
 
         return RoomResponse(
             this.id,
-            scrambles.map { ScrambleResponse(it.scrambleText, it.scrambleSvg) },
+            scrambles.map { ScrambleResponse(it.id, it.scrambleText, it.scrambleSvg) },
             this.status,
             this.administratorId,
             this.users,
