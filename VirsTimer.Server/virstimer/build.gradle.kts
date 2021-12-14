@@ -54,6 +54,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	// https://mvnrepository.com/artifact/de.flapdoodle.embed/de.flapdoodle.embed.mongo
 	testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
+	implementation("io.projectreactor:reactor-core:3.4.12")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
 }
 
 tasks.withType<KotlinCompile> {
