@@ -17,14 +17,13 @@
 		<DockPanel>
 			<ScrollViewer>
 				<TextBlock
+					x:Name="ScrambleTextBlock"
 					ScrollViewer.HorizontalScrollBarVisibility="Auto"
 					ScrollViewer.VerticalScrollBarVisibility="Disabled"
 					VerticalAlignment="Center"
 					HorizontalAlignment="Center"
 					Text="{Binding Current.Value}"
 					TextWrapping="WrapWithOverflow"
-					MinWidth="200"
-					FontSize="42"
 					Foreground="White"
 					FontFamily="Consolas"
 					FontWeight="Regular"

@@ -8,8 +8,6 @@
         xmlns:sessionsViews="clr-namespace:VirsTimer.DesktopApp.Views.Sessions;assembly=VirsTimer.DesktopApp"
         xmlns:scramblesViews="clr-namespace:VirsTimer.DesktopApp.Views.Scrambles;assembly=VirsTimer.DesktopApp"
         xmlns:statisticsViews="clr-namespace:VirsTimer.DesktopApp.Views.Statistics;assembly=VirsTimer.DesktopApp"
-        Height="1050" Width="1500"
-        MinHeight="700" MinWidth="1000"
         x:Class="VirsTimer.DesktopApp.Views.MainWindow"
         Title="MainWindow"
         KeyDown="WindowKeyDown"
@@ -148,7 +146,7 @@
 				</StackPanel>
 			</Panel>
 		</SplitView.Pane>
-		<Grid RowDefinitions="0,Auto,300,*">
+		<Grid RowDefinitions="0,Auto,Auto,*">
 			<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
 				<ExperimentalAcrylicBorder.Material>
 					<ExperimentalAcrylicMaterial
@@ -169,11 +167,13 @@
 
 			</Panel>
 			<ContentControl
+				x:Name="ScrambleContenteControl"
 				MinHeight="100"
 				MaxHeight="300"
 				Grid.Row="1"
 				Content="{Binding ScrambleViewModel}"/>
 			<Panel
+				x:Name="TimerPanel"
 				Grid.Row="2">
 				<ContentControl
 					Content="{Binding TimerViewModel}"/>

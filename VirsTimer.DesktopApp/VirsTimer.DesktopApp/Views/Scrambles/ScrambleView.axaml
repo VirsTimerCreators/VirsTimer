@@ -37,6 +37,7 @@
 			</Button>
 			<ScrollViewer>
 				<TextBlock
+					x:Name="ScrambleTextBlock"
 					ScrollViewer.HorizontalScrollBarVisibility="Auto"
 					ScrollViewer.VerticalScrollBarVisibility="Disabled"
 					VerticalAlignment="Center"

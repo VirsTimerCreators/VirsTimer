@@ -19,7 +19,7 @@
 		ExtendClientAreaChromeHints="NoChrome"
 		ExtendClientAreaToDecorationsHint="True"
 		ExtendClientAreaTitleBarHeightHint="-1">
-	<Grid RowDefinitions="110,Auto,300,*">
+	<Grid RowDefinitions="110,Auto,Auto,*">
 		<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
 			<ExperimentalAcrylicBorder.Material>
 				<ExperimentalAcrylicMaterial
@@ -79,7 +79,6 @@
 				VerticalAlignment="Center"/>
 			<TextBlock
 				x:Name="AccessCodeTextBlock"
-				Text="xxxxxxxxxx"
 				FontSize="20"
 				HorizontalAlignment="Left"
 				FontWeight="Medium"
@@ -148,12 +147,14 @@
 			<Panel/>
 		</StackPanel>
 		<ContentControl
+			x:Name="ScrambleContenteControl"
 			MinHeight="100"
 			MaxHeight="300"
 			Grid.Row="1"
 			Content="{Binding ScrambleViewModel}"/>
 		<ContentControl
 			Grid.Row="2"
+			x:Name="TimerPanel"
 			Content="{Binding TimerContent}"/>
 		<Grid
 			Grid.Row="3"

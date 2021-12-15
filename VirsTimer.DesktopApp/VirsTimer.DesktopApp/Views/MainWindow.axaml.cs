@@ -9,6 +9,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
+using VirsTimer.DesktopApp.Constants;
 using VirsTimer.DesktopApp.ViewModels;
 using VirsTimer.DesktopApp.ViewModels.Rooms;
 using VirsTimer.DesktopApp.Views.Rooms;
@@ -19,6 +20,10 @@ namespace VirsTimer.DesktopApp.Views
     {
         public SplitView SplitView { get; }
 
+        public Panel TimerPanel { get; }
+
+        public ContentControl ScrambleContenteControl { get; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -26,6 +31,10 @@ namespace VirsTimer.DesktopApp.Views
             this.AttachDevTools();
 #endif
             SplitView = this.FindControl<SplitView>("SplitView");
+            TimerPanel = this.FindControl<Panel>("TimerPanel");
+            ScrambleContenteControl = this.FindControl<ContentControl>("ScrambleContenteControl");
+
+            Opened += (_, _) => OnOpen();
 
             this.WhenActivated(async disposableRegistration =>
             {
@@ -33,6 +42,27 @@ namespace VirsTimer.DesktopApp.Views
                 ViewModel.ShowRoomDialog.RegisterHandler(DoShowRoomDialogAsync).DisposeWith(disposableRegistration);
                 await ViewModel!.ConstructAsync().ConfigureAwait(false);
             });
+
+            var s = this.Height;
+        }
+
+        public void OnOpen()
+        {
+            TimerPanel.Margin = Height switch
+            {
+                >= ScreenHeight.Big => new Thickness(0, 50, 0, 50),
+                (< ScreenHeight.Big) and (>= ScreenHeight.Medium) => new Thickness(0, 35, 0, 35),
+                (< ScreenHeight.Medium) => new Thickness(0, 15, 0, 15),
+                _ => new Thickness(0, 15, 0, 15)
+            };
+
+            ScrambleContenteControl.MaxHeight = Height switch
+            {
+                >= ScreenHeight.Big => 300,
+                (< ScreenHeight.Big) and (>= ScreenHeight.Medium) => 225,
+                (< ScreenHeight.Medium) => 150,
+                _ => 150
+            };
         }
 
         private void InitializeComponent()

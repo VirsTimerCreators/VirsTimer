@@ -4,14 +4,13 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
-	mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 	x:Class="VirsTimer.DesktopApp.Views.TimerView">
 	<TextBlock x:Name="TimerTextBlock"
 			   Text="{Binding CurrentTime, Converter={converters:TimeSpanValueConverter}}"
 			   Foreground="{Binding Timer, Converter={converters:DelayStopwatchTimerConverter}}"
 			   HorizontalAlignment="Center"
 			   VerticalAlignment="Center"
-			   FontSize="144"
+			   FontSize="72"
 			   FontFamily="Verdana"
 			   FontWeight="Regular"/>
 </UserControl>
