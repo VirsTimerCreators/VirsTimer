@@ -16,6 +16,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
 {
     public class ScrambleViewModel : ViewModelBase
     {
+        private readonly SnackbarViewModel _snackbarViewModel;
         private readonly IScrambleGenerator _scrambleGenerator;
         private readonly ICustomScrambleGeneratorsCollector _customScrambleGeneratorsCollector;
 
@@ -33,9 +34,11 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
         public ReactiveCommand<Window, Unit> OpenGenerateScrambleInfoCommand { get; }
 
         public ScrambleViewModel(
+            SnackbarViewModel snackbarViewModel,
             IScrambleGenerator? scrambleGenerator = null,
             ICustomScrambleGeneratorsCollector? customScrambleGeneratorsCollector = null)
         {
+            _snackbarViewModel = snackbarViewModel;
             _scrambleGenerator = scrambleGenerator ?? Ioc.GetService<IScrambleGenerator>();
             _customScrambleGeneratorsCollector = customScrambleGeneratorsCollector ?? Ioc.GetService<ICustomScrambleGeneratorsCollector>();
 
@@ -57,9 +60,16 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
             {
                 _isCustom = false;
                 var scrabmles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 4).ConfigureAwait(false);
-                _scrambles = new Queue<Scramble>(scrabmles.Value);
-                await GetNextScrambleAsync();
+                if (scrabmles.IsSuccesfull)
+                {
+                    _scrambles = new Queue<Scramble>(scrabmles.Value!);
+                    await GetNextScrambleAsync();
 
+                    IsBusy = false;
+                    return;
+                }
+
+                _snackbarViewModel.Enqueue("Podczas pobierania scrambli wystąpił bład.");
                 IsBusy = false;
                 return;
             }
@@ -95,6 +105,13 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
             {
                 IsBusy = true;
                 var generatedScrambles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 5).ConfigureAwait(false);
+                if (generatedScrambles.IsSuccesfull is false)
+                {
+                    _snackbarViewModel.Enqueue("Podczas pobierania scrambli wystąpił bład.");
+                    IsBusy = false;
+                    return;
+                }
+
                 foreach (var scramble in generatedScrambles.Value)
                     _scrambles.Enqueue(scramble);
                 IsBusy = false;

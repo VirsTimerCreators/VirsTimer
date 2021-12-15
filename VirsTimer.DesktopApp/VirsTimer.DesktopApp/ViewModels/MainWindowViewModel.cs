@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.ValueConverters;
+using VirsTimer.DesktopApp.ViewModels.Common;
 using VirsTimer.DesktopApp.ViewModels.Events;
 using VirsTimer.DesktopApp.ViewModels.Rooms;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
@@ -25,6 +27,8 @@ namespace VirsTimer.DesktopApp.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private readonly List<Solve> _failedSolves = new();
+
         private readonly ISolvesRepository _solvesRepository;
         private readonly IValueConverter<string, Bitmap> _svgToBitmapConverter;
 
@@ -33,6 +37,8 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         [ObservableAsProperty]
         public new bool IsBusy { get; set; }
+
+        public SnackbarViewModel SnackbarViewModel { get; }
 
         public EventSummaryViewModel EventViewModel { get; }
         public SessionSummaryViewModel SessionSummaryViewModel { get; }
@@ -79,11 +85,13 @@ namespace VirsTimer.DesktopApp.ViewModels
             _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
             _svgToBitmapConverter = svgToBitmapConverter ?? new SvgToBitmapConverter(100);
 
+            SnackbarViewModel = new SnackbarViewModel();
+
             EventViewModel = new EventSummaryViewModel();
-            SessionSummaryViewModel = new SessionSummaryViewModel();
+            SessionSummaryViewModel = new SessionSummaryViewModel(SnackbarViewModel);
             TimerViewModel = new TimerViewModel();
-            SolvesListViewModel = new SolvesListViewModel();
-            ScrambleViewModel = new ScrambleViewModel();
+            SolvesListViewModel = new SolvesListViewModel(SnackbarViewModel);
+            ScrambleViewModel = new ScrambleViewModel(SnackbarViewModel);
             StatisticsViewModel = new StatisticsViewModel();
 
             AddSolveManualyCommand = ReactiveCommand.CreateFromTask<Window>(AddSolveManually);
@@ -167,9 +175,20 @@ namespace VirsTimer.DesktopApp.ViewModels
         public async Task SaveSolveAsync(Solve solve)
         {
             IsBusyManual = true;
-            await _solvesRepository.AddSolveAsync(solve).ConfigureAwait(false);
-            SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve, _solvesRepository));
+            foreach (var failed in _failedSolves)
+                await _solvesRepository.AddSolveAsync(failed).ConfigureAwait(false);
 
+            var repositoryResponse = await _solvesRepository.AddSolveAsync(solve).ConfigureAwait(false);
+            if (repositoryResponse.IsSuccesfull is false)
+            {
+                _failedSolves.Add(solve);
+                SnackbarViewModel.Enqueue("Podczas zapisywania ułożenia wystąpił błąd.");
+                await ScrambleViewModel.GetNextScrambleAsync().ConfigureAwait(false);
+                IsBusyManual = false;
+                return;
+            }
+
+            SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve, _solvesRepository));
             await ScrambleViewModel.GetNextScrambleAsync().ConfigureAwait(false);
             IsBusyManual = false;
         }
