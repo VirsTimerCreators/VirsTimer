@@ -21,7 +21,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         public TimeSpan? Worst { get; set; }
 
         [Reactive]
-        public TimeSpan? Ao { get; set; }
+        public TimeSpan? Ao5 { get; set; }
 
         [Reactive]
         public TimeSpan? Avg { get; set; }
@@ -86,13 +86,13 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
         private void CaclulateAo()
         {
-            if (Solves.Count > 2)
+            if (Solves.Count > 4)
             {
-                Ao = Solves.Select(x => x.Model).Ao(_scramblesAmount);
+                Ao5 = Solves.Select(x => x.Model).Ao5();
                 return;
             }
 
-            Ao = null;
+            Ao5 = null;
         }
 
         private void CaclulateAvg()
