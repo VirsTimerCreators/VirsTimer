@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
+using VirsTimer.Core.Models.Responses;
 using VirsTimer.Scrambles;
 
 namespace VirsTimer.Core.Services
@@ -15,6 +16,6 @@ namespace VirsTimer.Core.Services
         /// </summary>
         /// <param name="event">Event of which type will be scrambles.</param>
         /// <param name="scramblesAmount">Amount of scrambles.</param>
-        Task<IReadOnlyList<Scramble>> GenerateScrambles(Event @event, int scramblesAmount);
+        Task<RepositoryResponse<IReadOnlyList<Scramble>>> GenerateScrambles(Event @event, int scramblesAmount);
     }
 }

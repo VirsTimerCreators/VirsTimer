@@ -63,7 +63,7 @@ namespace VirsTimer.Core.Constants
         public const string Pyraminx = "Pyraminx";
 
         /// <summary>
-        /// Skweb.
+        /// SKEWB.
         /// </summary>
         public const string Skewb = "Skewb";
 

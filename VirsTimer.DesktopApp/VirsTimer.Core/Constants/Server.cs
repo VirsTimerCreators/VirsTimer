@@ -13,6 +13,7 @@ namespace VirsTimer.Core.Constants
         /// Base address of server.
         /// </summary>
         public const string Address = "http://localhost:8080/";
+        //public const string Address = "https://virstimer-deployment-test-1-tgo2vtbivq-lm.a.run.app/";
 
         /// <summary>
         /// Server endpoints.
@@ -106,7 +107,7 @@ namespace VirsTimer.Core.Constants
                 /// <summary>
                 /// GET scramble by event name.
                 /// </summary>
-                public static string Get(string eventName) => Path.Combine(ScramblesResource, eventName);
+                public static string Get(string eventName, int amount = 1) => Path.Combine(ScramblesResource, $"{eventName}?amount={amount}");
             }
 
             /// <summary>
@@ -253,9 +254,9 @@ namespace VirsTimer.Core.Constants
             public const string Pyraminx = "PYRAMINX";
 
             /// <summary>
-            /// Skweb.
+            /// Skewb.
             /// </summary>
-            public const string Skewb = "SKWEB";
+            public const string Skewb = "SKEWB";
 
             /// <summary>
             /// Square-1.
