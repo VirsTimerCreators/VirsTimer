@@ -43,7 +43,7 @@ class ScrambleService(
             PuzzleType.CLOCK -> scramble(ClockPuzzle(), puzzleType)
             PuzzleType.MEGAMINX -> scramble(MegaminxPuzzle(), puzzleType)
             PuzzleType.PYRAMINX -> scramble(PyraminxPuzzle(), puzzleType)
-            PuzzleType.SKWEB -> scramble(SkewbPuzzle(), puzzleType)
+            PuzzleType.SKEWB -> scramble(SkewbPuzzle(), puzzleType)
             PuzzleType.SQUARE_ONE -> scramble(SquareOnePuzzle(), puzzleType)
             PuzzleType.FOUR_BY_FOUR_BLINDFOLDED -> scramble(FourByFourCubePuzzle(), puzzleType)
             PuzzleType.FIVE_BY_FIVE_BLINDFOLDED -> scramble(NoInspectionFiveByFiveCubePuzzle(), puzzleType)
