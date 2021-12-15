@@ -17,6 +17,7 @@
 			<Button
 				IsVisible="{Binding GenerateScrambleInfoVisible}"
 				Margin="5"
+				Focusable="False"
 				VerticalAlignment="Stretch"
 				HorizontalAlignment="Stretch"
 				DockPanel.Dock="Right"
