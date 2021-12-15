@@ -46,7 +46,7 @@ class RoomController(
     @GetMapping("/{roomId}/feed")
     @Secured("ROLE_USER")
     fun streamEvents(@PathVariable roomId: String, authentication: Authentication): Flux<ServerSentEvent<String>> {
-        return Flux.interval(Duration.ofSeconds(4))
+        return Flux.interval(Duration.ofSeconds(1))
             .map { sequence: Long ->
                 ServerSentEvent.builder<String>()
                     .id(sequence.toString())
