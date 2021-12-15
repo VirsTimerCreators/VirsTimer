@@ -57,7 +57,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
             {
                 _isCustom = false;
                 var scrabmles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 10).ConfigureAwait(false);
-                _scrambles = new Queue<Scramble>(scrabmles);
+                _scrambles = new Queue<Scramble>(scrabmles.Value);
                 await GetNextScrambleAsync();
 
                 IsBusy = false;
@@ -95,7 +95,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
             {
                 IsBusy = true;
                 var generatedScrambles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 5).ConfigureAwait(false);
-                foreach (var scramble in generatedScrambles)
+                foreach (var scramble in generatedScrambles.Value)
                     _scrambles.Enqueue(scramble);
                 IsBusy = false;
             }

@@ -64,6 +64,7 @@ namespace VirsTimer.Core.Multiplayer
             {
                 var users = response.Value!.Users.Select(user => new RoomUser { Name = user }).ToList();
                 var room = new Room(response.Value!.Id, accessCode, response.Value.Scrambles, users);
+                AttachToNotifications(room.Id);
                 return new RepositoryResponse<Room>(response, room);
             }
 

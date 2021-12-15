@@ -103,7 +103,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
                 {
                     IsBusy = true;
 
-                    if (Status == "Zapraszanie" && notification.Status == RoomStatus.InProgress)
+                    if ((Status == "Zapraszanie" || Status == "Oczekiwanie na rozpoczęcie administratora.") && notification.Status == RoomStatus.InProgress)
                     {
                         Status = "Rozpoczęto";
                         BorderColor = "#9e5e4d";
