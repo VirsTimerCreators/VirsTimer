@@ -29,12 +29,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
         public void GetNextScramble()
         {
-            if (_scrambles.Count == 0)
+            if (_scrambles.Count == 0 && _started)
             {
-                Current = null;
-                if (_started)
-                    _finished.OnNext(true);
-
+                _finished.OnNext(true);
                 return;
             }
 

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Multiplayer;
 using VirsTimer.DesktopApp.ViewModels.Common;
 
@@ -12,7 +11,6 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 {
     public class RoomCreationViewModel : ViewModelBase
     {
-        private readonly IUserClient _userClient;
         private readonly IRoomsService _roomsService;
 
         public ReactiveCommand<Unit, RoomViewModel?> CreateRoomCommand { get; }
@@ -34,15 +32,13 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         public ReactiveCommand<Unit, Unit> CancelCommand { get; }
 
         public RoomCreationViewModel(
-            IUserClient? userClient = null,
             IRoomsService? roomsService = null)
         {
-            _userClient = userClient ?? Ioc.GetService<IUserClient>();
             _roomsService = roomsService ?? Ioc.GetService<IRoomsService>();
             AllEvents = Core.Constants.Events.Predefined;
             CreateRoomCommand = ReactiveCommand.CreateFromTask(CreateRoomAsync);
             JoinRoomCommand = ReactiveCommand.CreateFromTask(JoinRoomAsync);
-            CancelCommand = ReactiveCommand.Create(() => 
+            CancelCommand = ReactiveCommand.Create(() =>
             {
                 SnackbarViewModel.Disposed = true;
             });
@@ -63,8 +59,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
                 await SnackbarViewModel.Enqueue("Uzupełnij liczbę scrambli.");
                 return null;
             }
-            var scramblesAmountParsed = int.TryParse(ScramblesAmount, out var scramblesAmount) 
-                && 3 <= scramblesAmount 
+            var scramblesAmountParsed = int.TryParse(ScramblesAmount, out var scramblesAmount)
+                && 3 <= scramblesAmount
                 && scramblesAmount <= 20;
 
             if (scramblesAmountParsed is false)
@@ -89,7 +85,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             return new RoomViewModel(
                 isAdmin: true,
                 response.Value!,
-                _userClient);
+                _roomsService);
         }
 
         public async Task<RoomViewModel?> JoinRoomAsync()
@@ -116,7 +112,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             return new RoomViewModel(
                 isAdmin: false,
                 response.Value!,
-                _userClient);
+                _roomsService);
         }
     }
 }

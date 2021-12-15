@@ -6,6 +6,7 @@ using Avalonia.ReactiveUI;
 using ReactiveUI;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.ViewModels;
@@ -58,6 +59,7 @@ namespace VirsTimer.DesktopApp.Views
             };
 
             dialog.Show(this);
+            dialog.Closed += async (_, _) => await interaction.Input.ExitCommand.Execute();
             interaction.SetOutput(Unit.Default);
 
             return Task.CompletedTask;

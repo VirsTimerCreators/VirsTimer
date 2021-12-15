@@ -23,6 +23,7 @@ namespace VirsTimer.Core.Multiplayer
         private readonly IHttpResponseHandler _httpResponseHandler;
         private readonly Subject<RoomNotification> _subject;
 
+        private bool _left = false;
         private volatile string lastNotificationData = string.Empty;
 
         public RoomServerService(
@@ -41,7 +42,7 @@ namespace VirsTimer.Core.Multiplayer
             var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
             var request = new CreateRoomRequest(solvesAmount, eventName);
             var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Room.Post, request);
-            var response = await _httpResponseHandler.HandleAsync<CreateRoomResponse>(httpRequestFunc).ConfigureAwait(false);
+            var response = await _httpResponseHandler.HandleAsync<CreateRoomResponse>(httpRequestFunc).ConfigureAwait(true);
             if (response.IsSuccesfull)
             {
                 var users = response.Value!.Users.Select(user => new RoomUser { Name = user }).ToList();
@@ -69,11 +70,11 @@ namespace VirsTimer.Core.Multiplayer
             return new RepositoryResponse<Room>(response, null!);
         }
 
-        public async Task<RepositoryResponse> SendSolveAsync(RoomSolve solve)
+        public async Task<RepositoryResponse> SendSolveAsync(string roomId, RoomSolve solve)
         {
             var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
             var request = new SendSolveRequest(solve);
-            var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Room.Join, request);
+            var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Room.PostSolve(roomId), request);
             var response = await _httpResponseHandler.HandleAsync(httpRequestFunc).ConfigureAwait(false);
             return response;
         }
@@ -97,9 +98,9 @@ namespace VirsTimer.Core.Multiplayer
         private async void AttachToNotifications(string roomId)
         {
             var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
-            var stream = await client.GetStreamAsync(Server.Endpoints.Room.Notifications(roomId));
+            var stream = await client.GetStreamAsync(Server.Endpoints.Room.Notifications(roomId)).ConfigureAwait(false);
             using var reader = new StreamReader(stream);
-            while (reader.EndOfStream is false)
+            while (reader.EndOfStream is false && _left is false)
             {
                 var line = await reader.ReadLineAsync().ConfigureAwait(false);
                 if (line is null || line.Length < 6)
@@ -136,13 +137,28 @@ namespace VirsTimer.Core.Multiplayer
                     })
                     .ToList();
 
+                var status = roomNotificationResponse.Status switch
+                {
+                    "OPEN" => RoomStatus.Open,
+                    "INPROGRESS" => RoomStatus.InProgress,
+                    "CLOSED" => RoomStatus.Closed,
+                     _ => RoomStatus.Open
+                };
+
                 var notification = new RoomNotification
                 {
+                    Status = status,
                     RoomUsers = roomUsers
                 };
 
                 _subject.OnNext(notification);
             }
+        }
+
+        public Task LeaveRoomAsync()
+        {
+            _left = true;
+            return Task.CompletedTask;
         }
     }
 }

@@ -4,6 +4,7 @@ namespace VirsTimer.Core.Multiplayer.Responses
 {
     internal class RoomNotificationResponse
     {
+        public string Status { get; init; }
         public Dictionary<string, List<RoomNotificationSolve>> Users { get; init; }
     }
 

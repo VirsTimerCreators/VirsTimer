@@ -96,12 +96,27 @@
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"/>
 			</Button>
-			
+
 		</StackPanel>
 		<StackPanel
 			Orientation="Horizontal"
 			HorizontalAlignment="Right"
 			Spacing="30">
+
+			<StackPanel
+				IsVisible="{Binding IsBusy}"
+				Width="200"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Right">
+				<ProgressBar
+					Width="20" 
+					IsIndeterminate="True"/>
+				<TextBlock
+					Margin="0,10,0,0"
+					VerticalAlignment="Center"
+					TextAlignment="Center" 
+					Text="Synchronizacja danych"/>
+			</StackPanel>
 
 			<Button
 				x:Name="StartButton"

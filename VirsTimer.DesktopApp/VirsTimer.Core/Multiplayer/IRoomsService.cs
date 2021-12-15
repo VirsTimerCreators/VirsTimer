@@ -10,7 +10,8 @@ namespace VirsTimer.Core.Multiplayer
         public Task<RepositoryResponse<Room>> JoinRoomAsync(string accessCode);
         public Task<RepositoryResponse> StartRoomAsync(string roomId);
         public Task<RepositoryResponse> CloseRoomAsync(string roomId);
-        public Task<RepositoryResponse> SendSolveAsync(RoomSolve solve);
+        public Task LeaveRoomAsync();
+        public Task<RepositoryResponse> SendSolveAsync(string roomId, RoomSolve solve);
         public IObservable<RoomNotification> Notifications { get; }
     }
 }

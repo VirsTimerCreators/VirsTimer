@@ -105,7 +105,7 @@ namespace VirsTimer.DesktopApp
             ServiceDescriptors.AddSingleton<ISessionsRepository, SessionsServerRepository>();
             ServiceDescriptors.AddSingleton<ISolvesRepository, SolvesServerRepository>();
             ServiceDescriptors.AddSingleton<IScrambleGenerator, ScrambleServerGenerator>();
-            ServiceDescriptors.AddSingleton<IRoomsService, RoomServerService>();
+            ServiceDescriptors.AddTransient<IRoomsService, RoomServerService>();
             ServiceDescriptors.AddSingleton(userClient);
             Services = ServiceDescriptors.BuildServiceProvider();
         }

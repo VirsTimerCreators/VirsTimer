@@ -135,6 +135,11 @@ namespace VirsTimer.Core.Constants
                 public static string Patch(string roomId) => Path.Combine(RoomsResource, roomId);
 
                 /// <summary>
+                /// POST solve to room.
+                /// </summary>
+                public static string PostSolve(string roomId) => Path.Combine(RoomsResource, roomId, "solve");
+
+                /// <summary>
                 /// POST register.
                 /// </summary>
                 public static string Notifications(string roomId) => Path.Combine(RoomsResource, roomId, "feed");
