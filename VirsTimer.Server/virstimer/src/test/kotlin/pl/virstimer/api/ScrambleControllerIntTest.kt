@@ -27,8 +27,8 @@ class ScrambleControllerIntTest : TestCommons(){
     @Test
     fun should_return_scramble() {
         mockMvc.perform(get("/scramble/THREE_BY_THREE"))
-                .andExpect(jsonPath("$.scramble").isNotEmpty)
-                .andExpect(jsonPath("$.svgTag").isNotEmpty)
+                .andExpect(jsonPath("$[0].scramble").isNotEmpty)
+                .andExpect(jsonPath("$[0].svgTag").isNotEmpty)
                 .andExpect(status().isOk)
     }
 
