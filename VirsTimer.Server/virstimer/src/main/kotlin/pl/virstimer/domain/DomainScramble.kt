@@ -20,7 +20,7 @@ enum class PuzzleType {
     CLOCK,
     MEGAMINX,
     PYRAMINX,
-    SKWEB,
+    SKEWB,
     SQUARE_ONE,
     FOUR_BY_FOUR_BLINDFOLDED,
     FIVE_BY_FIVE_BLINDFOLDED,
