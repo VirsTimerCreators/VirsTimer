@@ -23,6 +23,9 @@ namespace VirsTimer.DesktopApp.Views
             {
                 _ancestor = this.FindAncestorOfType<Window>();
                 _ancestor.Opened += (_, _) => OnOpen();
+
+                if (_ancestor is not null && _ancestor.IsActive)
+                    OnOpen();
             });
         }
 

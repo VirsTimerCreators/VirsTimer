@@ -56,7 +56,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
             if (Core.Constants.Events.Predefined.Contains(newEvent.Name))
             {
                 _isCustom = false;
-                var scrabmles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 10).ConfigureAwait(false);
+                var scrabmles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 4).ConfigureAwait(false);
                 _scrambles = new Queue<Scramble>(scrabmles.Value);
                 await GetNextScrambleAsync();
 

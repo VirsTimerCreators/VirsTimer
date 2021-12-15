@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
@@ -38,6 +39,14 @@ namespace VirsTimer.DesktopApp.Views.Rooms
                 (< ScreenHeight.Big) and (>= ScreenHeight.Medium) => 34,
                 (< ScreenHeight.Medium) => 24,
                 _ => 24
+            };
+
+            ScrambleTextBlock.Padding = windowHeight switch
+            {
+                >= ScreenHeight.Big => new Thickness(30),
+                (< ScreenHeight.Big) and (>= ScreenHeight.Medium) => new Thickness(25),
+                (< ScreenHeight.Medium) => new Thickness(15),
+                _ => new Thickness(15)
             };
         }
     }

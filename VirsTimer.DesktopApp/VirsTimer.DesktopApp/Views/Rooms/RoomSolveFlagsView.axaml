@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="300"
              x:Class="VirsTimer.DesktopApp.Views.Rooms.RoomSolveFlagsView"
-			 Margin="100 30">
+			 Margin="100 0">
 	<UserControl.Styles>
 		<Style Selector="RadioButton">
 			<Setter Property="Background" Value="#646464"/>
@@ -47,14 +47,16 @@
 	</UserControl.Styles>
 	<DockPanel>
 		<StackPanel 
-			DockPanel.Dock="Top"
-			Spacing="15">
+			DockPanel.Dock="Top">
 			<TextBlock
+				x:Name="SolveTimeTextBlock"
 				Text="{Binding SolveTimeText}"
 				HorizontalAlignment="Center"
 				FontSize="32"
 				FontWeight="Medium"/>
+			<Panel Height="15"/>
 			<TextBlock
+				x:Name="ChooseTextBlock"
 				Text="Wybierz flagę ułożenia"
 				HorizontalAlignment="Center"
 				FontSize="32"
@@ -62,7 +64,8 @@
 		</StackPanel>
 		<Grid 
 			ColumnDefinitions="0,3*,*,3*,*,3*"
-			Margin="0 25 0 0">
+			Margin="0 10 0 0"
+			Height="80">
 			<RadioButton
 				x:Name="OkButton"
 				IsChecked="{Binding FlagsArray[0].Choosen}"
@@ -83,7 +86,6 @@
 				IsChecked="{Binding FlagsArray[1].Choosen}"
 				Grid.Column="3"
 				MinWidth="70"
-				MinHeight="20"
 				FontSize="20"
 				Padding="0 4 0 0"
 				HorizontalAlignment="Stretch"
@@ -101,7 +103,6 @@
 				Padding="0 4 0 0"
 				MinWidth="70"
 				FontSize="20"
-				MinHeight="20"
 				HorizontalAlignment="Stretch"
 				HorizontalContentAlignment="Center"
 				VerticalAlignment="Stretch"
