@@ -98,8 +98,9 @@ namespace VirsTimer.DesktopApp.ViewModels
                 .Skip(1)
                 .Subscribe(async _ =>
                 {
-                    await ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
-                    await SessionSummaryViewModel.LoadSessionAsync(EventViewModel.CurrentEvent).ConfigureAwait(true);
+                    var scramblesTask = ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent);
+                    var sessionTask = SessionSummaryViewModel.LoadSessionAsync(EventViewModel.CurrentEvent);
+                    await Task.WhenAll(scramblesTask, sessionTask).ConfigureAwait(true);
                 });
 
             this.WhenAnyValue(x => x.SessionSummaryViewModel.CurrentSession)
