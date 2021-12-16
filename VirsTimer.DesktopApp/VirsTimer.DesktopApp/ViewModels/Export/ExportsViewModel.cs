@@ -45,7 +45,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
             _solvesCsvExporter = solvesCsvExporter ?? Ioc.GetService<ISolvesCsvExporter>();
             _solvesRepository = solvesRepository ?? Ioc.GetService<ISolvesRepository>();
 
-            SnackbarViewModel = new SnackbarViewModel();
+            SnackbarViewModel = new SnackbarViewModel(500, 96, 4);
             ExportJsonCommand = ReactiveCommand.CreateFromTask(ExportJsonAsync);
             ImportJsonCommand = ReactiveCommand.CreateFromTask(ImportJsonAsync);
             ExportCsvCommand = ReactiveCommand.CreateFromTask(ExportCsvAsync);
@@ -56,7 +56,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
             ExportCsvCommand.ThrownExceptions.Subscribe(async (e) => await Catch(e, "Podczas ekspotu wystąpił błąd."));
             ImportCsvCommand.ThrownExceptions.Subscribe(async (e) => await Catch(e, "Podczas impoertu wystąpił błąd."));
 
-            OkCommand = ReactiveCommand.Create(() => { });
+            OkCommand = ReactiveCommand.Create(() => { SnackbarViewModel.Disposed = true; });
 
             ShowFileDialog = new Interaction<Unit, string[]>();
         }
@@ -68,8 +68,27 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
 
         public async Task ExportJsonAsync()
         {
+            const int Length = 60;
+
             var path = await _solvesJsonExporter.ExportAsync(_solves);
-            await SnackbarViewModel.Enqueue($"Wyeksportowano pomyślnie do {path}");
+            var c = path;
+            var cutted = new List<string>();
+            while(path.Any())
+            {
+                if (path.Length >= Length)
+                {
+                    cutted.Add(path[0..Length]);
+                    path = path[Length..];
+                }
+                else
+                {
+                    cutted.Add(path);
+                    path = string.Empty;
+                }
+            }
+
+            var pathCutted = string.Join("\r\n", cutted);
+            await SnackbarViewModel.Enqueue($"Wyeksportowano pomyślnie do \n{pathCutted}");
         }
 
         public async Task ImportJsonAsync()

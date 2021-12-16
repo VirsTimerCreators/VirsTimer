@@ -31,7 +31,6 @@
 			<Panel
 				DockPanel.Dock="Bottom">
 				<ContentControl
-					Width="400"
 					Content="{Binding SnackbarViewModel}"
 					VerticalAlignment="Bottom"
 					HorizontalAlignment="Center"
@@ -44,13 +43,13 @@
 					Content="OK"
 					MinWidth="150"
 					MinHeight="40"
-					Margin="40 20"/>
+					Margin="20 0 30 20"/>
 			</Panel>
 			<TextBlock
 				DockPanel.Dock="Top"
 				Text="Import oraz Eksport"
 				FontSize="14"
-				Margin="10 10 0 0"/>
+				Margin="10 10 0 15"/>
 			<Grid
 				ColumnDefinitions="20,*,20,*,20"
 				RowDefinitions="10,*,20,*,20"
@@ -64,7 +63,13 @@
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
 					VerticalContentAlignment="Center"
-					HorizontalContentAlignment="Center"/>
+					HorizontalContentAlignment="Center">
+					<Button.Styles>
+						<Style Selector="Button /template/ ContentPresenter#PART_ContentPresenter">
+							<Setter Property="CornerRadius" Value="15" />
+						</Style>
+					</Button.Styles>
+				</Button>
 
 				<Button
 					x:Name="ImportJsonButton"
@@ -74,7 +79,13 @@
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
 					VerticalContentAlignment="Center"
-					HorizontalContentAlignment="Center"/>
+					HorizontalContentAlignment="Center">
+					<Button.Styles>
+						<Style Selector="Button /template/ ContentPresenter#PART_ContentPresenter">
+							<Setter Property="CornerRadius" Value="15" />
+						</Style>
+					</Button.Styles>
+				</Button>
 
 				<Button
 					x:Name="ExportCsvButton"
@@ -84,7 +95,13 @@
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
 					VerticalContentAlignment="Center"
-					HorizontalContentAlignment="Center"/>
+					HorizontalContentAlignment="Center">
+					<Button.Styles>
+						<Style Selector="Button /template/ ContentPresenter#PART_ContentPresenter">
+							<Setter Property="CornerRadius" Value="15" />
+						</Style>
+					</Button.Styles>
+				</Button>
 
 				<Button
 					x:Name="ImportCsvButton"
@@ -94,7 +111,13 @@
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
 					VerticalContentAlignment="Center"
-					HorizontalContentAlignment="Center"/>
+					HorizontalContentAlignment="Center">
+					<Button.Styles>
+						<Style Selector="Button /template/ ContentPresenter#PART_ContentPresenter">
+							<Setter Property="CornerRadius" Value="15" />
+						</Style>
+					</Button.Styles>
+				</Button>
 			</Grid>
 		</DockPanel>
 	</Panel>

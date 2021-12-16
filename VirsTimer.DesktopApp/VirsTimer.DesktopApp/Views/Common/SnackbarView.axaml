@@ -7,17 +7,16 @@
 			 Background="Transparent"
              x:Class="VirsTimer.DesktopApp.Views.Common.SnackbarView"
 			 Focusable="False">
-	<Panel			
-		Height="64"
-		Width="300"> 
+	<Panel	
+		x:Name="MainPanel"
+		Height="96"> 
 		<Canvas 
 			VerticalAlignment="Stretch"
 			HorizontalAlignment="Stretch">
 			<Border
 				x:Name="Border"
 				CornerRadius="8"
-				Height="64"
-				Width="300">
+				Height="96">
 				<Border.Background>
 					<SolidColorBrush Color="#d6b27e" Opacity="0.9"/>
 				</Border.Background>

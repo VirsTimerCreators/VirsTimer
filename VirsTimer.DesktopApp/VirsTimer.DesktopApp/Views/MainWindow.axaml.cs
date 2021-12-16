@@ -107,6 +107,7 @@ namespace VirsTimer.DesktopApp.Views
             };
 
             var output = await dialog.ShowDialog<Unit>(this);
+            interaction.Input.SnackbarViewModel.Disposed = true;
             interaction.SetOutput(output);
         }
 

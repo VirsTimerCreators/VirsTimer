@@ -13,15 +13,14 @@ namespace VirsTimer.DesktopApp.Views.Common
 {
     public partial class SnackbarView : ReactiveUserControl<SnackbarViewModel>
     {
-        private const int HeightConst = 64;
         private static readonly TimeSpan Speed = TimeSpan.FromMilliseconds(8);
-        private static readonly TimeSpan Break = TimeSpan.FromMilliseconds(2000);
 
         private ContentControl _parent = null!;
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         public Border Border { get; }
         public TextBlock MessageTextBlock { get; }
+        public Panel MainPanel { get; }
 
         public SnackbarView()
         {
@@ -30,8 +29,7 @@ namespace VirsTimer.DesktopApp.Views.Common
             InitializeComponent();
             Border = this.FindControl<Border>("Border");
             MessageTextBlock = this.FindControl<TextBlock>("MessageTextBlock");
-
-            Canvas.SetBottom(Border, HeightConst);
+            MainPanel = this.FindControl<Panel>("MainPanel");
 
             this.WhenActivated(disposableRegistration =>
             {
@@ -48,7 +46,13 @@ namespace VirsTimer.DesktopApp.Views.Common
 
                 _semaphoreSlim.DisposeWith(disposableRegistration);
 
+                Canvas.SetBottom(Border, ViewModel.Height);
+
                 Parent!.ZIndex = -100;
+                MainPanel.Width = ViewModel.Width;
+                Border.Width = ViewModel.Width;
+                MainPanel.Height = ViewModel.Height;
+                Border.Height = ViewModel.Height;
             });
         }
 
@@ -75,15 +79,15 @@ namespace VirsTimer.DesktopApp.Views.Common
         public async Task MoveCanvasAsync()
         {
             _parent.ZIndex = 5;
-            for (var i = HeightConst; i >= 0; i -= 4)
+            for (var i = ViewModel.Height; i >= 0; i -= 4)
             {
                 await Task.Delay(Speed);
                 Canvas.SetTop(Border, i);
             }
 
-            await Task.Delay(Break);
+            await Task.Delay(TimeSpan.FromSeconds(ViewModel.Length));
 
-            for (var i = 0; i <= HeightConst; i += 4)
+            for (var i = 0; i <= ViewModel.Height; i += 4)
             {
                 await Task.Delay(Speed);
                 Canvas.SetTop(Border, i);
