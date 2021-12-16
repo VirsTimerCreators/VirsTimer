@@ -70,12 +70,15 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
 
         private async Task Catch(Exception e, string message)
         {
+            IsBusy = false;
             await SnackbarViewModel.Enqueue(message);
         }
 
         public async Task ExportJsonAsync()
         {
             const int Length = 60;
+
+            IsBusy = true;
 
             var path = await _solvesJsonExporter.ExportAsync(_solves);
             var cutted = new List<string>();
@@ -94,6 +97,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
             }
 
             var pathCutted = string.Join(Environment.NewLine, cutted);
+
+            IsBusy = false;
+
             await SnackbarViewModel.Enqueue($"Wyeksportowano pomyślnie do {Environment.NewLine}{pathCutted}");
         }
 
@@ -102,11 +108,16 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
             var choosen = await ShowJsonFileDialog.Handle(Unit.Default);
             if (choosen is null || choosen.Length == 0)
                 return;
+
+            IsBusy = true;
             var firstFile = choosen[0];
             var solves = await _solvesJsonExporter.ImportAsync(firstFile);
             solves.ForEach(solve => solve.Session = _session);
 
             var response = await _solvesRepository.AddSolvesAsync(solves);
+
+            IsBusy = false;
+
             if (response.IsSuccesfull)
             {
                 Imported = true;
@@ -120,6 +131,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
         public async Task ExportCsvAsync()
         {
             const int Length = 60;
+
+            IsBusy = true;
 
             var path = await _solvesCsvExporter.ExportAsync(_solves);
             var cutted = new List<string>();
@@ -138,6 +151,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
             }
 
             var pathCutted = string.Join(Environment.NewLine, cutted);
+
+            IsBusy = false;
+
             await SnackbarViewModel.Enqueue($"Wyeksportowano pomyślnie do {Environment.NewLine}{pathCutted}");
         }
 
@@ -146,11 +162,17 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
             var choosen = await ShowCsvFileDialog.Handle(Unit.Default);
             if (choosen is null || choosen.Length == 0)
                 return;
+
+            IsBusy = true;
+
             var firstFile = choosen[0];
             var solves = await _solvesCsvExporter.ImportAsync(firstFile);
             solves.ForEach(solve => solve.Session = _session);
 
             var response = await _solvesRepository.AddSolvesAsync(solves);
+
+            IsBusy = false;
+
             if (response.IsSuccesfull)
             {
                 Imported = true;

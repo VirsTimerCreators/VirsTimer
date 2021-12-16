@@ -27,7 +27,30 @@
                     MaterialOpacity="0.75" />
 			</ExperimentalAcrylicBorder.Material>
 		</ExperimentalAcrylicBorder>
-		<DockPanel>
+		<Border 
+			IsVisible="{Binding IsBusy}"
+			CornerRadius="30"
+			ZIndex="5"
+			Background="#3676d6"
+			Margin="150">
+			<StackPanel
+				IsVisible="True"
+				Width="300"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center">
+				<ProgressBar
+					Width="30"
+					Foreground="Black"
+					IsIndeterminate="True"/>
+				<TextBlock
+					Margin="0,10,0,0"
+					FontSize="16"
+					VerticalAlignment="Center"
+					TextAlignment="Center"
+					Text="Ładownie danych"/>
+			</StackPanel>
+		</Border>
+		<DockPanel IsVisible="{Binding !IsBusy}">
 			<Panel
 				DockPanel.Dock="Bottom">
 				<ContentControl

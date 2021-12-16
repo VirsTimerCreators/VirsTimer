@@ -12,8 +12,8 @@ namespace VirsTimer.Core.Constants
         /// <summary>
         /// Base address of server.
         /// </summary>
-        public const string Address = "http://localhost:8080/";
-        //public const string Address = "https://virstimer-deployment-test-1-tgo2vtbivq-lm.a.run.app/";
+        //public const string Address = "http://localhost:8080/";
+        public const string Address = "https://virstimer-deployment-test-1-tgo2vtbivq-lm.a.run.app/";
 
         /// <summary>
         /// Server endpoints.
