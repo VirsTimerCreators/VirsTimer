@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.DesktopApp.Constants;
 using VirsTimer.DesktopApp.ViewModels;
+using VirsTimer.DesktopApp.ViewModels.Export;
+using VirsTimer.DesktopApp.Views.Export;
 using VirsTimer.DesktopApp.ViewModels.Rooms;
 using VirsTimer.DesktopApp.Views.Rooms;
 
@@ -40,6 +42,8 @@ namespace VirsTimer.DesktopApp.Views
             {
                 ViewModel.ShowRoomCreationDialog.RegisterHandler(DoShowRoomCreationDialogAsync).DisposeWith(disposableRegistration);
                 ViewModel.ShowRoomDialog.RegisterHandler(DoShowRoomDialogAsync).DisposeWith(disposableRegistration);
+                ViewModel.ShowExportDialog.RegisterHandler(DoShowExportDialogAsync).DisposeWith(disposableRegistration);
+
                 await ViewModel!.ConstructAsync().ConfigureAwait(false);
             });
 
@@ -93,6 +97,18 @@ namespace VirsTimer.DesktopApp.Views
             interaction.SetOutput(Unit.Default);
 
             return Task.CompletedTask;
+        }
+
+        private async Task DoShowExportDialogAsync(InteractionContext<ExportsViewModel, Unit> interaction)
+        {
+            var dialog = new ExportsView
+            {
+                DataContext = interaction.Input
+            };
+
+            var output = await dialog.ShowDialog<Unit>(this);
+            interaction.Input.SnackbarViewModel.Disposed = true;
+            interaction.SetOutput(output);
         }
 
         public async void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)

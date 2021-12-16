@@ -17,6 +17,7 @@ using VirsTimer.DesktopApp.ValueConverters;
 using VirsTimer.DesktopApp.ViewModels.Common;
 using VirsTimer.DesktopApp.ViewModels.Events;
 using VirsTimer.DesktopApp.ViewModels.Rooms;
+using VirsTimer.DesktopApp.ViewModels.Export;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
 using VirsTimer.DesktopApp.ViewModels.Sessions;
 using VirsTimer.DesktopApp.ViewModels.Solves;
@@ -51,6 +52,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         public ReactiveCommand<Unit, Unit> OpenMultiplayerCommand { get; }
         public ReactiveCommand<Unit, Unit> ExitCommand { get; }
         public ReactiveCommand<Unit, Unit> OpenMenuCommand { get; }
+        public ReactiveCommand<Unit, Unit> ExportCommand { get; }
 
         [Reactive]
         public IImage? ChooseEventImage { get; private set; }
@@ -78,10 +80,12 @@ namespace VirsTimer.DesktopApp.ViewModels
         public Interaction<RoomCreationViewModel, RoomViewModel?> ShowRoomCreationDialog { get; }
         public Interaction<RoomViewModel, Unit> ShowRoomDialog { get; }
 
+        public Interaction<ExportsViewModel, Unit> ShowExportDialog { get; }
+
         public MainWindowViewModel(
             bool online,
             IValueConverter<string, Bitmap>? svgToBitmapConverter = null)
-        {
+        { 
             _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
             _svgToBitmapConverter = svgToBitmapConverter ?? new SvgToBitmapConverter(100);
 
@@ -131,6 +135,9 @@ namespace VirsTimer.DesktopApp.ViewModels
 
             ShowRoomCreationDialog = new Interaction<RoomCreationViewModel, RoomViewModel?>();
             ShowRoomDialog = new Interaction<RoomViewModel, Unit>();
+
+            ShowExportDialog = new Interaction<ExportsViewModel, Unit>();
+            ExportCommand = ReactiveCommand.CreateFromTask(ExportAsync);
         }
 
         public override async Task ConstructAsync()
@@ -170,6 +177,16 @@ namespace VirsTimer.DesktopApp.ViewModels
             var roomViewModel = await ShowRoomCreationDialog.Handle(roomCreationViewModel);
             if (roomViewModel is not null && roomViewModel.Valid)
                 await ShowRoomDialog.Handle(roomViewModel);
+        }
+
+        private async Task ExportAsync()
+        {
+            var exportsViewModel = new ExportsViewModel(
+                SessionSummaryViewModel.CurrentSession,
+                SolvesListViewModel.Solves);
+            await ShowExportDialog.Handle(exportsViewModel);
+            if (exportsViewModel.Imported)
+                await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
         }
 
         public async Task SaveSolveAsync(Solve solve)

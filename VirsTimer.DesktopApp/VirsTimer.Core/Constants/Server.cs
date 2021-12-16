@@ -12,8 +12,8 @@ namespace VirsTimer.Core.Constants
         /// <summary>
         /// Base address of server.
         /// </summary>
-        public const string Address = "http://localhost:8080/";
-        //public const string Address = "https://virstimer-deployment-test-1-tgo2vtbivq-lm.a.run.app/";
+        //public const string Address = "http://localhost:8080/";
+        public const string Address = "https://virstimer-deployment-test-1-tgo2vtbivq-lm.a.run.app/";
 
         /// <summary>
         /// Server endpoints.
@@ -87,6 +87,11 @@ namespace VirsTimer.Core.Constants
                 /// POST solve.
                 /// </summary>
                 public static string Post => SolvesResource;
+
+                /// <summary>
+                /// POST solves.
+                /// </summary>
+                public static string PostMany => Path.Combine(SolvesResource, "many");
 
                 /// <summary>
                 /// PATCH solve by id.

@@ -111,7 +111,6 @@
 			Grid.ColumnSpan="3"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
-			ZIndex="5"
             Grid.Row="12"
             Grid.RowSpan="2"/>
 	</Grid>

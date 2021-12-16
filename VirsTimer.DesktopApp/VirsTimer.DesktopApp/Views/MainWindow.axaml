@@ -95,7 +95,8 @@
 						Padding="15"
 						Height="100"
 						HorizontalAlignment="Stretch"
-						VerticalContentAlignment="Center">
+						VerticalContentAlignment="Center"
+						Command="{Binding ExportCommand}">
 						<Grid ColumnDefinitions="30, 30, *">
 							<Image
 								Source="{Binding ImportExportImage}"

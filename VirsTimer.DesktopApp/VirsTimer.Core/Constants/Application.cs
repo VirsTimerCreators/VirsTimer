@@ -28,6 +28,14 @@ namespace VirsTimer.Core.Constants
                 Name);
 
         /// <summary>
+        /// Full path to documents directory path.
+        /// </summary>
+        public static string ApplicationDocumentsPath => Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                Company,
+                Name);
+
+        /// <summary>
         /// Current application directory.
         /// </summary>
         public static string? CurrentDirectory => Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);

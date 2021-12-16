@@ -8,6 +8,12 @@ namespace VirsTimer.DesktopApp.ViewModels.Common
 {
     public class SnackbarViewModel : ViewModelBase
     {
+        public int Width { get; }
+
+        public int Height { get; }
+
+        public int Length { get; }
+
         [Reactive]
         public string Message { get; set; } = string.Empty;
 
@@ -15,8 +21,11 @@ namespace VirsTimer.DesktopApp.ViewModels.Common
 
         public bool Disposed { get; set; }
 
-        public SnackbarViewModel()
+        public SnackbarViewModel(int width = 300, int height = 64, int length = 3)
         {
+            Width = width;
+            Height = height;
+            Length = length;
             QueueMessage = ReactiveCommand.Create<string>(x => Dispatcher.UIThread.InvokeAsync(() => Message = x));
         }
 

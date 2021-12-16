@@ -8,7 +8,6 @@ using VirsTimer.Core.Constants;
 using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Handlers;
 using VirsTimer.Core.Models;
-using VirsTimer.Core.Models.Authorization;
 using VirsTimer.Core.Models.Requests;
 using VirsTimer.Core.Models.Responses;
 
@@ -20,7 +19,6 @@ namespace VirsTimer.Core.Services.Solves
     public class SolvesServerRepository : ISolvesRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IUserClient _userClient;
         private readonly IHttpResponseHandler _httpResponseHandler;
 
         /// <summary>
@@ -28,11 +26,9 @@ namespace VirsTimer.Core.Services.Solves
         /// </summary>
         public SolvesServerRepository(
             IHttpClientFactory httpClientFactory,
-            IUserClient userClient,
             IHttpResponseHandler httpResponseHandler)
         {
             _httpClientFactory = httpClientFactory;
-            _userClient = userClient;
             _httpResponseHandler = httpResponseHandler;
         }
 
@@ -42,12 +38,24 @@ namespace VirsTimer.Core.Services.Solves
         public async Task<RepositoryResponse> AddSolveAsync(Solve solve)
         {
             var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
-            var request = new SolvePostRequest(_userClient.Id, solve);
+            var request = new SolvePostRequest(solve);
             var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Solve.Post, request);
             var response = await _httpResponseHandler.HandleAsync<SolvePostResponse>(httpRequestFunc).ConfigureAwait(false);
             if (response.IsSuccesfull)
                 solve.Id = response.Value.Id;
 
+            return response;
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public async Task<RepositoryResponse> AddSolvesAsync(IReadOnlyList<Solve> solves)
+        {
+            var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            var request = solves.Select(solve => new SolvePostRequest(solve)).ToList();
+            var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Solve.PostMany, request);
+            var response = await _httpResponseHandler.HandleAsync<SolvePostResponse[]>(httpRequestFunc).ConfigureAwait(false);
             return response;
         }
 
