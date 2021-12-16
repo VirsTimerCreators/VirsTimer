@@ -181,8 +181,12 @@ namespace VirsTimer.DesktopApp.ViewModels
 
         private async Task ExportAsync()
         {
-            var exportsViewModel = new ExportsViewModel(SolvesListViewModel.Solves);
+            var exportsViewModel = new ExportsViewModel(
+                SessionSummaryViewModel.CurrentSession,
+                SolvesListViewModel.Solves);
             await ShowExportDialog.Handle(exportsViewModel);
+            if (exportsViewModel.Imported)
+                await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
         }
 
         public async Task SaveSolveAsync(Solve solve)

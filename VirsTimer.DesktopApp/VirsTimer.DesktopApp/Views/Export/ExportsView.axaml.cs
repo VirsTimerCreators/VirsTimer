@@ -72,11 +72,12 @@ namespace VirsTimer.DesktopApp.Views.Export
                 })
                 .DisposeWith(disposableRegistration);
 
-                ViewModel.ShowFileDialog.RegisterHandler(DoShowFileDialogAsync).DisposeWith(disposableRegistration);
+                ViewModel.ShowJsonFileDialog.RegisterHandler(DoShowJsonFileDialogAsync).DisposeWith(disposableRegistration);
+                ViewModel.ShowCsvFileDialog.RegisterHandler(DoShowCsvFileDialogAsync).DisposeWith(disposableRegistration);
             });
         }
 
-        private async Task DoShowFileDialogAsync(InteractionContext<Unit, string[]> interaction)
+        private async Task DoShowJsonFileDialogAsync(InteractionContext<Unit, string[]> interaction)
         {
             var dialog = new OpenFileDialog
             {
@@ -84,7 +85,7 @@ namespace VirsTimer.DesktopApp.Views.Export
                 Title = "Wybierz plik do importu",
                 Filters = new List<FileDialogFilter>
                 {
-                    new FileDialogFilter{ Name = "Json files (.json)", Extensions = new List<string>{ "json" } }
+                    new FileDialogFilter{ Name = "Json files", Extensions = new List<string>{ "json" } }
                 }
             };
 
@@ -100,7 +101,7 @@ namespace VirsTimer.DesktopApp.Views.Export
                 Title = "Wybierz plik do importu",
                 Filters = new List<FileDialogFilter>
                 {
-                    new FileDialogFilter{ Name = "Csv files (.csv)", Extensions = new List<string>{ "csv" } }
+                    new FileDialogFilter{ Name = "Csv files", Extensions = new List<string>{ "csv" } }
                 }
             };
 

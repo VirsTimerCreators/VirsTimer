@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Threading.Tasks;
+using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Models.Responses;
 
@@ -47,6 +49,26 @@ namespace VirsTimer.Core.Services.Solves
 
             await _cache.RefreshCacheAsync(solve.Session).ConfigureAwait(false);
             _cache.LoadedSolves.Add(solve);
+            await _cache.UpdateCacheTargetAsync().ConfigureAwait(false);
+
+            return RepositoryResponse.Ok;
+        }
+
+        /// <summary>
+        /// Saves solves in local file.
+        /// </summary>
+        public async Task<RepositoryResponse> AddSolvesAsync(IReadOnlyList<Solve> solves)
+        {
+            if (solves.Count == 0)
+                return RepositoryResponse.Ok;
+
+            if (solves.Any(x => x.Session?.Id is null))
+                return new RepositoryResponse<IReadOnlyList<Solve>>(RepositoryResponseStatus.ClientError, "Solve session Id cannot be null.");
+
+            solves.ForEach(solve => solve.Id = Guid.NewGuid().ToString());
+
+            await _cache.RefreshCacheAsync(solves[0].Session).ConfigureAwait(false);
+            _cache.LoadedSolves.AddRange(solves);
             await _cache.UpdateCacheTargetAsync().ConfigureAwait(false);
 
             return RepositoryResponse.Ok;

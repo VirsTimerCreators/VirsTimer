@@ -21,6 +21,11 @@ namespace VirsTimer.Core.Services.Solves
         Task<RepositoryResponse> AddSolveAsync(Solve solve);
 
         /// <summary>
+        /// Saves solves in repository.
+        /// </summary>
+        Task<RepositoryResponse> AddSolvesAsync(IReadOnlyList<Solve> solve);
+
+        /// <summary>
         /// Updates solve in repository.
         /// </summary>
         Task<RepositoryResponse> UpdateSolveAsync(Solve solve);

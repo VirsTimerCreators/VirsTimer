@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using ReactiveUI;
+﻿using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,6 +7,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Export;
+using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.ViewModels.Common;
@@ -17,6 +17,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
 {
     public class ExportsViewModel : ViewModelBase
     {
+        private readonly Session _session;
         private readonly ObservableCollection<SolveViewModel> _solveViewModels;
         private readonly List<Solve> _solves;
         private readonly ISolvesJsonExporter _solvesJsonExporter;
@@ -31,17 +32,22 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
         public ReactiveCommand<Unit, Unit> ImportCsvCommand { get; }
         public ReactiveCommand<Unit, Unit> OkCommand { get; }
 
-        public Interaction<Unit, string[]> ShowFileDialog { get; }
+        public bool Imported { get; private set; }
+
+        public Interaction<Unit, string[]> ShowJsonFileDialog { get; }
+        public Interaction<Unit, string[]> ShowCsvFileDialog { get; }
 
         public ExportsViewModel(
+            Session session,
             ObservableCollection<SolveViewModel> solves,
             ISolvesJsonExporter? solvesJsonExporter = null,
             ISolvesCsvExporter? solvesCsvExporter = null,
             ISolvesRepository? solvesRepository = null)
         {
+            _session = session;
             _solveViewModels = solves;
             _solves = solves.Select(x => x.Model).ToList();
-            _solvesJsonExporter = solvesJsonExporter ??Ioc.GetService<ISolvesJsonExporter>();
+            _solvesJsonExporter = solvesJsonExporter ?? Ioc.GetService<ISolvesJsonExporter>();
             _solvesCsvExporter = solvesCsvExporter ?? Ioc.GetService<ISolvesCsvExporter>();
             _solvesRepository = solvesRepository ?? Ioc.GetService<ISolvesRepository>();
 
@@ -58,7 +64,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
 
             OkCommand = ReactiveCommand.Create(() => { SnackbarViewModel.Disposed = true; });
 
-            ShowFileDialog = new Interaction<Unit, string[]>();
+            ShowJsonFileDialog = new Interaction<Unit, string[]>();
+            ShowCsvFileDialog = new Interaction<Unit, string[]>();
         }
 
         private async Task Catch(Exception e, string message)
@@ -71,9 +78,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
             const int Length = 60;
 
             var path = await _solvesJsonExporter.ExportAsync(_solves);
-            var c = path;
             var cutted = new List<string>();
-            while(path.Any())
+            while (path.Any())
             {
                 if (path.Length >= Length)
                 {
@@ -87,22 +93,72 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
                 }
             }
 
-            var pathCutted = string.Join("\r\n", cutted);
-            await SnackbarViewModel.Enqueue($"Wyeksportowano pomyślnie do \n{pathCutted}");
+            var pathCutted = string.Join(Environment.NewLine, cutted);
+            await SnackbarViewModel.Enqueue($"Wyeksportowano pomyślnie do {Environment.NewLine}{pathCutted}");
         }
 
         public async Task ImportJsonAsync()
         {
-            var choosen = await ShowFileDialog.Handle(Unit.Default);
-            var s = 1;
+            var choosen = await ShowJsonFileDialog.Handle(Unit.Default);
+            if (choosen is null || choosen.Length == 0)
+                return;
+            var firstFile = choosen[0];
+            var solves = await _solvesJsonExporter.ImportAsync(firstFile);
+            solves.ForEach(solve => solve.Session = _session);
+
+            var response = await _solvesRepository.AddSolvesAsync(solves);
+            if (response.IsSuccesfull)
+            {
+                Imported = true;
+                await SnackbarViewModel.Enqueue($"Import zakończył się pomyślnie. Lista ułożeń odświeży się po zamknięciu okna.");
+                return;
+            }
+
+            await SnackbarViewModel.Enqueue($"Podczas importu wystąpił problem");
         }
 
         public async Task ExportCsvAsync()
         {
+            const int Length = 60;
+
+            var path = await _solvesCsvExporter.ExportAsync(_solves);
+            var cutted = new List<string>();
+            while (path.Any())
+            {
+                if (path.Length >= Length)
+                {
+                    cutted.Add(path[0..Length]);
+                    path = path[Length..];
+                }
+                else
+                {
+                    cutted.Add(path);
+                    path = string.Empty;
+                }
+            }
+
+            var pathCutted = string.Join(Environment.NewLine, cutted);
+            await SnackbarViewModel.Enqueue($"Wyeksportowano pomyślnie do {Environment.NewLine}{pathCutted}");
         }
 
         public async Task ImportCsvAsync()
         {
+            var choosen = await ShowCsvFileDialog.Handle(Unit.Default);
+            if (choosen is null || choosen.Length == 0)
+                return;
+            var firstFile = choosen[0];
+            var solves = await _solvesCsvExporter.ImportAsync(firstFile);
+            solves.ForEach(solve => solve.Session = _session);
+
+            var response = await _solvesRepository.AddSolvesAsync(solves);
+            if (response.IsSuccesfull)
+            {
+                Imported = true;
+                await SnackbarViewModel.Enqueue($"Import zakończył się pomyślnie. Lista ułożeń odświeży się po zamknięciu okna.");
+                return;
+            }
+
+            await SnackbarViewModel.Enqueue($"Podczas importu wystąpił problem");
         }
     }
 }
