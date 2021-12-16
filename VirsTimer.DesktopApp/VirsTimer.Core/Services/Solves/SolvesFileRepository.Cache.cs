@@ -53,6 +53,7 @@ namespace VirsTimer.Core.Services.Solves
             {
                 var targetFile = GetSessionFile(_savedEventId, SavedSessionId);
                 using var stream = _fileSystem.File.OpenWrite(targetFile);
+                stream.SetLength(0);
                 await JsonSerializer.SerializeAsync(stream, LoadedSolves).ConfigureAwait(false);
             }
 
