@@ -89,7 +89,7 @@
             VerticalContentAlignment="Center"
             HorizontalContentAlignment="Center"
             Margin="20"
-            Background="#4185fa"
+            Background="#2fbf24"
             Content="Kontynuuj bez logowania"/>
 
 		<Button
