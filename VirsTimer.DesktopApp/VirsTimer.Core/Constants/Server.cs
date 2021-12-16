@@ -89,6 +89,11 @@ namespace VirsTimer.Core.Constants
                 public static string Post => SolvesResource;
 
                 /// <summary>
+                /// POST solves.
+                /// </summary>
+                public static string PostMany => Path.Combine(SolvesResource, "many");
+
+                /// <summary>
                 /// PATCH solve by id.
                 /// </summary>
                 public static string Patch(string solveId) => Path.Combine(SolvesResource, solveId);
