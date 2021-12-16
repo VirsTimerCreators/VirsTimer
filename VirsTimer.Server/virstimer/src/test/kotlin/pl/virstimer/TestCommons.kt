@@ -220,6 +220,24 @@ open class TestCommons {
         )
     }
 
+    fun createMultiplayerSolve(roomId: String, scrambleId: String, time: Long, timestamp: Long, solved: Solved,  token: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/room/${roomId}/solve")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", token)
+                .content(
+                    Gson().toJson(
+                        CreateMultiplayerSolveRequest(
+                            scrambleId,
+                            time,
+                            timestamp,
+                            solved
+                        )
+                    ).toString()
+                )
+        )
+
+
     fun MockHttpServletRequestBuilder.authorizedWith(token: String) =
         this.header("Authorization", token)
 }

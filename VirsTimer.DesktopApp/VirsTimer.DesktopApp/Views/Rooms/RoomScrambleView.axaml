@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="VirsTimer.DesktopApp.Views.Rooms.RoomScrambleView">
+	<Panel HorizontalAlignment="Stretch">
+		<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="#d18006"
+                    TintOpacity="1"
+                    MaterialOpacity="1" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<DockPanel>
+			<ScrollViewer>
+				<TextBlock
+					x:Name="ScrambleTextBlock"
+					ScrollViewer.HorizontalScrollBarVisibility="Auto"
+					ScrollViewer.VerticalScrollBarVisibility="Disabled"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Text="{Binding Current.Value}"
+					TextWrapping="WrapWithOverflow"
+					Foreground="White"
+					FontFamily="Consolas"
+					FontWeight="Regular"
+					Padding="30"/>
+			</ScrollViewer>
+		</DockPanel>
+	</Panel>
+</UserControl>

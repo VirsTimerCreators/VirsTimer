@@ -14,8 +14,9 @@ interface RoomRepository: MongoRepository<PersistentRoom, String>, RoomRepositor
 
 interface RoomRepositoryCustom {
     fun modifyRoom(roomId: String, roomStatus: RoomStatus, userId: String): Boolean
-    fun join(joinCode: String, userId: String): Boolean
+    fun join(joinCode: String, userId: String): PersistentRoom?
     fun leave(roomId: String, userId: String): Boolean
+    fun findByIdAndUser(roomId: String, userId: String): PersistentRoom?
 }
 
 class RoomRepositoryCustomImpl(
@@ -28,12 +29,12 @@ class RoomRepositoryCustomImpl(
             PersistentRoom::class.java
         ).wasAcknowledged()
 
-    override fun join(joinCode: String, userId: String): Boolean {
-        return mongoTemplate.updateFirst(
+    override fun join(joinCode: String, userId: String): PersistentRoom? {
+        return mongoTemplate.findAndModify(
             Query(Criteria.where("joinCode").`is`(joinCode).and("status").`is`(RoomStatus.OPEN).and("users").not().`in`(userId)),
             Update().addToSet("users", userId),
             PersistentRoom::class.java
-        ).wasAcknowledged()
+        )
     }
 
     override fun leave(roomId: String, userId: String): Boolean {
@@ -42,5 +43,12 @@ class RoomRepositoryCustomImpl(
             Update().pull("users", userId),
             PersistentRoom::class.java
         ).wasAcknowledged()
+    }
+
+    override fun findByIdAndUser(roomId: String, userId: String): PersistentRoom? {
+        return mongoTemplate.findOne(
+            Query(Criteria.where("id").`is`(roomId).and("users").`in`(userId)),
+            PersistentRoom::class.java
+        )
     }
 }

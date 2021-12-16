@@ -9,6 +9,7 @@ data class PersistentScramble(
     @Id
     val id: String,
     val scrambleText: String,
+    val scrambleSvg: String,
     val generatedAt: Long,
     val puzzleType: PuzzleType
 )

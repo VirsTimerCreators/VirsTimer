@@ -2,7 +2,7 @@
 
 namespace VirsTimer.DesktopApp.ViewModels.Rooms
 {
-    public class FlagViewModel : ViewModelBase
+    public class RoomFlagViewModel : ViewModelBase
     {
         [Reactive]
         public bool Choosen { get; set; }

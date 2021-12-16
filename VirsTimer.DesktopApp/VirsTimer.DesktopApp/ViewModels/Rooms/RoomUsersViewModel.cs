@@ -1,6 +1,7 @@
 ﻿using ReactiveUI.Fody.Helpers;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace VirsTimer.DesktopApp.ViewModels.Rooms
 {
@@ -9,9 +10,15 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         [Reactive]
         public ObservableCollection<RoomUserViewModel> Users { get; set; }
 
-        public RoomUsersViewModel(IEnumerable<RoomUserViewModel> roomUsers)
+        public RoomUsersViewModel()
         {
-            Users = new(roomUsers);
+            Users = new();
+        }
+
+        public Task Refresh()
+        {
+            var tasks = Users.Select(x => x.UpdateIndexesAndStatisticAsync());
+            return Task.WhenAll(tasks);
         }
     }
 }

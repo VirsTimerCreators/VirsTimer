@@ -11,18 +11,21 @@ import java.util.*
 
 @Component
 class ScrambleService(
-    val scrambleRepository: ScrambleRepository
+    private val scrambleRepository: ScrambleRepository
 ) {
 
     private val random = Random(RANDOM_SEED)
 
     fun createPersistentScrambles(scrambleType: PuzzleType, numberOfScrambles: Int): List<PersistentScramble> {
-        val documents = Array(numberOfScrambles) { PersistentScramble(
-            UUID.randomUUID().toString(),
-            generateScrambleAndSvg(scrambleType).scrambleString,
-            Date().toInstant().toEpochMilli(),
-            scrambleType
-        )}
+        val documents = Array(numberOfScrambles) {
+            val generatedScramble = generateScrambleAndSvg(scrambleType)
+            PersistentScramble(
+                UUID.randomUUID().toString(),
+                generatedScramble.scrambleString,
+                generatedScramble.scrambleSvg.toString(),
+                Date().toInstant().toEpochMilli(),
+                scrambleType)
+        }
 
         return scrambleRepository.saveAll(documents.toList())
     }
@@ -40,7 +43,7 @@ class ScrambleService(
             PuzzleType.CLOCK -> scramble(ClockPuzzle(), puzzleType)
             PuzzleType.MEGAMINX -> scramble(MegaminxPuzzle(), puzzleType)
             PuzzleType.PYRAMINX -> scramble(PyraminxPuzzle(), puzzleType)
-            PuzzleType.SKWEB -> scramble(SkewbPuzzle(), puzzleType)
+            PuzzleType.SKEWB -> scramble(SkewbPuzzle(), puzzleType)
             PuzzleType.SQUARE_ONE -> scramble(SquareOnePuzzle(), puzzleType)
             PuzzleType.FOUR_BY_FOUR_BLINDFOLDED -> scramble(FourByFourCubePuzzle(), puzzleType)
             PuzzleType.FIVE_BY_FIVE_BLINDFOLDED -> scramble(NoInspectionFiveByFiveCubePuzzle(), puzzleType)

@@ -13,6 +13,7 @@ namespace VirsTimer.Core.Constants
         /// Base address of server.
         /// </summary>
         public const string Address = "http://localhost:8080/";
+        //public const string Address = "https://virstimer-deployment-test-1-tgo2vtbivq-lm.a.run.app/";
 
         /// <summary>
         /// Server endpoints.
@@ -106,7 +107,43 @@ namespace VirsTimer.Core.Constants
                 /// <summary>
                 /// GET scramble by event name.
                 /// </summary>
-                public static string Get(string eventName) => Path.Combine(ScramblesResource, eventName);
+                public static string Get(string eventName, int amount = 1) => Path.Combine(ScramblesResource, $"{eventName}?amount={amount}");
+            }
+
+            /// <summary>
+            /// Rooms resource endpoints.
+            /// </summary>
+            public static class Room
+            {
+                /// <summary>
+                /// POST room.
+                /// </summary>
+                public static string Post => RoomsResource;
+
+                /// <summary>
+                /// POST room join.
+                /// </summary>
+                public static string Join => Path.Combine(RoomsResource, "join");
+
+                /// <summary>
+                /// POST room leave.
+                /// </summary>
+                public static string Leave => Path.Combine(RoomsResource, "leave");
+
+                /// <summary>
+                /// PATCH room by id.
+                /// </summary>
+                public static string Patch(string roomId) => Path.Combine(RoomsResource, roomId);
+
+                /// <summary>
+                /// POST solve to room.
+                /// </summary>
+                public static string PostSolve(string roomId) => Path.Combine(RoomsResource, roomId, "solve");
+
+                /// <summary>
+                /// POST register.
+                /// </summary>
+                public static string Notifications(string roomId) => Path.Combine(RoomsResource, roomId, "feed");
             }
 
             /// <summary>
@@ -148,8 +185,12 @@ namespace VirsTimer.Core.Constants
             /// <summary>
             /// Auth endpoint.
             /// </summary>
-
             private const string AuthResource = "api/auth/";
+
+            /// <summary>
+            /// Rooms endpoint.
+            /// </summary>
+            private const string RoomsResource = "room/";
         }
 
         /// <summary>
@@ -213,9 +254,9 @@ namespace VirsTimer.Core.Constants
             public const string Pyraminx = "PYRAMINX";
 
             /// <summary>
-            /// Skweb.
+            /// Skewb.
             /// </summary>
-            public const string Skewb = "SKWEB";
+            public const string Skewb = "SKEWB";
 
             /// <summary>
             /// Square-1.

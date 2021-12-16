@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -10,24 +11,22 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
-using VirsTimer.Core.Models;
-using VirsTimer.Core.Models.Authorization;
-using VirsTimer.Core.Services.Rooms;
+using VirsTimer.Core.Multiplayer;
 using VirsTimer.DesktopApp.ValueConverters;
 using VirsTimer.DesktopApp.ViewModels.Common;
-using VirsTimer.DesktopApp.ViewModels.Scrambles;
-using VirsTimer.Scrambles;
 
 namespace VirsTimer.DesktopApp.ViewModels.Rooms
 {
     public class RoomViewModel : ViewModelBase
     {
+        private readonly Room _model;
         private readonly IValueConverter<string, Bitmap> _svgToBitmapConverter;
         private readonly bool _isAdmin;
-        private readonly IUserClient _userClient;
+        private readonly IRoomsService _roomsService;
+        private readonly List<RoomSolve> _failedSolves = new();
 
         public bool Valid { get; } = true;
-        public string AccessCode { get; }
+        public string AccessCode => _model.AccessCode;
 
         [Reactive]
         public string BorderColor { get; set; }
@@ -38,7 +37,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         [Reactive]
         public ViewModelBase TimerContent { get; set; }
 
-        public ScrambleViewModel ScrambleViewModel { get; }
+        public RoomScrambleViewModel ScrambleViewModel { get; }
 
         public TimerViewModel TimerViewModel { get; }
 
@@ -56,77 +55,67 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
         public ReactiveCommand<Unit, Unit> ExitCommand { get; set; }
 
-        private RoomUserViewModel Me => RoomUsersViewModel.Users.First(x => x.UserName == _userClient.Id);
-
         public RoomViewModel(
-            string accessCode,
             bool isAdmin,
-            IUserClient userClient,
-            IEnumerable<Scramble> scrambles,
-            IRoomsService? roomsService = null,
+            Room room,
+            IRoomsService roomsService,
             IValueConverter<string, Bitmap>? svgToBitmapConverter = null)
         {
+            _model = room;
             _svgToBitmapConverter = svgToBitmapConverter ?? new SvgToBitmapConverter(300);
             _isAdmin = isAdmin;
-            _userClient = userClient;
-            AccessCode = accessCode;
+            _roomsService = roomsService;
             Status = _isAdmin ? "Zapraszanie" : "Oczekiwanie na rozpoczęcie administratora.";
             BorderColor = "#4185fa";
-            ScrambleViewModel = new ScrambleViewModel();
+            ScrambleViewModel = new RoomScrambleViewModel(room.Scrambles);
+            ScrambleViewModel.Finished.Subscribe(x =>
+            {
+                if (x is false)
+                    return;
+
+                Status = "Zakończono";
+                BorderColor = "#0959db";
+            });
             TimerViewModel = new TimerViewModel();
             TimerViewModel.Timer.Stopped += SolveFinished;
             TimerContent = TimerViewModel;
+            RoomUsersViewModel = new RoomUsersViewModel();
             SnackbarViewModel = new SnackbarViewModel();
-            //roomsService.Notifications.Select(notification =>
-            //{
-            //    return new object();
-            //});
 
             CopyToClipboardCommand = ReactiveCommand.CreateFromTask(CopyToClipboard);
-            StartCommand = ReactiveCommand.CreateFromTask(StartCompetition, Observable.Return(_isAdmin));
-            ExitCommand = ReactiveCommand.Create(() => { });
+
+            var canStart = this.WhenAnyValue(x => x.Status)
+                .Select(x => x == "Zapraszanie" && _isAdmin);
+
+            StartCommand = ReactiveCommand.CreateFromTask(StartCompetition, canStart);
+            ExitCommand = ReactiveCommand.CreateFromTask(LeaveRoom);
 
             StartCommand.ThrownExceptions.Subscribe(ExceptionThrown);
 
-            var users = new List<RoomUserViewModel>
+            _roomsService.Notifications.Subscribe(async notification =>
             {
-                new RoomUserViewModel("Adam",5),
-                new RoomUserViewModel("Bartek",5),
-                new RoomUserViewModel("Kuba",5),
-                new RoomUserViewModel("padge",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-                new RoomUserViewModel("Michał",5),
-            };
+                var usersViewModels = notification.RoomUsers
+                .Select(roomUser => new RoomUserViewModel(roomUser, room.Scrambles.Count))
+                .OrderBy(user => user.Avg.HasValue)
+                .ThenBy(user => user.Avg);
 
-            users[0].Solves.Add(new RoomUserSolveViewModel(new  Solve(null!, TimeSpan.FromSeconds(6).Add(TimeSpan.FromMilliseconds(42)), "R U X A T R' C")));
-            users[0].Solves.Add(new RoomUserSolveViewModel(new  Solve(null!, TimeSpan.FromSeconds(7).Add(TimeSpan.FromMilliseconds(567)), "R U X A T R' C")));
-                                                                
-            users[12].Solves.Add(new RoomUserSolveViewModel(new Solve(null!, TimeSpan.FromSeconds(6).Add(TimeSpan.FromMilliseconds(42)), "R U X A T R' C")));
-            users[12].Solves.Add(new RoomUserSolveViewModel(new Solve(null!, TimeSpan.FromSeconds(7).Add(TimeSpan.FromMilliseconds(567)), "R U X A T R' C")));
-                                                                
-            users[20].Solves.Add(new RoomUserSolveViewModel(new Solve(null!, TimeSpan.FromSeconds(6).Add(TimeSpan.FromMilliseconds(42)), "R U X A T R' C")));
-            users[20].Solves.Add(new RoomUserSolveViewModel(new Solve(null!, TimeSpan.FromSeconds(7).Add(TimeSpan.FromMilliseconds(567)), "R U X A T R' C")));
-            RoomUsersViewModel = new RoomUsersViewModel(users);
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    IsBusy = true;
+
+                    if ((Status == "Zapraszanie" || Status == "Oczekiwanie na rozpoczęcie administratora.") && notification.Status == RoomStatus.InProgress)
+                    {
+                        Status = "Rozpoczęto";
+                        BorderColor = "#9e5e4d";
+                        ScrambleViewModel.GetNextScramble();
+                    }
+
+                    RoomUsersViewModel.Users = new(usersViewModels);
+                    await RoomUsersViewModel.Refresh();
+
+                    IsBusy = false;
+                });
+            });
         }
 
         public void SolveFinished()
@@ -139,17 +128,33 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             roomSolveFlagViewModel.RadioButtonFocusedCommand.ThrownExceptions.Subscribe(ExceptionThrown);
         }
 
-        private Task AddSolveToMeAsync(SolveFlag solveFlag)
+        private async Task AddSolveToMeAsync(SolveFlag solveFlag)
         {
             var time = TimerViewModel.SavedTime;
-            var solve = new Solve(null!, time, "xxx")
+            var solve = new RoomSolve
             {
-                Flag = solveFlag
+                Date = DateTime.Now,
+                Time = time.Ticks,
+                Flag = solveFlag,
+                ScrambleId = ScrambleViewModel.Current!.Id
             };
-            Me.Solves.Insert(0, new RoomUserSolveViewModel(solve));
+            var response = await _roomsService.SendSolveAsync(_model.Id, solve);
+
+            foreach (var failed in _failedSolves)
+            {
+                var failedResponse = await _roomsService.SendSolveAsync(_model.Id, failed);
+                if (failedResponse.IsSuccesfull)
+                    _failedSolves.Remove(failed);
+            }
+
+            if (response.IsSuccesfull is false)
+            {
+                SnackbarViewModel.Enqueue("Podczas wysyłania ułożenia wystąpił błąd");
+                _failedSolves.Add(solve);
+            }
 
             TimerContent = TimerViewModel;
-            return Task.CompletedTask;
+            ScrambleViewModel.GetNextScramble();
         }
 
         public override async Task ConstructAsync()
@@ -164,11 +169,22 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             await SnackbarViewModel.Enqueue("Skopiowano klucz dostępu do schowka");
         }
 
-        private Task StartCompetition()
+        private async Task StartCompetition()
         {
-            Status = "Rozpoczęto";
-            BorderColor = "#9e5e4d";
-            return Task.CompletedTask;
+            IsBusy = true;
+
+            var response = await _roomsService.StartRoomAsync(_model.Id);
+            if (response.IsSuccesfull is false)
+            {
+                SnackbarViewModel.Enqueue("Podczas rozpoczynia konkurencji wystąpił błąd.");
+                return;
+            }
+        }
+
+        private Task LeaveRoom()
+        {
+            SnackbarViewModel.Disposed = true;
+            return _roomsService.LeaveRoomAsync();
         }
 
         public void ExceptionThrown(Exception e)

@@ -7,7 +7,7 @@ namespace VirsTimer.Core.Models
     /// <summary>
     /// Model representing Solve.
     /// </summary>
-    public class Solve
+    public class Solve : SolveBase
     {
         /// <summary>
         /// Solve session.
@@ -21,42 +21,9 @@ namespace VirsTimer.Core.Models
         public string? Id { get; set; }
 
         /// <summary>
-        /// Solve time.
-        /// </summary>
-        public long Time { get; }
-
-        /// <summary>
-        /// Solve time as TimeSpan.
-        /// </summary>
-        [JsonIgnore]
-        public TimeSpan TimeAsSpan => TimeSpan.FromTicks(Time);
-
-        /// <summary>
-        /// Solve flag.
-        /// </summary>
-        public SolveFlag Flag { get; set; }
-
-        /// <summary>
-        /// Solve creation date.
-        /// </summary>
-        public DateTime Date { get; }
-
-        /// <summary>
         /// Solve scramble.
         /// </summary>
         public string Scramble { get; }
-
-        /// <summary>
-        /// Calculated time with flag.
-        /// </summary>
-        [JsonIgnore]
-        public TimeSpan TimeWithFlag => Flag switch
-        {
-            SolveFlag.OK => TimeAsSpan,
-            SolveFlag.Plus2 => TimeAsSpan.Add(TimeSpan.FromSeconds(2)),
-            SolveFlag.DNF => TimeSpan.MaxValue,
-            _ => throw new ArgumentException(nameof(Flag))
-        };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Solve"/> class.

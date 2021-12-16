@@ -3,6 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using VirsTimer.Core.Multiplayer;
 using VirsTimer.Core.Utils;
 
 namespace VirsTimer.DesktopApp.ViewModels.Rooms
@@ -20,7 +21,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         public TimeSpan? Worst { get; set; }
 
         [Reactive]
-        public TimeSpan? Ao { get; set; }
+        public TimeSpan? Ao5 { get; set; }
 
         [Reactive]
         public TimeSpan? Avg { get; set; }
@@ -34,10 +35,18 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         {
             UserName = userName;
             _scramblesAmount = scramblesAmount;
-            Solves.CollectionChanged += UpdateIndexesAndStatisticAsync;
         }
 
-        private async void UpdateIndexesAndStatisticAsync(object? sender, EventArgs e)
+        public RoomUserViewModel(
+            RoomUser roomUser,
+            int scramblesAmount)
+        {
+            _scramblesAmount = scramblesAmount;
+            UserName = roomUser.Name;
+            Solves = new(roomUser.Solves.Select(x => new RoomUserSolveViewModel(x)));
+        }
+
+        public async Task UpdateIndexesAndStatisticAsync()
         {
             var tasks = Solves.Select(solve => Task.Run(() => solve.Index = $"{Solves.Count - Solves.IndexOf(solve)}."));
             await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -77,13 +86,13 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
         private void CaclulateAo()
         {
-            if (Solves.Count > 2)
+            if (Solves.Count > 4)
             {
-                Ao = Solves.Select(x => x.Model).Ao(_scramblesAmount);
+                Ao5 = Solves.Select(x => x.Model).Ao5();
                 return;
             }
 
-            Ao = null;
+            Ao5 = null;
         }
 
         private void CaclulateAvg()

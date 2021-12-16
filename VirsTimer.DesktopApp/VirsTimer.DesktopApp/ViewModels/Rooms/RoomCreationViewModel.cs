@@ -4,15 +4,13 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using VirsTimer.Core.Models.Authorization;
-using VirsTimer.Core.Services.Rooms;
+using VirsTimer.Core.Multiplayer;
 using VirsTimer.DesktopApp.ViewModels.Common;
 
 namespace VirsTimer.DesktopApp.ViewModels.Rooms
 {
     public class RoomCreationViewModel : ViewModelBase
     {
-        private readonly IUserClient _userClient;
         private readonly IRoomsService _roomsService;
 
         public ReactiveCommand<Unit, RoomViewModel?> CreateRoomCommand { get; }
@@ -26,20 +24,24 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         [Reactive]
         public string AccessCode { get; set; }
 
+        [Reactive]
+        public string ScramblesAmount { get; set; }
+
         public SnackbarViewModel SnackbarViewModel { get; }
 
         public ReactiveCommand<Unit, Unit> CancelCommand { get; }
 
         public RoomCreationViewModel(
-            IUserClient? userClient = null,
             IRoomsService? roomsService = null)
         {
-            _userClient = userClient ?? Ioc.GetService<IUserClient>();
             _roomsService = roomsService ?? Ioc.GetService<IRoomsService>();
             AllEvents = Core.Constants.Events.Predefined;
             CreateRoomCommand = ReactiveCommand.CreateFromTask(CreateRoomAsync);
             JoinRoomCommand = ReactiveCommand.CreateFromTask(JoinRoomAsync);
-            CancelCommand = ReactiveCommand.Create(() => { });
+            CancelCommand = ReactiveCommand.Create(() =>
+            {
+                SnackbarViewModel.Disposed = true;
+            });
             AccessCode = "";
             SnackbarViewModel = new SnackbarViewModel();
         }
@@ -52,14 +54,37 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
                 return null;
             }
 
-            var room = await _roomsService.CreateRoomAsync(SelectedEvent!);
+            if (string.IsNullOrEmpty(ScramblesAmount))
+            {
+                await SnackbarViewModel.Enqueue("Uzupełnij liczbę scrambli.");
+                return null;
+            }
+            var scramblesAmountParsed = int.TryParse(ScramblesAmount, out var scramblesAmount)
+                && 3 <= scramblesAmount
+                && scramblesAmount <= 20;
+
+            if (scramblesAmountParsed is false)
+            {
+                await SnackbarViewModel.Enqueue("Liczba scrambli musi być w przedziale [3, 20].");
+                return null;
+            }
+
+            IsBusy = true;
+
+            var response = await _roomsService.CreateRoomAsync(SelectedEvent!, scramblesAmount);
+
+            IsBusy = false;
+
+            if (response.IsSuccesfull is false)
+            {
+                await SnackbarViewModel.Enqueue("Podczas tworzenia pokoju wystąpił problem.");
+                return null;
+            }
 
             SnackbarViewModel.Disposed = true;
             return new RoomViewModel(
-                "A4xg629p1Q",
-                true,
-                _userClient,
-                room.Scrambles,
+                isAdmin: true,
+                response.Value!,
                 _roomsService);
         }
 
@@ -71,14 +96,22 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
                 return null;
             }
 
-            var room = await _roomsService.JoinRoomAsync(SelectedEvent!);
+            IsBusy = true;
+
+            var response = await _roomsService.JoinRoomAsync(AccessCode!);
+
+            IsBusy = false;
+
+            if (response.IsSuccesfull is false)
+            {
+                await SnackbarViewModel.Enqueue("Nie można dołaczyć do pokoju ponieważ już się rozpoczął lub nie istnieje.");
+                return null;
+            }
 
             SnackbarViewModel.Disposed = true;
             return new RoomViewModel(
-                "A4xg629p1Q",
-                false,
-                _userClient,
-                room.Scrambles,
+                isAdmin: false,
+                response.Value!,
                 _roomsService);
         }
     }

@@ -8,8 +8,6 @@
         xmlns:sessionsViews="clr-namespace:VirsTimer.DesktopApp.Views.Sessions;assembly=VirsTimer.DesktopApp"
         xmlns:scramblesViews="clr-namespace:VirsTimer.DesktopApp.Views.Scrambles;assembly=VirsTimer.DesktopApp"
         xmlns:statisticsViews="clr-namespace:VirsTimer.DesktopApp.Views.Statistics;assembly=VirsTimer.DesktopApp"
-        Height="1050" Width="1500"
-        MinHeight="700" MinWidth="1000"
         x:Class="VirsTimer.DesktopApp.Views.MainWindow"
         Title="MainWindow"
         KeyDown="WindowKeyDown"
@@ -148,63 +146,90 @@
 				</StackPanel>
 			</Panel>
 		</SplitView.Pane>
-		<Grid RowDefinitions="0,Auto,300,*">
-			<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
-				<ExperimentalAcrylicBorder.Material>
-					<ExperimentalAcrylicMaterial
-						BackgroundSource="Digger"
-						TintColor="Black"
-						TintOpacity="1"
-						MaterialOpacity="0.75" />
-				</ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
+		<Panel>
+			<Grid RowDefinitions="0,Auto,Auto,*">
+				<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="10">
+					<ExperimentalAcrylicBorder.Material>
+						<ExperimentalAcrylicMaterial
+							BackgroundSource="Digger"
+							TintColor="Black"
+							TintOpacity="1"
+							MaterialOpacity="0.75" />
+					</ExperimentalAcrylicBorder.Material>
+				</ExperimentalAcrylicBorder>
 
-			<Panel
-				PointerEnter="ShowMenu"
-				Grid.RowSpan="5"
-				Width="300"
-				Background="Transparent"
-				HorizontalAlignment="Left"
-				ZIndex="1">
+				<Panel
+					PointerEnter="ShowMenu"
+					Grid.RowSpan="5"
+					Width="300"
+					Background="Transparent"
+					HorizontalAlignment="Left"
+					ZIndex="1">
 
-			</Panel>
-			<ContentControl
-				MinHeight="100"
-				MaxHeight="300"
-				Grid.Row="1"
-				Content="{Binding ScrambleViewModel}"/>
-			<ContentControl
-				Grid.Row="2"
-				Content="{Binding TimerViewModel}"/>
-			<Grid
-				Grid.Row="3"
-				ColumnDefinitions="*,*"
-				RowDefinitions="*, Auto">
-				<solvesViews:SolvesListView
-					Grid.Row="0"
-					Content="{Binding SolvesListViewModel}"/>
-				<Button
+				</Panel>
+				<ContentControl
+					x:Name="ScrambleContenteControl"
+					MinHeight="100"
+					MaxHeight="300"
 					Grid.Row="1"
-					HorizontalAlignment="Right"
-					Command="{Binding AddSolveManualyCommand}"
-					CommandParameter="{Binding $parent[Window]}"
-					Background="#0959db"
-					Content="Dodaj ręcznie"
-					HorizontalContentAlignment="Center"
-					Width="130"
-					Margin="20 12 26 12"/>
+					Content="{Binding ScrambleViewModel}"/>
+				<Panel
+					x:Name="TimerPanel"
+					Grid.Row="2">
+					<ContentControl
+						Content="{Binding TimerViewModel}"/>
+					<StackPanel
+						IsVisible="{Binding IsBusy}"
+						Width="300"
+						Margin="0 0 25 0"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Right">
+						<ProgressBar
+							Width="30"
+							IsIndeterminate="True"/>
+						<TextBlock
+							Margin="0,10,0,0"
+							FontSize="16"
+							VerticalAlignment="Center"
+							TextAlignment="Center"
+							Text="Synchronizacja danych"/>
+					</StackPanel>
+				</Panel>
 				<Grid
-					Grid.Column="1"
-					Grid.RowSpan="2"
-					RowDefinitions="*,*">
-					<Image
-						Name="ImageLayout"
+					Grid.Row="3"
+					ColumnDefinitions="*,*"
+					RowDefinitions="*, Auto">
+					<solvesViews:SolvesListView
+						Grid.Row="0"
+						Content="{Binding SolvesListViewModel}"/>
+					<Button
+						Grid.Row="1"
+						HorizontalAlignment="Right"
+						Command="{Binding AddSolveManualyCommand}"
+						CommandParameter="{Binding $parent[Window]}"
+						Background="#0959db"
+						Content="Dodaj ręcznie"
+						HorizontalContentAlignment="Center"
+						Width="130"
+						Margin="20 12 26 12"/>
+					<Grid
 						Grid.Column="1"
-						Focusable="False"
-						Source="{Binding ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
-					<statisticsViews:StatisticsView Margin="30"  Grid.Column="1" Grid.Row="1" Content="{Binding StatisticsViewModel}"/>
+						Grid.RowSpan="2"
+						RowDefinitions="*,*">
+						<Image
+							Name="ImageLayout"
+							Grid.Column="1"
+							Focusable="False"
+							Source="{Binding ScrambleViewModel.CurrentScramble.Svg, Converter={converters:SvgToBitmapConverter}}"/>
+						<statisticsViews:StatisticsView Margin="30"  Grid.Column="1" Grid.Row="1" Content="{Binding StatisticsViewModel}"/>
+					</Grid>
 				</Grid>
 			</Grid>
-		</Grid>
+			<ContentControl
+				Content="{Binding SnackbarViewModel}"
+				VerticalAlignment="Bottom"
+				HorizontalAlignment="Center"
+				ZIndex="5"/>
+		</Panel>
 	</SplitView>
 </Window>

@@ -9,12 +9,12 @@ using VirsTimer.Core.Constants;
 using VirsTimer.Core.Export;
 using VirsTimer.Core.Handlers;
 using VirsTimer.Core.Models.Authorization;
+using VirsTimer.Core.Multiplayer;
 using VirsTimer.Core.Services;
 using VirsTimer.Core.Services.Cache;
 using VirsTimer.Core.Services.Events;
 using VirsTimer.Core.Services.Login;
 using VirsTimer.Core.Services.Register;
-using VirsTimer.Core.Services.Rooms;
 using VirsTimer.Core.Services.Scrambles;
 using VirsTimer.Core.Services.Sessions;
 using VirsTimer.Core.Services.Solves;
@@ -109,7 +109,7 @@ namespace VirsTimer.DesktopApp
             ServiceDescriptors.AddSingleton<ISessionsRepository, SessionsServerRepository>();
             ServiceDescriptors.AddSingleton<ISolvesRepository, SolvesServerRepository>();
             ServiceDescriptors.AddSingleton<IScrambleGenerator, ScrambleServerGenerator>();
-            ServiceDescriptors.AddSingleton<IRoomsService, RoomServerService>();
+            ServiceDescriptors.AddTransient<IRoomsService, RoomServerService>();
             ServiceDescriptors.AddSingleton(userClient);
             Services = ServiceDescriptors.BuildServiceProvider();
         }

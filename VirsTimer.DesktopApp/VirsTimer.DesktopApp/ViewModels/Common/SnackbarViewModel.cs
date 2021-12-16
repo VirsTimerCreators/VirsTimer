@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using Avalonia.Threading;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Reactive;
@@ -16,7 +17,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Common
 
         public SnackbarViewModel()
         {
-            QueueMessage = ReactiveCommand.Create<string>(x => Message = x);
+            QueueMessage = ReactiveCommand.Create<string>(x => Dispatcher.UIThread.InvokeAsync(() => Message = x));
         }
 
         public IObservable<Unit> Enqueue(string message)

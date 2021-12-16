@@ -17,6 +17,7 @@
 			<Button
 				IsVisible="{Binding GenerateScrambleInfoVisible}"
 				Margin="5"
+				Focusable="False"
 				VerticalAlignment="Stretch"
 				HorizontalAlignment="Stretch"
 				DockPanel.Dock="Right"
@@ -37,6 +38,7 @@
 			</Button>
 			<ScrollViewer>
 				<TextBlock
+					x:Name="ScrambleTextBlock"
 					ScrollViewer.HorizontalScrollBarVisibility="Auto"
 					ScrollViewer.VerticalScrollBarVisibility="Disabled"
 					VerticalAlignment="Center"

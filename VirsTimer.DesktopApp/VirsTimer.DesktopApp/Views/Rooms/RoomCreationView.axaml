@@ -2,12 +2,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Height="760"
-		Width="600"
-		MaxHeight="760"
-		MaxWidth="600"
-		MinHeight="760"
-		MinWidth="600"
+        Height="570"
+		Width="400"
+		MaxHeight="570"
+		MaxWidth="400"
+		MinHeight="570"
+		MinWidth="400"
         x:Class="VirsTimer.DesktopApp.Views.Rooms.RoomCreationView"
         Title="RoomCreationView"
 		WindowStartupLocation="CenterScreen"
@@ -38,10 +38,17 @@
 		</ExperimentalAcrylicBorder>
 		<StackPanel>
 			<Panel Height="30"/>
+			<ProgressBar 
+				IsIndeterminate="True"
+				Width="40"
+				HorizontalAlignment="Right"
+				Margin="0 0 30 0"
+				IsVisible="{Binding IsBusy}"/>
+			<Panel Height="20"/>
 			<Button
 				x:Name="CreateRoomButton"
-				Height="500"
-				Width="400"
+				Height="320"
+				Width="300"
 				VerticalAlignment="Stretch"
 				HorizontalAlignment="Stretch">
 				<DockPanel
@@ -53,10 +60,14 @@
 						FontWeight="SemiBold"
 						DockPanel.Dock="Top"
 						HorizontalAlignment="Center"/>
-					
+
+					<DockPanel
+						DockPanel.Dock="Bottom"
+						VerticalAlignment="Stretch">
 						<ListBox
-							DockPanel.Dock="Bottom"
-							Width="310"
+							DockPanel.Dock="Top"
+							Width="230"
+							Height="170"
 							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							ScrollViewer.VerticalScrollBarVisibility="Disabled"
 							x:Name="EventsListBox"
@@ -68,18 +79,28 @@
 								</DataTemplate>
 							</ListBox.ItemTemplate>
 						</ListBox>
-			
+						<TextBox
+							DockPanel.Dock="Bottom"
+							Margin="0 15 0 15"
+							x:Name="ScramblesAmountTextBox"
+							Watermark="Liczba scrambli (3-20)"
+							Height="45"
+							VerticalContentAlignment="Center"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							Width="230"/>
+					</DockPanel>
 				</DockPanel>
 			</Button>
 			<Button
 				x:Name="JoinRoomButton"
-				Height="150"
-				Width="400"
+				Height="120"
+				Width="300"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center">
 				<StackPanel>
 					<TextBlock
-						Margin="0 10 0 10"
+						Margin="0 5 0 5"
 						Text="Dołącz do pokoju"
 						FontSize="20"
 						FontWeight="SemiBold"
@@ -89,10 +110,10 @@
 						Watermark="Kod dostępu"
 						Height="45"
 						VerticalContentAlignment="Center"
-						Margin="0 15 0 0"
+						Margin="0 7 0 0"
 						HorizontalAlignment="Center"
 						VerticalAlignment="Center"
-						Width="310"/>
+						Width="230"/>
 				</StackPanel>
 			</Button>
 			<Button
