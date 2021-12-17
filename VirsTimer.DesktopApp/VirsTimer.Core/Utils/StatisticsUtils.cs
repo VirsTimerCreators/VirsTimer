@@ -94,7 +94,7 @@ namespace VirsTimer.Core.Utils
                 return DnfTime;
 
             if (solves.Count() == 1)
-                return solves.First().TimeAsSpan;
+                return solves.First().TimeWithFlag;
 
            var sum = 0L;
             foreach (var solve in solves)
