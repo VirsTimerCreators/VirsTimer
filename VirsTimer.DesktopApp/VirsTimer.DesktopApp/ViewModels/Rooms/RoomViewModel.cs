@@ -95,9 +95,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             _roomsService.Notifications.Subscribe(async notification =>
             {
                 var usersViewModels = notification.RoomUsers
-                .Select(roomUser => new RoomUserViewModel(roomUser, room.Scrambles.Count))
-                .OrderBy(user => user.Avg.HasValue)
-                .ThenBy(user => user.Avg);
+                .Select(roomUser => new RoomUserViewModel(roomUser, room.Scrambles.Count));
 
                 await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
