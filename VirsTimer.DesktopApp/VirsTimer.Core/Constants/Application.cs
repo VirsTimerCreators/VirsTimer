@@ -38,6 +38,6 @@ namespace VirsTimer.Core.Constants
         /// <summary>
         /// Current application directory.
         /// </summary>
-        public static string? CurrentDirectory => Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
+        public static string CurrentDirectory => AppDomain.CurrentDomain.BaseDirectory;
     }
 }

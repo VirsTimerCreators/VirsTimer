@@ -26,7 +26,6 @@ namespace VirsTimer.Core.Services.Scrambles
 
                 var type = typeof(ICustomScrambleGenerator);
                 var assemblyPath = Path.Combine(Application.CurrentDirectory, "ScrambleGenerators.dll");
-                var k = File.Exists(assemblyPath);
                 var generatorsAssembly = Assembly.LoadFile(assemblyPath);
                 var generatorsTypes = generatorsAssembly.GetTypes()
                     .Where(p => type.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract)
