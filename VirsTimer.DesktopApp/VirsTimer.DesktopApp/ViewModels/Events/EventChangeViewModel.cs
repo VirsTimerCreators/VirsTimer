@@ -13,7 +13,6 @@ using VirsTimer.Core.Constants;
 using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Events;
-using VirsTimer.DesktopApp.Commands;
 
 namespace VirsTimer.DesktopApp.ViewModels.Events
 {
@@ -31,7 +30,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
         public ReactiveCommand<Window, Unit> AcceptCommand { get; }
         public ReactiveCommand<Unit, Unit> AddEventCommand { get; }
         public ReactiveCommand<EventViewModel, Event> AcceptRenameEventCommand { get; private set; } = null!;
-        public AsyncRelayCommand<EventViewModel> DeleteEventCommand { get; }
+        public ReactiveCommand<EventViewModel, Unit> DeleteEventCommand { get; }
 
         public EventChangeViewModel(IEventsRepository? eventsRepository = null)
         {
@@ -42,7 +41,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
 
             AddEventCommand = ReactiveCommand.CreateFromTask(AddEventAsync);
 
-            DeleteEventCommand = new AsyncRelayCommand<EventViewModel>(DeleteEventAsync);
+            DeleteEventCommand = ReactiveCommand.CreateFromTask<EventViewModel>(DeleteEventAsync);
         }
 
         public override async Task ConstructAsync()
