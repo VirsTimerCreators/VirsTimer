@@ -10,8 +10,6 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 {
     public class RoomUserViewModel : ViewModelBase
     {
-        private readonly int _scramblesAmount;
-
         public string UserName { get; set; }
 
         [Reactive]
@@ -27,21 +25,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         public TimeSpan? Avg { get; set; }
 
         [Reactive]
-        public ObservableCollection<RoomUserSolveViewModel> Solves { get; set; } = new();
+        public ObservableCollection<RoomUserSolveViewModel> Solves { get; set; }
 
-        public RoomUserViewModel(
-            string userName,
-            int scramblesAmount)
+        public RoomUserViewModel(RoomUser roomUser)
         {
-            UserName = userName;
-            _scramblesAmount = scramblesAmount;
-        }
-
-        public RoomUserViewModel(
-            RoomUser roomUser,
-            int scramblesAmount)
-        {
-            _scramblesAmount = scramblesAmount;
             UserName = roomUser.Name;
             Solves = new(roomUser.Solves.Select(x => new RoomUserSolveViewModel(x)));
         }

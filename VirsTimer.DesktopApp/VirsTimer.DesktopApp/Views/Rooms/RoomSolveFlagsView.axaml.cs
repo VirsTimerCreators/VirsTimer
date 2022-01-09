@@ -118,19 +118,6 @@ namespace VirsTimer.DesktopApp.Views.Rooms
                 .DisposeWith(dispasableRegistration);
 
                 Focus();
-                this.Events().KeyUp
-                .Select(x => x.Key)
-                .Where(x => x == Key.Enter || x == Key.Space)
-                .Select(x => true switch
-                {
-                    var _ when OkRadioButton.IsChecked == true => "0",
-                    var _ when OkRadioButton.IsChecked == true => "1",
-                    var _ when OkRadioButton.IsChecked == true => "2",
-                    _ => ""
-                })
-                .Where(x => x != "")
-                .InvokeCommand(this, x => x.ViewModel.AcceptFlagCommand)
-                .DisposeWith(dispasableRegistration);
             });
         }
 

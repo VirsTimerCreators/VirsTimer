@@ -79,7 +79,7 @@
 				VerticalContentAlignment="Center"
 				Content="OK"
 				FontWeight="Bold"
-				Command="{Binding ClickFlagCommand}"
+				Command="{Binding AcceptFlagCommand}"
 				CommandParameter="0"/>
 			<RadioButton
 				x:Name="Plus2Button"
@@ -94,7 +94,7 @@
 				VerticalContentAlignment="Center"
 				Content="+2"
 				FontWeight="Bold"
-				Command="{Binding ClickFlagCommand}"
+				Command="{Binding AcceptFlagCommand}"
 				CommandParameter="1"/>
 			<RadioButton
 				x:Name="DnfButton"
@@ -109,7 +109,7 @@
 				VerticalContentAlignment="Center"
 				Content="DNF"
 				FontWeight="Bold"
-				Command="{Binding ClickFlagCommand}"
+				Command="{Binding AcceptFlagCommand}"
 				CommandParameter="2"/>
 		</Grid>
 	</DockPanel>
