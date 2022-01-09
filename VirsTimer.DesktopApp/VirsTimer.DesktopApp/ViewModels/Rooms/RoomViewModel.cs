@@ -95,7 +95,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             _roomsService.Notifications.Subscribe(async notification =>
             {
                 var usersViewModels = notification.RoomUsers
-                .Select(roomUser => new RoomUserViewModel(roomUser, room.Scrambles.Count));
+                .Select(roomUser => new RoomUserViewModel(roomUser));
 
                 await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
@@ -122,7 +122,6 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             TimerContent = roomSolveFlagViewModel;
             roomSolveFlagViewModel.AcceptFlagCommand.Subscribe(async x => await AddSolveToMeAsync(x));
             roomSolveFlagViewModel.AcceptFlagCommand.ThrownExceptions.Subscribe(ExceptionThrown);
-            roomSolveFlagViewModel.ClickFlagCommand.ThrownExceptions.Subscribe(ExceptionThrown);
             roomSolveFlagViewModel.RadioButtonFocusedCommand.ThrownExceptions.Subscribe(ExceptionThrown);
         }
 
