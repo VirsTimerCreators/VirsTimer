@@ -55,6 +55,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Statistics
                 .AutoRefresh(x => x.Flag)
                 .Subscribe(refreshOnFlagChangeObservable);
 
+            if (Solves.IsNullOrEmpty())
+                return Refresh();
+
             return Task.CompletedTask;
         }
 
