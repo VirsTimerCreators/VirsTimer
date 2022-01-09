@@ -12,6 +12,7 @@
 				<Style Selector="ListBoxItem">
 					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 					<Setter Property="VerticalContentAlignment" Value="Center"/>
+					<Setter Property="FocusAdorner" Value="{x:Null}" />
 				</Style>
 			</ListBox.Styles>
 			<ListBox.ItemTemplate>
