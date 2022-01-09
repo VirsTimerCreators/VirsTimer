@@ -14,10 +14,13 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
 
         public ReactiveCommand<Window, Unit> AcceptCommand { get; }
 
+        public ReactiveCommand<Unit, Unit> CancelCommand { get; }
+
         public SolveAddViewModel()
         {
             var acceptedEnabled = this.WhenAnyValue(x => x.SolveTime, x => x > TimeSpan.Zero);
             AcceptCommand = ReactiveCommand.Create<Window>(SaveSolve, acceptedEnabled);
+            CancelCommand = ReactiveCommand.Create(() => { });
         }
 
         private void SaveSolve(Window window)

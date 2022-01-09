@@ -35,6 +35,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             IRoomsService? roomsService = null)
         {
             _roomsService = roomsService ?? Ioc.GetService<IRoomsService>();
+            ScramblesAmount = string.Empty;
             AllEvents = Core.Constants.Events.Predefined;
             CreateRoomCommand = ReactiveCommand.CreateFromTask(CreateRoomAsync);
             JoinRoomCommand = ReactiveCommand.CreateFromTask(JoinRoomAsync);

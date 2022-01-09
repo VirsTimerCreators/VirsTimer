@@ -4,27 +4,44 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using ReactiveUI;
 using System;
+using System.Reactive.Disposables;
 using VirsTimer.DesktopApp.ViewModels.Solves;
 
 namespace VirsTimer.DesktopApp.Views.Solves
 {
     public partial class SolveAddView : ReactiveWindow<SolveAddViewModel>
     {
-        private readonly TextBox solveTextBox;
+        public TextBox SolveTextBox { get; }
+        public Button CancelButton { get; }
 
         public SolveAddView()
         {
             InitializeComponent();
-            solveTextBox = this.FindControl<TextBox>("SolveTextBox");
-            solveTextBox.Text = "00:00:00.00";
-            solveTextBox.CaretIndex = 6;
-            solveTextBox.CaretBrush = Avalonia.Media.Brushes.Yellow;
-            solveTextBox.AddHandler(TextInputEvent, PreviewTextInput, RoutingStrategies.Tunnel);
-            solveTextBox.AddHandler(KeyDownEvent, PreviewKeyDown, RoutingStrategies.Tunnel);
+            SolveTextBox = this.FindControl<TextBox>("SolveTextBox");
+            SolveTextBox.Text = "00:00:00.00";
+            SolveTextBox.CaretIndex = 6;
+            SolveTextBox.CaretBrush = Avalonia.Media.Brushes.Yellow;
+            SolveTextBox.AddHandler(TextInputEvent, PreviewTextInput, RoutingStrategies.Tunnel);
+            SolveTextBox.AddHandler(KeyDownEvent, PreviewKeyDown, RoutingStrategies.Tunnel);
+
+            CancelButton = this.Find<Button>("CancelButton");
 #if DEBUG
             this.AttachDevTools();
 #endif
+
+            this.WhenActivated(disposableRegistration =>
+            {
+                this.BindCommand(
+                    ViewModel,
+                    viewModel => viewModel.CancelCommand,
+                    view => view.CancelButton)
+                .DisposeWith(disposableRegistration);
+
+                ViewModel!.CancelCommand.Subscribe(_ => Close())
+                .DisposeWith(disposableRegistration);
+            });
         }
 
         private void InitializeComponent()
@@ -35,7 +52,7 @@ namespace VirsTimer.DesktopApp.Views.Solves
         protected override void OnOpened(EventArgs e)
         {
             base.OnOpened(e);
-            solveTextBox.Focus();
+            SolveTextBox.Focus();
         }
 
         private void PreviewTextInput(object? sender, TextInputEventArgs e)
