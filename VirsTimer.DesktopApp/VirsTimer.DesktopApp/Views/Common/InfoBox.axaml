@@ -10,9 +10,12 @@
 	MaxWidth="600"
 	x:Class="VirsTimer.DesktopApp.Views.Common.InfoBox"
 	Title="InfoBox"
+	WindowStartupLocation="CenterScreen"
 	TransparencyLevelHint="AcrylicBlur"
 	Background="Transparent"
-	ExtendClientAreaToDecorationsHint="True">
+	ExtendClientAreaToDecorationsHint="True"
+	ExtendClientAreaChromeHints="NoChrome"
+	ExtendClientAreaTitleBarHeightHint="-1">
 	<Panel>
 		<ExperimentalAcrylicBorder
             IsHitTestVisible="False"

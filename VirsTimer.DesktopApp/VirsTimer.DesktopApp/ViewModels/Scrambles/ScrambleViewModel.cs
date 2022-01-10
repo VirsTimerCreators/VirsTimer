@@ -1,9 +1,11 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services;
@@ -45,9 +47,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
             OpenGenerateScrambleInfoCommand = ReactiveCommand.CreateFromTask<Window>(OpenGenerateScrambleInfo);
         }
 
-        public override Task ConstructAsync()
+        public override async Task<bool> ConstructAsync()
         {
-            return ChangeEventAsync(_currentEvent);
+            await ChangeEventAsync(_currentEvent);
+            return true;
         }
 
         public async Task ChangeEventAsync(Event newEvent)
@@ -59,7 +62,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
             if (Core.Constants.Events.Predefined.Contains(newEvent.Name))
             {
                 _isCustom = false;
-                var scrabmles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 4).ConfigureAwait(false);
+                var scrabmles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 4);
                 if (scrabmles.IsSuccesfull)
                 {
                     _scrambles = new Queue<Scramble>(scrabmles.Value!);
@@ -69,7 +72,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
                     return;
                 }
 
-                _snackbarViewModel.Enqueue("Podczas pobierania scrambli wystąpił bład.");
+                await ShutdownDialogHandleAsync("Nie można pobrać scrambli z serwera. Sprawdź połączenie internetowe. Jeżeli problem będzie się powtarzał zgłoś problem na https://github.com/VirsTimerCreators/VirsTimer.");
                 IsBusy = false;
                 return;
             }
@@ -100,19 +103,21 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
                 return;
             }
 
+            if (_scrambles.Count == 0)
+                await ShutdownDialogHandleAsync("Nie można pobrać scrambli z serwera.");
+
             CurrentScramble = _scrambles.Dequeue();
             if (_scrambles.Count < 3)
             {
                 IsBusy = true;
-                var generatedScrambles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 5).ConfigureAwait(false);
+                var generatedScrambles = await _scrambleGenerator.GenerateScrambles(_currentEvent, 5);
                 if (generatedScrambles.IsSuccesfull is false)
                 {
-                    _snackbarViewModel.Enqueue("Podczas pobierania scrambli wystąpił bład.");
                     IsBusy = false;
                     return;
                 }
 
-                foreach (var scramble in generatedScrambles.Value)
+                foreach (var scramble in generatedScrambles.Value!)
                     _scrambles.Enqueue(scramble);
                 IsBusy = false;
             }
@@ -123,14 +128,14 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
             var message = string.Join("\n\n",
                 "1. Stworzyć bibliotekę klas (Class Library) w technologii .NET 6.",
                 "2. Dodać paczkę VirsTimer.Scrambles z witryny nuget.org: \n" +
-                "https://www.nuget.org/packages/VirsTimer.Scrambles/1.0.0 \n" + 
-                "do stworzonej bibliteki.",
+                "https://www.nuget.org/packages/VirsTimer.Scrambles/1.0.0 \n" +
+                "do stworzonej biblioteki.",
                 "3. Zaimplementować interfejs ICustomScrambleGenerator gdzie w właściwości EventName należy umieścić nazwę stworzonej konkurencji w aplikacji.\n" +
                 "Biblioteka może zawierać wiele implemenacjia interfejsu, ale tylko jedną dla danej konkurencji.",
                 "4. Zmienić nazwę pliku .dll zbudowanej biblioteki na ScrambleGenerators.dll.",
                 "5. Umieścić plik ScrambleGenerators.dll w głównym folderze aplikacji VirsTimer.",
                 "6. Zresetować aplikację.");
-            
+
             var infoBoxViewModel = new InfoBoxViewModel
             {
                 Message = message

@@ -1,16 +1,20 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Cache;
 using VirsTimer.Core.Services.Sessions;
+using VirsTimer.DesktopApp.ValueConverters;
 using VirsTimer.DesktopApp.ViewModels.Common;
-using VirsTimer.DesktopApp.Views.Sessions;
 
 namespace VirsTimer.DesktopApp.ViewModels.Sessions
 {
@@ -19,6 +23,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
         private readonly ISessionsRepository _sessionRepository;
         private readonly IApplicationCache _applicationCache;
         private readonly IApplicationCacheSaver _applicationCacheSaver;
+        private readonly IValueConverter<string, Bitmap> _svgToBitmapConverter;
         private readonly SnackbarViewModel _snackbarViewModel;
 
         private Event _event = null!;
@@ -26,7 +31,12 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
         [Reactive]
         public Session CurrentSession { get; set; } = null!;
 
-        public ReactiveCommand<Window, Unit> ChangeSessionCommand { get; }
+        [Reactive]
+        public IImage? ChooseSessionImage { get; private set; }
+
+        public ReactiveCommand<Unit, Unit> ChangeSessionCommand { get; }
+
+        public Interaction<SessionChangeViewModel, SessionViewModel?> ShowSessionChangeDialog { get; }
 
         public SessionSummaryViewModel(
             SnackbarViewModel snackbarViewModel,
@@ -34,21 +44,31 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
             IApplicationCache? applicationCache = null,
             IApplicationCacheSaver? applicationCacheSaver = null)
         {
+            _svgToBitmapConverter = new SvgToBitmapConverter(100);
             _snackbarViewModel = snackbarViewModel;
             _sessionRepository = sessionRepository ?? Ioc.GetService<ISessionsRepository>();
             _applicationCache = applicationCache ?? Ioc.GetService<IApplicationCache>();
             _applicationCacheSaver = applicationCacheSaver ?? Ioc.GetService<IApplicationCacheSaver>();
-            ChangeSessionCommand = ReactiveCommand.CreateFromTask<Window>(ChangeSessionAsync);
+            ChangeSessionCommand = ReactiveCommand.CreateFromTask(ChangeSessionAsync);
+            ShowSessionChangeDialog = new Interaction<SessionChangeViewModel, SessionViewModel?>();
+        }
+
+        public override async Task<bool> ConstructAsync()
+        {
+            var sessionSvg = await File.ReadAllTextAsync("Assets/session.svg");
+
+            ChooseSessionImage = _svgToBitmapConverter.Convert(sessionSvg);
+            return true;
         }
 
         public async Task LoadSessionAsync(Event @event)
         {
             IsBusy = true;
             _event = @event;
-            var repositoryResponse = await _sessionRepository.GetSessionsAsync(_event).ConfigureAwait(false);
+            var repositoryResponse = await _sessionRepository.GetSessionsAsync(_event);
             if (repositoryResponse.IsSuccesfull is false)
             {
-                _snackbarViewModel.Enqueue("Podczas ładowania sesji wystąpił błąd.");
+                await ShutdownDialogHandleAsync("Nie można załadować sesji.");
                 IsBusy = false;
                 return;
             }
@@ -57,12 +77,12 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
             if (sessions.IsNullOrEmpty())
             {
                 var session = new Session(@event, $"{Constants.Sessions.NewSessionNameBase}1");
-                var response = await _sessionRepository.AddSessionAsync(session).ConfigureAwait(false); 
+                var response = await _sessionRepository.AddSessionAsync(session);
                 sessions.Add(session);
 
                 if (response.IsSuccesfull is false)
                 {
-                    _snackbarViewModel.Enqueue("Podczas ładowania sesji wystąpił błąd (nie można utworzyć sesji).");
+                    await ShutdownDialogHandleAsync("Nie można załadować sesji.");
                     IsBusy = false;
                     return;
                 }
@@ -72,23 +92,23 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
             IsBusy = false;
         }
 
-        private async Task ChangeSessionAsync(Window window)
+        private async Task ChangeSessionAsync()
         {
             var sessionChangeViewModel = new SessionChangeViewModel(_event, _sessionRepository);
-            await sessionChangeViewModel.ConstructAsync().ConfigureAwait(true);
-            var dialog = new SessionChangeView
+            var contructed = await sessionChangeViewModel.ConstructAsync().ConfigureAwait(true);
+            if (contructed is false)
             {
-                DataContext = sessionChangeViewModel
-            };
+                await CloseWindowDialogHandleAsync("Nie można załadować sesji");
+                return;
+            }
 
-            var observer = Observer.Create<Session>(UpdateSessionIfNameChanged);
-            sessionChangeViewModel.AcceptRenameSessionCommand.Subscribe(observer);
-
+            sessionChangeViewModel.AcceptRenameSessionCommand.Subscribe(UpdateSessionIfNameChanged);
             sessionChangeViewModel.Sessions.CollectionChanged += (_, o) => OnSessionDelete(o, sessionChangeViewModel);
-            await dialog.ShowDialog(window);
-            if (sessionChangeViewModel.Accepted)
+
+            var result = await ShowSessionChangeDialog.Handle(sessionChangeViewModel);
+            if (result is not null && result.Session.Id != CurrentSession.Id)
             {
-                CurrentSession = sessionChangeViewModel.SelectedSession!.Session;
+                CurrentSession = result.Session;
                 _applicationCache.LastChoosenSession = CurrentSession.Id!;
                 await _applicationCacheSaver.SaveCacheAsync(_applicationCache).ConfigureAwait(true);
             }

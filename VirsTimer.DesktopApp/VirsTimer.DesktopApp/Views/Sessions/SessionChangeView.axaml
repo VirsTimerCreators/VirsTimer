@@ -10,9 +10,12 @@
         MaxHeight="500"
         x:Class="VirsTimer.DesktopApp.Views.Sessions.SessionChangeView"
         Title="SessionChangeView"
-        TransparencyLevelHint="AcrylicBlur"
-        Background="Transparent"
-        ExtendClientAreaToDecorationsHint="True">
+		WindowStartupLocation="CenterScreen"
+		TransparencyLevelHint="AcrylicBlur"
+		Background="Transparent"
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaChromeHints="NoChrome"
+		ExtendClientAreaTitleBarHeightHint="-1">
     <Grid RowDefinitions="30, *, 80">
         <ExperimentalAcrylicBorder Grid.RowSpan="3" IsHitTestVisible="False">
             <ExperimentalAcrylicBorder.Material>
@@ -78,21 +81,40 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button
+		<Button
+			x:Name="CancelButton"
             Grid.Row="2"
             VerticalAlignment="Center"
             HorizontalAlignment="Left"
             Margin="20"
+			Width="90"
+			Height="35"
+			HorizontalContentAlignment="Center"
+			VerticalContentAlignment="Center"
+            Content="Anuluj"/>
+		<Button
+			x:Name="AddButton"
+            Grid.Row="2"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Margin="20"
+			Width="90"
+			Height="35"
+			HorizontalContentAlignment="Center"
+			VerticalContentAlignment="Center"
             Content="Dodaj"
-            Command="{Binding AddSessionCommand}"/>
-        <Button
+			Background="#2fbf24"/>
+		<Button
+			x:Name="AcceptButton"
             Grid.Row="2"
             VerticalAlignment="Center"
             HorizontalAlignment="Right"
             Margin="20"
+			Width="90"
+			Height="35"
+			HorizontalContentAlignment="Center"
+			VerticalContentAlignment="Center"
             Content="Akceptuj"
-            Command="{Binding AcceptCommand}"
-            Background="#0959db"
-            CommandParameter="{Binding $parent[Window]}"/>
+            Background="#0959db"/>
     </Grid>
 </Window>

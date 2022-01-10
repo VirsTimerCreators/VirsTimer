@@ -1,16 +1,14 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
-using Avalonia.VisualTree;
 using ReactiveUI;
 using VirsTimer.DesktopApp.Constants;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
+using VirsTimer.DesktopApp.Views.Common;
 
 namespace VirsTimer.DesktopApp.Views.Scrambles
 {
-    public class ScrambleView : ReactiveUserControl<ScrambleViewModel>
+    public class ScrambleView : BaseUserControl<ScrambleViewModel>
     {
-        private Window? _ancestor;
         public TextBlock ScrambleTextBlock { get; }
 
         public ScrambleView()
@@ -19,8 +17,8 @@ namespace VirsTimer.DesktopApp.Views.Scrambles
             ScrambleTextBlock = this.FindControl<TextBlock>("ScrambleTextBlock");
             this.WhenActivated(disposableRegistration =>
             {
-                _ancestor = this.FindAncestorOfType<Window>();
-                _ancestor.Opened += (_, _) => OnOpen();
+                Activate(disposableRegistration);
+                WindowParent.Opened += (_, _) => OnOpen();
             });
         }
 
@@ -31,7 +29,7 @@ namespace VirsTimer.DesktopApp.Views.Scrambles
 
         private void OnOpen()
         {
-            var windowHeight = _ancestor!.Height;
+            var windowHeight = WindowParent!.Height;
             ScrambleTextBlock.FontSize = windowHeight switch
             {
                 >= ScreenHeight.Big => 42,

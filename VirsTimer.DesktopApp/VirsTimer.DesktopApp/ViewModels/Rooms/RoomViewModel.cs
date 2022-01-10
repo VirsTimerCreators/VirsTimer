@@ -154,10 +154,11 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             ScrambleViewModel.GetNextScramble();
         }
 
-        public override async Task ConstructAsync()
+        public override async Task<bool> ConstructAsync()
         {
             var exitSvgTask = await File.ReadAllTextAsync("Assets/copyToClipboard.svg");
             CopyImage = _svgToBitmapConverter.Convert(exitSvgTask);
+            return true;
         }
 
         private async Task CopyToClipboard()

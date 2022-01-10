@@ -1,19 +1,24 @@
-using System;
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
+using ReactiveUI;
+using System;
+using System.Linq;
+using System.Reactive.Disposables;
 using VirsTimer.DesktopApp.Extensions;
 using VirsTimer.DesktopApp.ViewModels.Sessions;
+using VirsTimer.DesktopApp.Views.Common;
 
 namespace VirsTimer.DesktopApp.Views.Sessions
 {
-    public class SessionChangeView : ReactiveWindow<SessionChangeViewModel>
+    public class SessionChangeView : BaseWindow<SessionChangeViewModel>
     {
-        private readonly ListBox _sessionsListBox;
+        public ListBox SessionsListBox { get; }
+        public Button CancelButton { get; }
+        public Button AddButton { get; }
+        public Button AcceptButton { get; }
 
         public SessionChangeView()
         {
@@ -21,7 +26,36 @@ namespace VirsTimer.DesktopApp.Views.Sessions
 #if DEBUG
             this.AttachDevTools();
 #endif
-            _sessionsListBox = this.FindControl<ListBox>("SessionsListBox");
+            SessionsListBox = this.FindControl<ListBox>("SessionsListBox");
+            CancelButton = this.FindControl<Button>("CancelButton");
+            AddButton = this.FindControl<Button>("AddButton");
+            AcceptButton = this.FindControl<Button>("AcceptButton");
+
+            this.WhenActivated(disposableRegistration =>
+            {
+                this.BindCommand(
+                    ViewModel,
+                    viewModel => viewModel.CancelCommand,
+                    view => view.CancelButton)
+                .DisposeWith(disposableRegistration);
+
+                this.BindCommand(
+                    ViewModel,
+                    viewModel => viewModel.AddSessionCommand,
+                    view => view.AddButton)
+                .DisposeWith(disposableRegistration);
+
+                this.BindCommand(
+                    ViewModel,
+                    viewModel => viewModel.AcceptCommand,
+                    view => view.AcceptButton)
+                .DisposeWith(disposableRegistration);
+
+                Activate(disposableRegistration);
+
+                ViewModel.CancelCommand.Subscribe(_ => Close()).DisposeWith(disposableRegistration);
+                ViewModel.AcceptCommand.Subscribe(Close).DisposeWith(disposableRegistration);
+            });
         }
 
         private void InitializeComponent()
@@ -36,12 +70,12 @@ namespace VirsTimer.DesktopApp.Views.Sessions
 
         private void ListItemTextBoxGotFocus(object? sender, GotFocusEventArgs e)
         {
-            _sessionsListBox.UnselectAll();
+            SessionsListBox.UnselectAll();
         }
 
         private void ClickWithUnselect(object? sender, RoutedEventArgs e)
         {
-            _sessionsListBox.UnselectAll();
+            SessionsListBox.UnselectAll();
             ResetEditing();
 
             var button = sender as Button;

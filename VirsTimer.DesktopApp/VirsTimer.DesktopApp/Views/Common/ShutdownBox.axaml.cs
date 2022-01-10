@@ -3,26 +3,24 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
-using System;
 using System.Reactive.Disposables;
 using VirsTimer.DesktopApp.ViewModels.Common;
 
 namespace VirsTimer.DesktopApp.Views.Common
 {
-    public partial class InfoBox : ReactiveWindow<InfoBoxViewModel>
+    public partial class ShutdownBox : ReactiveWindow<ShutdownBoxViewModel>
     {
         public TextBlock MessageTextBlock { get; }
-        public Button OkButton { get; }
+        public Button ShutdownButton { get; }
 
-        public InfoBox()
+        public ShutdownBox()
         {
             InitializeComponent();
 #if DEBUG
             this.AttachDevTools();
 #endif
-
             MessageTextBlock = this.FindControl<TextBlock>("MessageTextBox");
-            OkButton = this.FindControl<Button>("OkButton");
+            ShutdownButton = this.FindControl<Button>("ShutdownButton");
 
             this.WhenActivated(disposableRegistration =>
             {
@@ -34,11 +32,9 @@ namespace VirsTimer.DesktopApp.Views.Common
 
                 this.BindCommand(
                     ViewModel,
-                    viewModel => viewModel.OkCommand,
-                    view => view.OkButton)
+                    viewModel => viewModel.ShutdownCommand,
+                    view => view.ShutdownButton)
                 .DisposeWith(disposableRegistration);
-
-                ViewModel!.OkCommand.Subscribe(_ => Close()).DisposeWith(disposableRegistration);
             });
         }
 
