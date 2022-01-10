@@ -46,49 +46,13 @@
 						</Grid>
 					</Button>
 
-					<Button
-						Focusable="False"
-						Padding="15"
+					<ContentControl
 						Height="100"
-						HorizontalAlignment="Stretch"
-						VerticalContentAlignment="Center"
-						Command="{Binding EventViewModel.ChangeEventCommand}"
-						CommandParameter="{Binding $parent[Window]}">
-						<Grid ColumnDefinitions="30, 30, *">
-							<Image
-								Source="{Binding ChooseEventImage}"
-								MaxWidth="30"/>
-							<StackPanel Grid.Column="2" VerticalAlignment="Center">
-								<TextBlock
-									Text="Event"/>
-								<Panel Height="10"/>
-								<TextBlock
-									Text="{Binding EventViewModel.CurrentEvent.Name}"/>
-							</StackPanel>
-						</Grid>
-					</Button>
-
-					<Button
-						Focusable="False"
-						Padding="15"
+						Content="{Binding EventViewModel}"/>
+					
+					<ContentControl
 						Height="100"
-						HorizontalAlignment="Stretch"
-						VerticalContentAlignment="Center"
-						Command="{Binding SessionSummaryViewModel.ChangeSessionCommand}"
-						CommandParameter="{Binding $parent[Window]}">
-						<Grid ColumnDefinitions="30, 30, *">
-							<Image
-								Source="{Binding ChooseSessionImage}"
-								MaxWidth="30"/>
-							<StackPanel Grid.Column="2" VerticalAlignment="Center">
-								<TextBlock
-									Text="Sesja"/>
-								<Panel Height="10"/>
-								<TextBlock
-									Text="{Binding SessionSummaryViewModel.CurrentSession.Name}"/>
-							</StackPanel>
-						</Grid>
-					</Button>
+						Content="{Binding SessionViewModel}"/>
 
 					<Button
 						Focusable="False"

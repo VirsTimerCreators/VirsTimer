@@ -9,12 +9,12 @@ using VirsTimer.DesktopApp.ViewModels.Common;
 
 namespace VirsTimer.DesktopApp.Views.Common
 {
-    public partial class InfoBox : ReactiveWindow<InfoBoxViewModel>
+    public partial class CloseWindowBox : ReactiveWindow<CloseWindowBoxViewModel>
     {
         public TextBlock MessageTextBlock { get; }
-        public Button OkButton { get; }
+        public Button CloseWindowButton { get; }
 
-        public InfoBox()
+        public CloseWindowBox()
         {
             InitializeComponent();
 #if DEBUG
@@ -22,7 +22,7 @@ namespace VirsTimer.DesktopApp.Views.Common
 #endif
 
             MessageTextBlock = this.FindControl<TextBlock>("MessageTextBox");
-            OkButton = this.FindControl<Button>("OkButton");
+            CloseWindowButton = this.FindControl<Button>("CloseWindowButton");
 
             this.WhenActivated(disposableRegistration =>
             {
@@ -34,11 +34,11 @@ namespace VirsTimer.DesktopApp.Views.Common
 
                 this.BindCommand(
                     ViewModel,
-                    viewModel => viewModel.OkCommand,
-                    view => view.OkButton)
+                    viewModel => viewModel.CloseWindowCommand,
+                    view => view.CloseWindowButton)
                 .DisposeWith(disposableRegistration);
 
-                ViewModel!.OkCommand.Subscribe(_ => Close()).DisposeWith(disposableRegistration);
+                ViewModel!.CloseWindowCommand.Subscribe(_ => Close()).DisposeWith(disposableRegistration);
             });
         }
 

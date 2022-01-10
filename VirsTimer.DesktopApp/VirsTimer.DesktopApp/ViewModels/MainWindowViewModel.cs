@@ -11,13 +11,14 @@ using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.ValueConverters;
 using VirsTimer.DesktopApp.ViewModels.Common;
 using VirsTimer.DesktopApp.ViewModels.Events;
-using VirsTimer.DesktopApp.ViewModels.Rooms;
 using VirsTimer.DesktopApp.ViewModels.Export;
+using VirsTimer.DesktopApp.ViewModels.Rooms;
 using VirsTimer.DesktopApp.ViewModels.Scrambles;
 using VirsTimer.DesktopApp.ViewModels.Sessions;
 using VirsTimer.DesktopApp.ViewModels.Solves;
@@ -42,7 +43,7 @@ namespace VirsTimer.DesktopApp.ViewModels
         public SnackbarViewModel SnackbarViewModel { get; }
 
         public EventSummaryViewModel EventViewModel { get; }
-        public SessionSummaryViewModel SessionSummaryViewModel { get; }
+        public SessionSummaryViewModel SessionViewModel { get; }
         public TimerViewModel TimerViewModel { get; }
         public SolvesListViewModel SolvesListViewModel { get; }
         public ScrambleViewModel ScrambleViewModel { get; }
@@ -55,26 +56,15 @@ namespace VirsTimer.DesktopApp.ViewModels
         public ReactiveCommand<Unit, Unit> ExportCommand { get; }
 
         [Reactive]
-        public IImage? ChooseEventImage { get; private set; }
-
-        [Reactive]
-
-        public IImage? ChooseSessionImage { get; private set; }
-
-        [Reactive]
-
         public IImage? ImportExportImage { get; private set; }
 
         [Reactive]
-
         public IImage? MultiplayerImage { get; private set; }
 
         [Reactive]
-
         public IImage? ExitImage { get; private set; }
 
         [Reactive]
-
         public IImage? MenuImage { get; private set; }
 
         public Interaction<RoomCreationViewModel, RoomViewModel?> ShowRoomCreationDialog { get; }
@@ -85,14 +75,14 @@ namespace VirsTimer.DesktopApp.ViewModels
         public MainWindowViewModel(
             bool online,
             IValueConverter<string, Bitmap>? svgToBitmapConverter = null)
-        { 
+        {
             _solvesRepository = Ioc.Services.GetRequiredService<ISolvesRepository>();
             _svgToBitmapConverter = svgToBitmapConverter ?? new SvgToBitmapConverter(100);
 
-            SnackbarViewModel = new SnackbarViewModel();
+            SnackbarViewModel = new SnackbarViewModel(400, 96);
 
             EventViewModel = new EventSummaryViewModel();
-            SessionSummaryViewModel = new SessionSummaryViewModel(SnackbarViewModel);
+            SessionViewModel = new SessionSummaryViewModel(SnackbarViewModel);
             TimerViewModel = new TimerViewModel();
             SolvesListViewModel = new SolvesListViewModel(SnackbarViewModel);
             ScrambleViewModel = new ScrambleViewModel(SnackbarViewModel);
@@ -111,21 +101,21 @@ namespace VirsTimer.DesktopApp.ViewModels
                 .Subscribe(async _ =>
                 {
                     var scramblesTask = ScrambleViewModel.ChangeEventAsync(EventViewModel.CurrentEvent);
-                    var sessionTask = SessionSummaryViewModel.LoadSessionAsync(EventViewModel.CurrentEvent);
-                    await Task.WhenAll(scramblesTask, sessionTask).ConfigureAwait(true);
+                    var sessionTask = SessionViewModel.LoadSessionAsync(EventViewModel.CurrentEvent);
+                    await Task.WhenAll(scramblesTask, sessionTask);
                 });
 
-            this.WhenAnyValue(x => x.SessionSummaryViewModel.CurrentSession)
+            this.WhenAnyValue(x => x.SessionViewModel.CurrentSession)
                 .Skip(1)
                 .Subscribe(async _ =>
                 {
-                    await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
-                    await StatisticsViewModel.Construct(SolvesListViewModel.Solves).ConfigureAwait(false);
+                    await SolvesListViewModel.ChangeSessionAsync(SessionViewModel.CurrentSession);
+                    await StatisticsViewModel.Construct(SolvesListViewModel.Solves);
                 });
 
             this.WhenAnyValue(
                 x => x.EventViewModel.IsBusy,
-                x => x.SessionSummaryViewModel.IsBusy,
+                x => x.SessionViewModel.IsBusy,
                 x => x.SolvesListViewModel.IsBusy,
                 x => x.ScrambleViewModel.IsBusy,
                 x => x.StatisticsViewModel.IsBusy,
@@ -140,35 +130,31 @@ namespace VirsTimer.DesktopApp.ViewModels
             ExportCommand = ReactiveCommand.CreateFromTask(ExportAsync);
         }
 
-        public override async Task ConstructAsync()
+        public override async Task<bool> ConstructAsync()
         {
             IsBusyManual = true;
 
-            await EventViewModel.ConstructAsync().ConfigureAwait(false);
+            await EventViewModel.ConstructAsync();
+            await SessionViewModel.ConstructAsync();
 
             var hamburgerSvgTask = File.ReadAllTextAsync("Assets/hamburger.svg");
-            var eventSvgTask = File.ReadAllTextAsync("Assets/event.svg");
-            var sessionSvgTask = File.ReadAllTextAsync("Assets/session.svg");
             var exportSvgTask = File.ReadAllTextAsync("Assets/export.svg");
             var multiplayerSvgTask = File.ReadAllTextAsync("Assets/multiplayer.svg");
             var exitSvgTask = File.ReadAllTextAsync("Assets/exit.svg");
 
             var svgs = await Task.WhenAll(
                 hamburgerSvgTask,
-                eventSvgTask,
-                sessionSvgTask,
                 exportSvgTask,
                 multiplayerSvgTask,
-                exitSvgTask).ConfigureAwait(false);
+                exitSvgTask);
 
             MenuImage = _svgToBitmapConverter.Convert(svgs[0]);
-            ChooseEventImage = _svgToBitmapConverter.Convert(svgs[1]);
-            ChooseSessionImage = _svgToBitmapConverter.Convert(svgs[2]);
-            ImportExportImage = _svgToBitmapConverter.Convert(svgs[3]);
-            MultiplayerImage = _svgToBitmapConverter.Convert(svgs[4]);
-            ExitImage = _svgToBitmapConverter.Convert(svgs[5]);
+            ImportExportImage = _svgToBitmapConverter.Convert(svgs[1]);
+            MultiplayerImage = _svgToBitmapConverter.Convert(svgs[2]);
+            ExitImage = _svgToBitmapConverter.Convert(svgs[3]);
 
             IsBusyManual = false;
+            return true;
         }
 
         public async Task OpenRoomCreationDialog()
@@ -182,31 +168,28 @@ namespace VirsTimer.DesktopApp.ViewModels
         private async Task ExportAsync()
         {
             var exportsViewModel = new ExportsViewModel(
-                SessionSummaryViewModel.CurrentSession,
+                SessionViewModel.CurrentSession,
                 SolvesListViewModel.Solves);
             await ShowExportDialog.Handle(exportsViewModel);
             if (exportsViewModel.Imported)
-                await SolvesListViewModel.ChangeSessionAsync(SessionSummaryViewModel.CurrentSession).ConfigureAwait(false);
+                await SolvesListViewModel.ChangeSessionAsync(SessionViewModel.CurrentSession).ConfigureAwait(false);
         }
 
         public async Task SaveSolveAsync(Solve solve)
         {
             IsBusyManual = true;
-            foreach (var failed in _failedSolves)
-                await _solvesRepository.AddSolveAsync(failed).ConfigureAwait(false);
+            if (_failedSolves.IsNullOrEmpty() is false)
+                await _solvesRepository.AddSolvesAsync(_failedSolves);
 
-            var repositoryResponse = await _solvesRepository.AddSolveAsync(solve).ConfigureAwait(false);
+            var repositoryResponse = await _solvesRepository.AddSolveAsync(solve);
             if (repositoryResponse.IsSuccesfull is false)
             {
                 _failedSolves.Add(solve);
-                SnackbarViewModel.Enqueue("Podczas zapisywania ułożenia wystąpił błąd.");
-                await ScrambleViewModel.GetNextScrambleAsync().ConfigureAwait(false);
-                IsBusyManual = false;
-                return;
+                Task.Run(async () => await SnackbarViewModel.Enqueue("Podczas zapisywania ułożenia wystąpił błąd. Próba zapisu będzie powtórzona po kolejnym ułożeniu."));
             }
 
             SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve, _solvesRepository));
-            await ScrambleViewModel.GetNextScrambleAsync().ConfigureAwait(false);
+            await ScrambleViewModel.GetNextScrambleAsync();
             IsBusyManual = false;
         }
 
@@ -221,7 +204,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             if (!solveAddViewModel.Accepted)
                 return;
             var solve = new Solve(
-                SessionSummaryViewModel.CurrentSession,
+                SessionViewModel.CurrentSession,
                 solveAddViewModel.SolveTime,
                 ScrambleViewModel.CurrentScramble.Value);
 

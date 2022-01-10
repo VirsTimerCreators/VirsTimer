@@ -22,7 +22,7 @@ using VirsTimer.Core.Services.Solves;
 namespace VirsTimer.DesktopApp
 {
     /// <summary>
-    /// Invesrion of control.
+    /// Inversion of control.
     /// </summary>
     public static class Ioc
     {
@@ -58,7 +58,6 @@ namespace VirsTimer.DesktopApp
             services.AddHttpClient(
                 HttpClientNames.Blank,
                 client => client.BaseAddress = new Uri(Path.Combine(Server.Address)));
-
 
             services.AddSingleton<IHttpResponseHandler, HttpResponseHandler>();
             services.AddSingleton<IFileSystem, FileSystem>();
@@ -102,6 +101,7 @@ namespace VirsTimer.DesktopApp
                 client =>
                 {
                     client.BaseAddress = new Uri(Path.Combine(Server.Address));
+                    client.Timeout = TimeSpan.FromSeconds(6);
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userClient.Jwt);
                 });
 

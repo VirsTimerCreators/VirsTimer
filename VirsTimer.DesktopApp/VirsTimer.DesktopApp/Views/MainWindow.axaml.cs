@@ -44,10 +44,8 @@ namespace VirsTimer.DesktopApp.Views
                 ViewModel.ShowRoomDialog.RegisterHandler(DoShowRoomDialogAsync).DisposeWith(disposableRegistration);
                 ViewModel.ShowExportDialog.RegisterHandler(DoShowExportDialogAsync).DisposeWith(disposableRegistration);
 
-                await ViewModel!.ConstructAsync().ConfigureAwait(false);
+                await ViewModel!.ConstructAsync();
             });
-
-            var s = this.Height;
         }
 
         public void OnOpen()
@@ -121,7 +119,7 @@ namespace VirsTimer.DesktopApp.Views
                 ViewModel.TimerViewModel.Timer.Stop();
 
                 var solve = new Solve(
-                    ViewModel.SessionSummaryViewModel.CurrentSession,
+                    ViewModel.SessionViewModel.CurrentSession,
                     ViewModel.TimerViewModel.SavedTime,
                     ViewModel.ScrambleViewModel.CurrentScramble.Value);
 

@@ -1,14 +1,13 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Avalonia.Controls;
-using DynamicData;
+﻿using DynamicData;
 using DynamicData.Alias;
 using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
 using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
@@ -20,14 +19,13 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
     {
         private readonly IEventsRepository _eventsRepository;
 
-        public bool Accepted { get; private set; } = false;
-
         public ObservableCollection<EventViewModel> Events { get; private set; } = null!;
 
         [Reactive]
         public EventViewModel? SelectedEvent { get; set; }
 
-        public ReactiveCommand<Window, Unit> AcceptCommand { get; }
+        public ReactiveCommand<Unit, Unit> CancelCommand { get; }
+        public ReactiveCommand<Unit, EventViewModel?> AcceptCommand { get; }
         public ReactiveCommand<Unit, Unit> AddEventCommand { get; }
         public ReactiveCommand<EventViewModel, Event> AcceptRenameEventCommand { get; private set; } = null!;
         public ReactiveCommand<EventViewModel, Unit> DeleteEventCommand { get; }
@@ -36,17 +34,22 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
         {
             _eventsRepository = eventsRepository ?? Ioc.GetService<IEventsRepository>();
 
+            CancelCommand = ReactiveCommand.Create(() => { });
+
             var canAccpet = this.WhenAnyValue<EventChangeViewModel, bool, EventViewModel?>(x => x.SelectedEvent, x => x != null);
-            AcceptCommand = ReactiveCommand.Create<Window>(AcceptEvent, canAccpet);
+            AcceptCommand = ReactiveCommand.Create(() => SelectedEvent, canAccpet);
 
             AddEventCommand = ReactiveCommand.CreateFromTask(AddEventAsync);
 
             DeleteEventCommand = ReactiveCommand.CreateFromTask<EventViewModel>(DeleteEventAsync);
         }
 
-        public override async Task ConstructAsync()
+        public override async Task<bool> ConstructAsync()
         {
             var repositoryResponse = await _eventsRepository.GetEventsAsync().ConfigureAwait(false);
+            if (repositoryResponse.IsSuccesfull is false)
+                return false;
+
             var eventViewModels = repositoryResponse.Value.Select(e => new EventViewModel(e));
             Events = new(eventViewModels);
 
@@ -63,12 +66,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Events
                 });
 
             AcceptRenameEventCommand = ReactiveCommand.CreateFromTask<EventViewModel, Event>(AcceptRename, canAcceptRenaming);
-        }
-
-        private void AcceptEvent(Window window)
-        {
-            Accepted = SelectedEvent != null;
-            window.Close();
+            return true;
         }
 
         private async Task AddEventAsync()

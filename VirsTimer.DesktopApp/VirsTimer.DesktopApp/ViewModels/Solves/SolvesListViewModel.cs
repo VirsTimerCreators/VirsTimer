@@ -35,9 +35,10 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
             DeleteItemCommand = ReactiveCommand.CreateFromTask<SolveViewModel>(DeleteSolveAsync);
         }
 
-        public override Task ConstructAsync()
+        public override async Task<bool> ConstructAsync()
         {
-            return ChangeSessionAsync(_session);
+            await ChangeSessionAsync(_session);
+            return true;
         }
 
         public Task ChangeSessionAsync(Session session)
