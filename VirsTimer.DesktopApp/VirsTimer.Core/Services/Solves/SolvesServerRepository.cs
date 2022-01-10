@@ -53,9 +53,12 @@ namespace VirsTimer.Core.Services.Solves
         public async Task<RepositoryResponse> AddSolvesAsync(IReadOnlyList<Solve> solves)
         {
             var client = _httpClientFactory.CreateClient(HttpClientNames.UserAuthorized);
+            client.Timeout = TimeSpan.FromSeconds(10);
             var request = solves.Select(solve => new SolvePostRequest(solve)).ToList();
             var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Solve.PostMany, request);
             var response = await _httpResponseHandler.HandleAsync<SolvePostResponse[]>(httpRequestFunc).ConfigureAwait(false);
+
+            client.Timeout = TimeSpan.FromSeconds(6);
             return response;
         }
 
