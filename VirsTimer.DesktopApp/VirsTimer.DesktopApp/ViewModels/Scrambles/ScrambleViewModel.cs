@@ -18,7 +18,6 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
 {
     public class ScrambleViewModel : ViewModelBase
     {
-        private readonly SnackbarViewModel _snackbarViewModel;
         private readonly IScrambleGenerator _scrambleGenerator;
         private readonly ICustomScrambleGeneratorsCollector _customScrambleGeneratorsCollector;
 
@@ -26,6 +25,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
         private bool _isCustom = false;
         private Event _currentEvent = null!;
         private Queue<Scramble> _scrambles = null!;
+
+        public bool Loading { get; set; }
 
         [Reactive]
         public Scramble CurrentScramble { get; set; } = new Scramble();
@@ -36,11 +37,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
         public ReactiveCommand<Window, Unit> OpenGenerateScrambleInfoCommand { get; }
 
         public ScrambleViewModel(
-            SnackbarViewModel snackbarViewModel,
             IScrambleGenerator? scrambleGenerator = null,
             ICustomScrambleGeneratorsCollector? customScrambleGeneratorsCollector = null)
         {
-            _snackbarViewModel = snackbarViewModel;
             _scrambleGenerator = scrambleGenerator ?? Ioc.GetService<IScrambleGenerator>();
             _customScrambleGeneratorsCollector = customScrambleGeneratorsCollector ?? Ioc.GetService<ICustomScrambleGeneratorsCollector>();
 
@@ -55,6 +54,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
 
         public async Task ChangeEventAsync(Event newEvent)
         {
+            Loading = true;
             IsBusy = true;
             _currentEvent = newEvent;
             GenerateScrambleInfoVisible = false;
@@ -69,11 +69,13 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
                     await GetNextScrambleAsync();
 
                     IsBusy = false;
+                    Loading = false;
                     return;
                 }
 
                 await ShutdownDialogHandleAsync("Nie można pobrać scrambli z serwera. Sprawdź połączenie internetowe. Jeżeli problem będzie się powtarzał zgłoś problem na https://github.com/VirsTimerCreators/VirsTimer.");
                 IsBusy = false;
+                Loading = false;
                 return;
             }
 
@@ -85,6 +87,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Scrambles
                 GenerateScrambleInfoVisible = true;
 
             IsBusy = false;
+            Loading = false;
         }
 
         public async Task GetNextScrambleAsync()

@@ -2,20 +2,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		Height="500" Width="900"
+		Height="500" 
 		MinHeight="500"
+		MaxHeight="700"
 		MinWidth="900"
-		MaxHeight="1000"
-		MaxWidth="1800"
-		CanResize="True"
+		Width="900"
+		MaxWidth="900"
 		xmlns:views="clr-namespace:VirsTimer.DesktopApp.Views;assembly=VirsTimer.DesktopApp"
 		xmlns:solveViews="clr-namespace:VirsTimer.DesktopApp.Views.Solves;assembly=VirsTimer.DesktopApp"
 		xmlns:converters="clr-namespace:VirsTimer.DesktopApp.ValueConverters;assembly=VirsTimer.DesktopApp"
         x:Class="VirsTimer.DesktopApp.Views.Solves.SolveView"
         Title="SolveInfoView"
+		WindowStartupLocation="CenterScreen"
 		TransparencyLevelHint="AcrylicBlur"
 		Background="Transparent"
-		ExtendClientAreaToDecorationsHint="True">
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaChromeHints="NoChrome"
+		ExtendClientAreaTitleBarHeightHint="-1">
 	<Panel>
 		<ExperimentalAcrylicBorder IsHitTestVisible="False">
 			<ExperimentalAcrylicBorder.Material>
@@ -26,9 +29,27 @@
 					MaterialOpacity="0.75" />
 			</ExperimentalAcrylicBorder.Material>
 		</ExperimentalAcrylicBorder>
-		<Grid Margin="30 0 0 0" RowDefinitions="*,*,*,*,*" ColumnDefinitions="Auto, 50, *">
+		<StackPanel
+			IsVisible="{Binding IsBusy}"
+			Width="260"
+			Margin="0 30 0 0"
+			Spacing="10"
+			VerticalAlignment="Top"
+			HorizontalAlignment="Right">
+			<ProgressBar
+				Width="30"
+				IsIndeterminate="True"/>
+			<TextBlock
+				FontSize="16"
+				VerticalAlignment="Center"
+				TextAlignment="Center"
+				Text="Synchronizacja danych"/>
+		</StackPanel>
+		<Grid Margin="30 0 0 0" RowDefinitions="*,Auto,*,*,*" ColumnDefinitions="Auto, 50, *">
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Czas" Grid.Row="0" Grid.Column="0"/>
-			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Scramble" Grid.Row="1" Grid.Column="0"/>
+			<Border BorderBrush="{x:Null}" MinHeight="100" Grid.Row="1" Grid.Column="0">
+				<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Scramble"/>
+			</Border>
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Data" Grid.Row="2" Grid.Column="0"/>
 			<TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="DemiBold" Text="Flaga" Grid.Row="3" Grid.Column="0"/>
 
@@ -43,7 +64,19 @@
 				VerticalAlignment="Center"
 				Grid.Row="3"
 				Grid.Column="2"/>
-			<Button Content="Akceptuj" Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Right" Background="#0959db" Margin="20 0 20 20" Command="{Binding AcceptCommand}" CommandParameter="{Binding $parent[Window]}"/>
+			<Button 
+				Content="Akceptuj" 
+				Grid.Row="4" 
+				Grid.ColumnSpan="3"
+				HorizontalAlignment="Right"
+				Background="#0959db"
+				Height="45"
+				Width="120"
+				VerticalContentAlignment="Center"
+				HorizontalContentAlignment="Center"
+				Margin="20 0 30 0" 
+				Command="{Binding AcceptCommand}"
+				CommandParameter="{Binding $parent[Window]}"/>
 		</Grid>
 	</Panel>
 </Window>

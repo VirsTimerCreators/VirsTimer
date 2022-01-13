@@ -44,7 +44,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
                 SnackbarViewModel.Disposed = true;
             });
             AccessCode = "";
-            SnackbarViewModel = new SnackbarViewModel();
+            SnackbarViewModel = new SnackbarViewModel(height: 96);
         }
 
         public async Task<RoomViewModel?> CreateRoomAsync()
@@ -78,7 +78,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
             if (response.IsSuccesfull is false)
             {
-                await SnackbarViewModel.Enqueue("Podczas tworzenia pokoju wystąpił problem.");
+                await SnackbarViewModel.Enqueue("Podczas można utworzyć pokoju. Podczas łączenia z serwerem wystąpił problem.");
                 return null;
             }
 

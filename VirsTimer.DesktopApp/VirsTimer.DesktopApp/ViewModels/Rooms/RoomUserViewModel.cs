@@ -30,7 +30,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         public RoomUserViewModel(RoomUser roomUser)
         {
             UserName = roomUser.Name;
-            Solves = new(roomUser.Solves.Select(x => new RoomUserSolveViewModel(x)));
+            Solves = new(roomUser.Solves.OrderByDescending(x => x.Date).Select(x => new RoomUserSolveViewModel(x)));
         }
 
         public async Task UpdateIndexesAndStatisticAsync()

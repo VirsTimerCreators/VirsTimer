@@ -8,12 +8,14 @@ using VirsTimer.Core.Constants;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.Extensions;
+using VirsTimer.DesktopApp.ViewModels.Common;
 using VirsTimer.DesktopApp.Views.Solves;
 
 namespace VirsTimer.DesktopApp.ViewModels.Solves
 {
     public class SolveViewModel : ViewModelBase
     {
+        private readonly SnackbarViewModel _snackbarViewModel;
         private readonly ISolvesRepository _solvesRepository;
 
         public bool Accepted { get; private set; }
@@ -33,11 +35,15 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
         public string Index { get; set; } = "-1";
 
         public ReactiveCommand<Window, Unit> EditSolveCommand { get; }
-        public SolveFlagsViewModel SolveFlagsViewModel { get; }
+        public SolveFlagsViewModel SolveFlagsViewModel { get; set; }
         public ReactiveCommand<Window, Unit> AcceptCommand { get; }
 
-        public SolveViewModel(Solve solve, ISolvesRepository solvesSaver)
+        public SolveViewModel(
+            Solve solve, 
+            SnackbarViewModel snackbarViewModel, 
+            ISolvesRepository solvesSaver)
         {
+            _snackbarViewModel = snackbarViewModel;
             _solvesRepository = solvesSaver;
 
             Model = solve;
@@ -65,7 +71,6 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
 
         private async Task SaveFlag(Window window)
         {
-            //TODO watchout for exception - rollback flag change
             Accepted = Flag != SolveFlagsViewModel.ChoosenFlag;
             if (Accepted is false)
             {
@@ -73,11 +78,23 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
                 return;
             }
 
+            IsBusy = true;
+
+            var response = await _solvesRepository.UpdateSolveAsync(Model);
+            if (response.IsSuccesfull is false)
+            {
+                SolveFlagsViewModel = new SolveFlagsViewModel(Flag);
+                IsBusy = false;
+                window.Close();
+                _snackbarViewModel.EnqueueSchedule("Nie udało się zaaktualizować flagi ułożenia. Błąd przy połączeniu z serwerem.");
+                return;
+            }
+
             Model.Flag = SolveFlagsViewModel.ChoosenFlag;
-            await _solvesRepository.UpdateSolveAsync(Model).ConfigureAwait(true);
             Flag = SolveFlagsViewModel.ChoosenFlag;
             UpdateSummary();
 
+            IsBusy = false;
             window.Close();
         }
 

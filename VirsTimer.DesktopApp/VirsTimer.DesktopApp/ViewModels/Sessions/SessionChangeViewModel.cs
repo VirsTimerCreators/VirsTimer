@@ -60,7 +60,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Sessions
                 .ToCollection()
                 .Select(vms =>
                 {
-                    return vms.All(vm => !string.IsNullOrWhiteSpace(vm.Name))
+                    return vms.All(vm => vm?.Name?.Length > 0 && vm?.Name?.Length < 41)
                     && vms.AllDistinctBy(vm => vm.Name);
                 });
 

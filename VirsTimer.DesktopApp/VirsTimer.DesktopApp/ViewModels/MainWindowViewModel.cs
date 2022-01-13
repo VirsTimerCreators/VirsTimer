@@ -9,9 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using VirsTimer.Core.Extensions;
 using VirsTimer.Core.Models;
 using VirsTimer.Core.Services.Solves;
 using VirsTimer.DesktopApp.ValueConverters;
@@ -85,7 +85,7 @@ namespace VirsTimer.DesktopApp.ViewModels
             SessionViewModel = new SessionSummaryViewModel(SnackbarViewModel);
             TimerViewModel = new TimerViewModel();
             SolvesListViewModel = new SolvesListViewModel(SnackbarViewModel);
-            ScrambleViewModel = new ScrambleViewModel(SnackbarViewModel);
+            ScrambleViewModel = new ScrambleViewModel();
             StatisticsViewModel = new StatisticsViewModel();
 
             AddSolveManualyCommand = ReactiveCommand.CreateFromTask<Window>(AddSolveManually);
@@ -128,6 +128,17 @@ namespace VirsTimer.DesktopApp.ViewModels
 
             ShowExportDialog = new Interaction<ExportsViewModel, Unit>();
             ExportCommand = ReactiveCommand.CreateFromTask(ExportAsync);
+
+            RxApp.TaskpoolScheduler.SchedulePeriodic(TimeSpan.FromSeconds(30), async () =>
+            {
+                for (var i = 0; i < _failedSolves.Count; i++)
+                {
+                    var failed = _failedSolves[i];
+                    var failedResponse = await _solvesRepository.AddSolveAsync(failed);
+                    if (failedResponse.IsSuccesfull)
+                        _failedSolves.Remove(failed);
+                }
+            });
         }
 
         public override async Task<bool> ConstructAsync()
@@ -178,17 +189,15 @@ namespace VirsTimer.DesktopApp.ViewModels
         public async Task SaveSolveAsync(Solve solve)
         {
             IsBusyManual = true;
-            if (_failedSolves.IsNullOrEmpty() is false)
-                await _solvesRepository.AddSolvesAsync(_failedSolves);
 
             var repositoryResponse = await _solvesRepository.AddSolveAsync(solve);
             if (repositoryResponse.IsSuccesfull is false)
             {
                 _failedSolves.Add(solve);
-                Task.Run(async () => await SnackbarViewModel.Enqueue("Podczas zapisywania ułożenia wystąpił błąd. Próba zapisu będzie powtórzona po kolejnym ułożeniu."));
+                SnackbarViewModel.EnqueueSchedule("Podczas zapisywania ułożenia wystąpił błąd. Próba zapisu będzie powtórzona za 30 sekund.");
             }
 
-            SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve, _solvesRepository));
+            SolvesListViewModel.Solves.Insert(0, new SolveViewModel(solve, SnackbarViewModel, _solvesRepository));
             await ScrambleViewModel.GetNextScrambleAsync();
             IsBusyManual = false;
         }

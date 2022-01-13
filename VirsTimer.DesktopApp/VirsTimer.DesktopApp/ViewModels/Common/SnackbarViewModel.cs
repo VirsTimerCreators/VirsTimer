@@ -3,6 +3,8 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Reactive;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 
 namespace VirsTimer.DesktopApp.ViewModels.Common
 {
@@ -32,6 +34,11 @@ namespace VirsTimer.DesktopApp.ViewModels.Common
         public IObservable<Unit> Enqueue(string message)
         {
             return QueueMessage.Execute(message);
+        }
+
+        public void EnqueueSchedule(string message)
+        {
+            RxApp.MainThreadScheduler.Schedule(async () => await QueueMessage.Execute(message));
         }
     }
 }

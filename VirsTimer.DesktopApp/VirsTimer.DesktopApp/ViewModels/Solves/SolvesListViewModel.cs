@@ -53,12 +53,12 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
             var repositoryResponse = await _solvesRepository.GetSolvesAsync(_session).ConfigureAwait(false);
             if (repositoryResponse.IsSuccesfull is false)
             {
-                _snackbarViewModel.Enqueue("Podczas ładownia ułożeń wysątpił błąd.");
+                _snackbarViewModel.EnqueueSchedule("Podczas ładownia ułożeń wysątpił błąd.");
                 IsBusy = false;
                 return;
             }
 
-            var ordered = repositoryResponse.Value!.OrderByDescending(solve => solve.Date).Select(solve => new SolveViewModel(solve, _solvesRepository));
+            var ordered = repositoryResponse.Value!.OrderByDescending(solve => solve.Date).Select(solve => new SolveViewModel(solve, _snackbarViewModel, _solvesRepository));
             Solves = new ObservableCollection<SolveViewModel>(ordered);
             Solves.CollectionChanged += UpdateIndexesAsync;
             UpdateIndexesAsync(this, EventArgs.Empty);
@@ -77,7 +77,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Solves
             var repositoryResponse = await _solvesRepository.DeleteSolveAsync(solveViewModel.Model).ConfigureAwait(false);
             if (repositoryResponse.IsSuccesfull is false)
             {
-                _snackbarViewModel.Enqueue("Podczas usuwania ułożenia wysątpił błąd.");
+                _snackbarViewModel.EnqueueSchedule("Podczas usuwania ułożenia wysątpił błąd.");
                 IsBusy = false;
                 return;
             }

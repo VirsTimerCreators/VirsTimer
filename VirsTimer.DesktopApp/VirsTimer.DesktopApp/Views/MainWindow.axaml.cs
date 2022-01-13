@@ -112,6 +112,9 @@ namespace VirsTimer.DesktopApp.Views
         public async void WindowKeyDown(object? sender, KeyEventArgs keyEventArgs)
         {
             keyEventArgs.Handled = true;
+            if (ViewModel.ScrambleViewModel.Loading)
+                return;
+
             if (keyEventArgs.Key == Key.Space && !ViewModel.TimerViewModel.Timer.IsRunning && !ViewModel.TimerViewModel.Timer.CountdownStarted)
                 ViewModel.TimerViewModel.Timer.StartCountdown();
             else if (ViewModel.TimerViewModel.Timer.IsRunning)

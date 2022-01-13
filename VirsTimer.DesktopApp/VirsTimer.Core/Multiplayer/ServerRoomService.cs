@@ -103,57 +103,66 @@ namespace VirsTimer.Core.Multiplayer
             using var reader = new StreamReader(stream);
             while (reader.EndOfStream is false && _left is false)
             {
-                var line = await reader.ReadLineAsync().ConfigureAwait(false);
-                if (line is null || line.Length < 6)
-                    continue;
+                try
+                {
+                    var line = await reader.ReadLineAsync().ConfigureAwait(false);
+                    if (line is null || line.Length < 6)
+                        continue;
 
-                if (line[..5] != "data:")
-                    continue;
+                    if (line[..5] != "data:")
+                        continue;
 
-                var cleared = line[5..];
-                if (lastNotificationData == cleared)
-                    continue;
+                    var cleared = line[5..];
+                    if (lastNotificationData == cleared)
+                        continue;
 
-                lastNotificationData = cleared;
-                var roomNotificationResponse = JsonSerializer.Deserialize<RoomNotificationResponse>(lastNotificationData, Json.ServerSerializerOptions);
-                if (roomNotificationResponse is null)
-                    continue;
+                    lastNotificationData = cleared;
+                    var roomNotificationResponse = JsonSerializer.Deserialize<RoomNotificationResponse>(lastNotificationData, Json.ServerSerializerOptions);
+                    if (roomNotificationResponse is null)
+                        continue;
 
-                var roomUsers = roomNotificationResponse.Users
-                    .Select(solvesByUser =>
+                    var roomUsers = roomNotificationResponse.Users
+                        .Select(solvesByUser =>
+                        {
+                            var solves = solvesByUser.Value.Select(x => new RoomSolve
+                            {
+                                Id = x.Id,
+                                Time = x.Time,
+                                Flag = SolveServerFlags.ToSolveFlag(x.Solved),
+                                Date = new DateTime(x.Timestamp)
+                            });
+
+                            return new RoomUser
+                            {
+                                Name = solvesByUser.Key,
+                                Solves = solves.OrderByDescending(x => x.Date).ToList()
+                            };
+                        })
+                        .ToList();
+
+                    var status = roomNotificationResponse.Status switch
                     {
-                        var solves = solvesByUser.Value.Select(x => new RoomSolve
-                        {
-                            Id = x.Id,
-                            Time = x.Time,
-                            Flag = SolveServerFlags.ToSolveFlag(x.Solved),
-                            Date = new DateTime(x.Timestamp)
-                        });
+                        "OPEN" => RoomStatus.Open,
+                        "INPROGRESS" => RoomStatus.InProgress,
+                        "CLOSED" => RoomStatus.Closed,
+                        _ => RoomStatus.Open
+                    };
 
-                        return new RoomUser
-                        {
-                            Name = solvesByUser.Key,
-                            Solves = solves.OrderByDescending(x => x.Date).ToList()
-                        };
-                    })
-                    .ToList();
+                    var notification = new RoomNotification
+                    {
+                        Status = status,
+                        RoomUsers = roomUsers
+                    };
 
-                var status = roomNotificationResponse.Status switch
+                    _subject.OnNext(notification);
+                }
+                catch(Exception ex)
                 {
-                    "OPEN" => RoomStatus.Open,
-                    "INPROGRESS" => RoomStatus.InProgress,
-                    "CLOSED" => RoomStatus.Closed,
-                     _ => RoomStatus.Open
-                };
-
-                var notification = new RoomNotification
-                {
-                    Status = status,
-                    RoomUsers = roomUsers
-                };
-
-                _subject.OnNext(notification);
+                    _subject.OnError(ex);
+                }
             }
+
+            _subject.OnCompleted();
         }
 
         public Task LeaveRoomAsync()

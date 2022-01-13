@@ -1,6 +1,5 @@
 ﻿using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Threading;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -8,6 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VirsTimer.Core.Constants;
@@ -27,6 +28,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
         public bool Valid { get; } = true;
         public string AccessCode => _model.AccessCode;
+
+        public bool FinishedWithError { get; set; }
 
         [Reactive]
         public string BorderColor { get; set; }
@@ -80,7 +83,7 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             TimerViewModel.Timer.Stopped += SolveFinished;
             TimerContent = TimerViewModel;
             RoomUsersViewModel = new RoomUsersViewModel();
-            SnackbarViewModel = new SnackbarViewModel();
+            SnackbarViewModel = new SnackbarViewModel(400, 64);
 
             CopyToClipboardCommand = ReactiveCommand.CreateFromTask(CopyToClipboard);
 
@@ -90,29 +93,24 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
             StartCommand = ReactiveCommand.CreateFromTask(StartCompetition, canStart);
             ExitCommand = ReactiveCommand.CreateFromTask(LeaveRoom);
 
+            CopyToClipboardCommand.ThrownExceptions.Subscribe((e) => SnackbarViewModel.EnqueueSchedule("Podczas kopiowania do schowka wystąpił problem"));
             StartCommand.ThrownExceptions.Subscribe(ExceptionThrown);
 
-            _roomsService.Notifications.Subscribe(async notification =>
+            var observer = new NotificationObserver(this);
+            _roomsService.Notifications.Subscribe(observer);
+
+            this.WhenActivated(disposableRegistration =>
             {
-                var usersViewModels = notification.RoomUsers
-                .Select(roomUser => new RoomUserViewModel(roomUser));
-
-                await Dispatcher.UIThread.InvokeAsync(async () =>
+                RxApp.TaskpoolScheduler.SchedulePeriodic(TimeSpan.FromSeconds(3), async () =>
                 {
-                    IsBusy = true;
-
-                    if ((Status == "Zapraszanie" || Status == "Oczekiwanie na rozpoczęcie administratora.") && notification.Status == RoomStatus.InProgress)
+                    for (var i = 0; i < _failedSolves.Count; i++)
                     {
-                        Status = "Rozpoczęto";
-                        BorderColor = "#9e5e4d";
-                        ScrambleViewModel.GetNextScramble();
+                        var failed = _failedSolves[i];
+                        var failedResponse = await _roomsService.SendSolveAsync(_model.Id, failed);
+                        if (failedResponse.IsSuccesfull)
+                            _failedSolves.Remove(failed);
                     }
-
-                    RoomUsersViewModel.Users = new(usersViewModels);
-                    await RoomUsersViewModel.Refresh();
-
-                    IsBusy = false;
-                });
+                }).DisposeWith(disposableRegistration);
             });
         }
 
@@ -127,6 +125,8 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
         private async Task AddSolveToMeAsync(SolveFlag solveFlag)
         {
+            IsBusy = true;
+
             var time = TimerViewModel.SavedTime;
             var solve = new RoomSolve
             {
@@ -135,18 +135,11 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
                 Flag = solveFlag,
                 ScrambleId = ScrambleViewModel.Current!.Id
             };
+
             var response = await _roomsService.SendSolveAsync(_model.Id, solve);
-
-            foreach (var failed in _failedSolves)
-            {
-                var failedResponse = await _roomsService.SendSolveAsync(_model.Id, failed);
-                if (failedResponse.IsSuccesfull)
-                    _failedSolves.Remove(failed);
-            }
-
             if (response.IsSuccesfull is false)
             {
-                SnackbarViewModel.Enqueue("Podczas wysyłania ułożenia wystąpił błąd");
+                SnackbarViewModel.EnqueueSchedule("Podczas wysyłania ułożenia wystąpił błąd. Próba zostanie ponowiona.");
                 _failedSolves.Add(solve);
             }
 
@@ -173,10 +166,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
 
             var response = await _roomsService.StartRoomAsync(_model.Id);
             if (response.IsSuccesfull is false)
-            {
-                SnackbarViewModel.Enqueue("Podczas rozpoczynia konkurencji wystąpił błąd.");
-                return;
-            }
+                SnackbarViewModel.EnqueueSchedule("Podczas łączenia z serwerem wystąpił błąd. Nie można ropocząć kokurencji.");
+
+            IsBusy = false;
         }
 
         private Task LeaveRoom()
@@ -188,6 +180,49 @@ namespace VirsTimer.DesktopApp.ViewModels.Rooms
         public void ExceptionThrown(Exception e)
         {
             SnackbarViewModel.Enqueue("Wystąpił problem podczas łączenia z serwem.");
+        }
+
+        private class NotificationObserver : IObserver<RoomNotification>
+        {
+            private readonly RoomViewModel _viewModel;
+
+            public NotificationObserver(RoomViewModel viewModel)
+            {
+                _viewModel = viewModel;
+            }
+
+            public void OnCompleted()
+            {
+                _viewModel.FinishedWithError = true;
+            }
+
+            public void OnError(Exception error)
+            {
+                _viewModel.FinishedWithError = true;
+            }
+
+            public void OnNext(RoomNotification notification)
+            {
+                var usersViewModels = notification.RoomUsers
+                .Select(roomUser => new RoomUserViewModel(roomUser));
+
+                RxApp.MainThreadScheduler.Schedule(async () =>
+                {
+                    _viewModel.IsBusy = true;
+
+                    if ((_viewModel.Status == "Zapraszanie" || _viewModel.Status == "Oczekiwanie na rozpoczęcie administratora.") && notification.Status == RoomStatus.InProgress)
+                    {
+                        _viewModel.Status = "Rozpoczęto";
+                        _viewModel.BorderColor = "#9e5e4d";
+                        _viewModel.ScrambleViewModel.GetNextScramble();
+                    }
+
+                    _viewModel.RoomUsersViewModel.Users = new(usersViewModels);
+                    await _viewModel.RoomUsersViewModel.Refresh();
+
+                    _viewModel.IsBusy = false;
+                });
+            }
         }
     }
 }
