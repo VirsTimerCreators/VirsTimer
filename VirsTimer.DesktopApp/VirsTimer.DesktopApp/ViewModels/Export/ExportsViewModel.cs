@@ -58,9 +58,9 @@ namespace VirsTimer.DesktopApp.ViewModels.Export
             ImportCsvCommand = ReactiveCommand.CreateFromTask(ImportCsvAsync);
 
             ExportJsonCommand.ThrownExceptions.Subscribe(async (e) => await Catch(e, "Podczas ekspotu wystąpił błąd."));
-            ImportJsonCommand.ThrownExceptions.Subscribe(async (e) => await Catch(e, "Podczas impoertu wystąpił błąd."));
+            ImportJsonCommand.ThrownExceptions.Subscribe(async (e) => await Catch(e, "Podczas importu wystąpił błąd."));
             ExportCsvCommand.ThrownExceptions.Subscribe(async (e) => await Catch(e, "Podczas ekspotu wystąpił błąd."));
-            ImportCsvCommand.ThrownExceptions.Subscribe(async (e) => await Catch(e, "Podczas impoertu wystąpił błąd."));
+            ImportCsvCommand.ThrownExceptions.Subscribe(async (e) => await Catch(e, "Podczas importu wystąpił błąd."));
 
             OkCommand = ReactiveCommand.Create(() => { SnackbarViewModel.Disposed = true; });
 

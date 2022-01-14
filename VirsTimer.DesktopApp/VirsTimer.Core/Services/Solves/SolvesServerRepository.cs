@@ -58,7 +58,6 @@ namespace VirsTimer.Core.Services.Solves
             var httpRequestFunc = () => client.PostAsJsonAsync(Server.Endpoints.Solve.PostMany, request);
             var response = await _httpResponseHandler.HandleAsync<SolvePostResponse[]>(httpRequestFunc).ConfigureAwait(false);
 
-            client.Timeout = TimeSpan.FromSeconds(6);
             return response;
         }
 
